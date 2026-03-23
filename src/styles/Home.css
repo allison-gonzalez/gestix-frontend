@@ -1,0 +1,133 @@
+/* Page Container */
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+/* Page Header */
+.page-header {
+  padding: 2rem 2rem 1rem 2rem;
+  border-bottom: none;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
+}
+
+/* Page Content */
+.page-content {
+  flex: 1;
+  padding: 2rem;
+  background-color: #f8f9fa;
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+/* Stat Card */
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s;
+  border: 1px solid #f0f0f0;
+  border-left: 5px solid #3498db;
+}
+
+.stat-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.stat-icon {
+  font-size: 1.8rem;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  flex-shrink: 0;
+  margin-bottom: 1rem;
+}
+
+.stat-icon-blue { background-color: #D6EAF8; color: #5DADE2; }
+.stat-icon-yellow { background-color: #FEF5E7; color: #F4D03F; }
+.stat-icon-green { background-color: #D5F4E6; color: #58D68D; }
+.stat-icon-purple { background-color: #EBDEF0; color: #AF7AC5; }
+
+.stat-content { flex: 1; }
+
+.stat-content h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.stat-number {
+  margin: 0.5rem 0 0.75rem 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.stat-change {
+  display: inline-block;
+  color: #27ae60;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* Chart Section */
+.chart-section {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f0f0f0;
+}
+
+.chart-title {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #333;
+  padding-bottom: 1rem;
+  border-bottom: 3px solid #ffc107;
+  display: inline-block;
+}
+
+.chart-container {
+  position: relative;
+  height: 400px;
+  margin-top: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid { grid-template-columns: 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+  .page-content { padding: 1rem; }
+  .page-header { padding: 1.5rem 1rem 0.5rem 1rem; }
+  .page-title { font-size: 1.5rem; }
+  .chart-section { padding: 1.5rem; }
+  .chart-container { height: 300px; }
+}
