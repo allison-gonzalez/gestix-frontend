@@ -7,17 +7,55 @@
   z-index: 9999;
   background: transparent;
   overflow: hidden;
+  animation: bar-enter 0.15s ease forwards;
+}
+
+.loading-bar-track.leaving {
+  animation: bar-leave 0.4s ease forwards;
 }
 
 .loading-bar-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
   height: 100%;
-  background: linear-gradient(90deg, #2DC4D4, #FFD100, #2DC4D4);
-  background-size: 200% 100%;
-  animation: loading-slide 1.4s ease infinite;
+  width: 0;
+  background: linear-gradient(90deg, #2DC4D4 0%, #1aa8b8 40%, #FFD100 80%, #ffe066 100%);
+  border-radius: 0 2px 2px 0;
+  animation: bar-progress 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
-@keyframes loading-slide {
-  0%   { width: 0%;   margin-left: 0;    opacity: 1; }
-  50%  { width: 75%;  margin-left: 10%;  opacity: 1; }
-  100% { width: 20%;  margin-left: 110%; opacity: 0; }
+.loading-bar-glow {
+  position: absolute;
+  top: -3px;
+  height: 9px;
+  width: 80px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(45,196,212,0.9) 0%, transparent 70%);
+  animation: glow-move 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+}
+
+@keyframes bar-progress {
+  0%   { width: 0%;  left: 0; }
+  30%  { width: 50%; left: 0; }
+  70%  { width: 30%; left: 60%; }
+  100% { width: 0%;  left: 110%; }
+}
+
+@keyframes glow-move {
+  0%   { left: -80px; opacity: 0; }
+  10%  { opacity: 1; }
+  70%  { left: 80%;  opacity: 1; }
+  100% { left: 110%; opacity: 0; }
+}
+
+@keyframes bar-enter {
+  from { opacity: 0; transform: scaleY(0.3); }
+  to   { opacity: 1; transform: scaleY(1); }
+}
+
+@keyframes bar-leave {
+  from { opacity: 1; }
+  to   { opacity: 0; }
 }

@@ -40,12 +40,14 @@ export const comentarioService = {
 };
 
 export const backupService = {
-  getInfo:    ()         => api.get('/backup/info'),
-  getList:    ()         => api.get('/backup/list'),
-  create:     ()         => api.post('/backup/create'),
-  download:   (filename) => api.get(`/backup/download/${filename}`, { responseType: 'blob' }),
-  delete:     (filename) => api.delete(`/backup/${filename}`),
-  restore:    (filename) => api.post(`/backup/restore/${filename}`),
+  getInfo:        ()         => api.get('/backup/info'),
+  getList:        ()         => api.get('/backup/list'),
+  getSchedule:    ()         => api.get('/backup/schedule'),
+  updateSchedule: (data)     => api.put('/backup/schedule', data),
+  create:         ()         => api.post('/backup/create'),
+  download:       (filename) => api.get(`/backup/download/${filename}`, { responseType: 'blob' }),
+  delete:         (filename) => api.delete(`/backup/${filename}`),
+  restore:        (filename) => api.post(`/backup/restore/${filename}`),
 };
 
 export default api;
