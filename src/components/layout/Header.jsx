@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaBell, FaUser, FaSignOutAlt } from 'react-icons/fa';
-import '../styles/Header.css';
+import '../../styles/Header.css';
 
 function Header() {
   const [notifications] = useState(3);

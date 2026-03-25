@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import TicketList from '../components/TicketList';
+import TicketList from '../components/tickets/TicketList';
 import { ticketService } from '../services';
 
 export default function Tickets() {

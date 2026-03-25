@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaSearch, FaEye, FaEdit } from 'react-icons/fa';
-import '../styles/UsuariosList.css';
+import '../../styles/UsuariosList.css';
 
 const ROL_COLORS = {
   admin: 'badge-red',
