@@ -1,0 +1,358 @@
+/* =====================================================
+   Administracion.css  — Gestix Backup Administration
+   Palette: #1B3A5C (navy) | #FFD100 (yellow) | #2DC4D4 (cyan)
+   ===================================================== */
+
+.admin-page {
+  padding: 24px;
+  max-width: 1200px;
+}
+
+/* ── Page Header ─────────────────────────────────── */
+.admin-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.admin-page-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #1B3A5C;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.admin-page-title svg {
+  color: #2DC4D4;
+  font-size: 1.6rem;
+}
+
+/* ── Alerts ──────────────────────────────────────── */
+.admin-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.admin-alert.success {
+  background: #d4f5e9;
+  color: #155724;
+  border-left: 4px solid #28a745;
+}
+
+.admin-alert.error {
+  background: #fde8e8;
+  color: #721c24;
+  border-left: 4px solid #dc3545;
+}
+
+.admin-alert svg {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.alert-close {
+  margin-left: auto;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: inherit;
+  opacity: 0.6;
+  line-height: 1;
+  padding: 0 4px;
+}
+
+.alert-close:hover {
+  opacity: 1;
+}
+
+/* ── Info Cards Grid ─────────────────────────────── */
+.admin-info-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+@media (max-width: 1100px) {
+  .admin-info-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.admin-info-card {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  border-left: 5px solid #2DC4D4;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.admin-info-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+.admin-info-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.admin-info-icon.cyan  { background: #e0f7fa; color: #2DC4D4; }
+.admin-info-icon.navy  { background: #e8eef5; color: #1B3A5C; }
+.admin-info-icon.yellow { background: #fffde7; color: #d4a017; }
+.admin-info-icon.green { background: #e6f9f0; color: #28a745; }
+
+.admin-info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.admin-info-label {
+  font-size: 0.78rem;
+  color: #7a8a99;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+
+.admin-info-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1B3A5C;
+  line-height: 1;
+}
+
+/* ── Section Blocks ──────────────────────────────── */
+.admin-section {
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.admin-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 2px solid #f0f3f7;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.admin-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1B3A5C;
+  margin: 0;
+}
+
+.admin-section-title svg {
+  color: #2DC4D4;
+}
+
+.admin-section-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ── Tables: reutiliza .table-wrapper y .ticket-table de TicketList.css ── */
+
+/* ── Column: collection name ─────────────────────── */
+.col-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #1B3A5C;
+}
+
+.col-name svg {
+  color: #2DC4D4;
+  font-size: 0.95rem;
+}
+
+.backup-filename {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.82rem;
+  color: #374151;
+  word-break: break-all;
+}
+
+/* ── Badges ──────────────────────────────────────── */
+/* Extiende .badge de TicketList.css */
+.badge-cyan {
+  background: #e0f7fa;
+  color: #0097a7;
+  border: 1px solid #b2ebf2;
+}
+
+/* ── Buttons — generic ───────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  background: #FFD100;
+  color: #1B3A5C;
+  border: none;
+  border-radius: 7px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+  white-space: nowrap;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #e6bc00;
+  transform: translateY(-1px);
+}
+
+.btn-primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: transparent;
+  color: #1B3A5C;
+  border: 2px solid #1B3A5C;
+  border-radius: 7px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #1B3A5C;
+  color: #ffffff;
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Buttons — backup row actions ────────────────── */
+.backup-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+  white-space: nowrap;
+}
+
+.backup-btn:hover:not(:disabled) {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+.backup-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.backup-btn.download {
+  background: #2DC4D4;
+  color: #ffffff;
+}
+
+.backup-btn.restore {
+  background: #1B3A5C;
+  color: #ffffff;
+}
+
+.backup-btn.delete {
+  background: #e53e3e;
+  color: #ffffff;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* ── Empty / Loading States ──────────────────────── */
+.admin-empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+.admin-empty svg {
+  font-size: 2.5rem;
+  color: #d1d5db;
+  margin-bottom: 12px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.admin-loading {
+  padding: 40px 20px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+.spin {
+  display: inline-block;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}

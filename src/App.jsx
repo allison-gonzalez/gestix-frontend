@@ -1,10 +1,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar, { SidebarProvider, useSidebarState } from './components/Navbar';
-import Header from './components/Header';
+import Navbar, { SidebarProvider, useSidebarState } from './components/layout/Navbar';
+import Header from './components/layout/Header';
 import Home from './pages/Home';
 import Tickets from './pages/Tickets';
 import Usuarios from './pages/Usuarios';
+import Administracion from './pages/Administracion';
 import './styles/index.css';
 
 function AppContent() {
@@ -20,6 +21,7 @@ function AppContent() {
             <Route path="/" element={<Home />} />
             <Route path="/tickets" element={<Tickets />} />
             <Route path="/usuarios" element={<Usuarios />} />
+            <Route path="/administracion" element={<Administracion />} />
           </Routes>
         </main>
       </div>
