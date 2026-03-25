@@ -2,6 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar, { SidebarProvider, useSidebarState } from './components/layout/Navbar';
 import Header from './components/layout/Header';
+import LoadingBar from './components/common/LoadingBar';
+import { LoadingProvider } from './context/LoadingContext';
 import Home from './pages/Home';
 import Tickets from './pages/Tickets';
 import Usuarios from './pages/Usuarios';
@@ -13,6 +15,7 @@ function AppContent() {
 
   return (
     <div className="app-layout">
+      <LoadingBar />
       <Navbar />
       <div className={`main-content ${!collapsed ? 'sidebar-expanded' : ''}`}>
         <Header />
@@ -32,9 +35,11 @@ function AppContent() {
 function App() {
   return (
     <Router>
-      <SidebarProvider>
-        <AppContent />
-      </SidebarProvider>
+      <LoadingProvider>
+        <SidebarProvider>
+          <AppContent />
+        </SidebarProvider>
+      </LoadingProvider>
     </Router>
   );
 }

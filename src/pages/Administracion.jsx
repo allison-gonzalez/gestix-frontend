@@ -10,6 +10,8 @@ import {
   FaExclamationTriangle,
   FaServer,
   FaTable,
+  FaChevronDown,
+  FaChevronUp,
 } from 'react-icons/fa';
 import { backupService } from '../services';
 import DataTable from '../components/common/DataTable';
@@ -23,7 +25,8 @@ export default function Administracion() {
   const [creating, setCreating] = useState(false);
   const [restoring, setRestoring] = useState(null);
   const [deleting, setDeleting]   = useState(null);
-  const [alert, setAlert]         = useState(null);
+  const [alert, setAlert]               = useState(null);
+  const [showCollections, setShowCollections] = useState(true);
 
   useEffect(() => {
     fetchData();
@@ -161,17 +164,27 @@ export default function Administracion() {
               <div className="admin-section">
                 <div className="admin-section-header">
                   <h2 className="admin-section-title">Colecciones</h2>
+                  <button
+                    className="btn-secondary"
+                    onClick={() => setShowCollections(v => !v)}
+                    title={showCollections ? 'Ocultar' : 'Mostrar'}
+                  >
+                    {showCollections ? <FaChevronUp /> : <FaChevronDown />}
+                    {showCollections ? 'Ocultar' : 'Mostrar'}
+                  </button>
                 </div>
-                <DataTable
-                  keyField="name"
-                  rows={info.collections}
-                  emptyText="No hay colecciones"
-                  columns={[
-                    { label: 'COLECCIÓN', render: (col) => <span className="col-name"><FaTable /> {col.name}</span> },
-                    { label: 'DOCUMENTOS', key: 'count' },
-                    { label: 'ESTADO', render: () => <span className="badge badge-cyan">Activa</span> },
-                  ]}
-                />
+                {showCollections && (
+                  <DataTable
+                    keyField="name"
+                    rows={info.collections}
+                    emptyText="No hay colecciones"
+                    columns={[
+                      { label: 'COLECCIÓN', render: (col) => <span className="col-name"><FaTable /> {col.name}</span> },
+                      { label: 'DOCUMENTOS', key: 'count' },
+                      { label: 'ESTADO', render: () => <span className="badge badge-cyan">Activa</span> },
+                    ]}
+                  />
+                )}
               </div>
             )}
 
