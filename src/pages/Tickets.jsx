@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import TicketList from '../components/TicketList';
+import TicketTemplates from '../components/TicketTemplates';
 import { ticketService } from '../services';
 
 export default function Tickets() {
@@ -23,12 +24,19 @@ export default function Tickets() {
     }
   };
 
+  const handleSelectTemplate = (template) => {
+    console.log('Plantilla seleccionada:', template);
+    // Aquí puedes abrir el modal/form de creación con campos predefinidos:
+    // setFormData({ titulo: template.title, prioridad: template.priority, ... })
+  };
+
   return (
     <div className="page-container">
       <div className="page-header">
         <h1 className="page-title">Tickets</h1>
       </div>
       <div className="page-content">
+        <TicketTemplates onSelectTemplate={handleSelectTemplate} />
         <TicketList tickets={tickets} loading={loading} onRefresh={fetchTickets} />
       </div>
     </div>
