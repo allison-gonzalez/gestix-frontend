@@ -243,7 +243,6 @@ export default function AdminModule() {
           {activeTab === 'departamentos' && (
             <div className="admin-section">
             <div className="admin-section-header">
-              <h2 className="admin-section-title"><FaBuilding /> Departamentos</h2>
               <div className="admin-section-toolbar">
                 <div className="search-box">
                   <FaSearch className="search-icon" />
@@ -276,7 +275,6 @@ export default function AdminModule() {
         {activeTab === 'permisos' && (
           <div className="admin-section">
             <div className="admin-section-header">
-              <h2 className="admin-section-title"><FaKey /> Permisos</h2>
               <div className="admin-section-toolbar">
                 <div className="search-box">
                   <FaSearch className="search-icon" />
@@ -310,7 +308,6 @@ export default function AdminModule() {
         {activeTab === 'categorias' && (
           <div className="admin-section">
             <div className="admin-section-header">
-              <h2 className="admin-section-title"><FaTags /> Categorías</h2>
               <div className="admin-section-toolbar">
                 <div className="search-box">
                   <FaSearch className="search-icon" />
