@@ -9,7 +9,7 @@ import {
   FaSignOutAlt,
   FaTimes,
   FaBars,
-  FaCogs,
+  FaCog,
 } from 'react-icons/fa';
 import '../../styles/Navbar.css';
 
@@ -48,8 +48,8 @@ function Navbar() {
     { path: '/tickets', label: 'Tickets', icon: FaTicketAlt },
     { path: '/usuarios', label: 'Usuarios', icon: FaUsers },
     { path: '/reportes', label: 'Reportes', icon: FaChartBar },
-    { path: '/admin', label: 'Administración de Datos', icon: FaCogs },
-    { path: '/administracion', label: 'Administración', icon: FaDatabase },
+    { path: '/admin', label: 'Administración de Datos', icon: FaCog },
+    { path: '/administracion', label: 'Administración BD', icon: FaDatabase },
   ];
 
   const isActive = (path) => location.pathname === path;
