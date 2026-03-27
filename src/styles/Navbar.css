@@ -125,7 +125,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  padding: 1rem 0.75rem;
+  padding: 1rem 0;
   list-style: none;
   margin: 0;
 }
@@ -135,6 +135,7 @@
   align-items: center;
   gap: 1rem;
   padding: 0.875rem 1rem;
+  margin: 0 0.75rem;
   background: none;
   border: none;
   color: rgba(255, 255, 255, 0.8);
@@ -155,6 +156,12 @@
   background-color: #ffc107;
   color: #1e3a5f;
   font-weight: 600;
+  margin: 0;
+  margin-right: -0.75rem;
+  padding: 0.875rem 1.75rem;
+  padding-right: 2.5rem;
+  width: calc(100% + 0.75rem);
+  border-radius: 0;
 }
 
 .menu-icon {
@@ -177,6 +184,14 @@
 .sidebar.collapsed .menu-item {
   justify-content: center;
   padding: 0.875rem 0.5rem;
+  margin: 0 0.75rem;
+}
+
+.sidebar.collapsed .menu-item.active {
+  margin: 0 0.75rem;
+  padding: 0.875rem 0.5rem;
+  width: auto;
+  border-radius: 6px;
 }
 
 /* Sidebar Footer */

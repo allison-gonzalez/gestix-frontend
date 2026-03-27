@@ -211,7 +211,7 @@ export default function AdminModule() {
     <div className="page-container">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Datos Maestros</h1>
+          <h1 className="page-title">Administración de Datos</h1>
           <p className="page-subtitle">Gestión de departamentos, permisos y categorías</p>
         </div>
       </div>
