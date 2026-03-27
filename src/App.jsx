@@ -8,6 +8,7 @@ import Home from './pages/Home';
 import Tickets from './pages/Tickets';
 import Usuarios from './pages/Usuarios';
 import Administracion from './pages/Administracion';
+import AdminModule from './pages/AdminModule';
 import './styles/index.css';
 
 function AppContent() {
@@ -25,6 +26,7 @@ function AppContent() {
             <Route path="/tickets" element={<Tickets />} />
             <Route path="/usuarios" element={<Usuarios />} />
             <Route path="/administracion" element={<Administracion />} />
+            <Route path="/admin" element={<AdminModule />} />
           </Routes>
         </main>
       </div>

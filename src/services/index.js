@@ -32,6 +32,14 @@ export const categoriaService = {
   delete: (id) => api.delete(`/categorias/${id}`),
 };
 
+export const permisoService = {
+  getAll: () => api.get('/permisos'),
+  getById: (id) => api.get(`/permisos/${id}`),
+  create: (data) => api.post('/permisos', data),
+  update: (id, data) => api.put(`/permisos/${id}`, data),
+  delete: (id) => api.delete(`/permisos/${id}`),
+};
+
 export const comentarioService = {
   getAll: () => api.get('/comentarios'),
   getByTicket: (ticketId) => api.get(`/tickets/${ticketId}/comentarios`),
