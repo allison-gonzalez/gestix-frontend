@@ -1,23 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import UsuariosList from '../components/usuarios/UsuariosList';
-import { usuarioService } from '../services';
+import { usuarioService, departamentoService, permisoService } from '../services';
 
 export default function Usuarios() {
-  const [usuarios, setUsuarios] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [usuarios,     setUsuarios]     = useState([]);
+  const [departamentos,setDepartamentos]= useState([]);
+  const [permisos,     setPermisos]     = useState([]);
+  const [loading,      setLoading]      = useState(true);
 
   useEffect(() => {
-    fetchUsuarios();
+    fetchAll();
   }, []);
 
-  const fetchUsuarios = async () => {
+  const fetchAll = async () => {
     try {
       setLoading(true);
-      const res = await usuarioService.getAll();
-      const data = Array.isArray(res.data) ? res.data : res.data.data || [];
-      setUsuarios(data);
+      const [uRes, dRes, pRes] = await Promise.all([
+        usuarioService.getAll(),
+        departamentoService.getAll(),
+        permisoService.getAll(),
+      ]);
+
+      const toArray = (res) =>
+        Array.isArray(res.data) ? res.data : res.data?.data || [];
+
+      setUsuarios(toArray(uRes));
+      setDepartamentos(toArray(dRes));
+      setPermisos(toArray(pRes));
     } catch (error) {
-      console.error('Error fetching usuarios:', error);
+      console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
     }
@@ -29,7 +40,13 @@ export default function Usuarios() {
         <h1 className="page-title">Usuarios</h1>
       </div>
       <div className="page-content">
-        <UsuariosList usuarios={usuarios} loading={loading} onRefresh={fetchUsuarios} />
+        <UsuariosList
+          usuarios={usuarios}
+          loading={loading}
+          onRefresh={fetchAll}
+          departamentos={departamentos}
+          permisos={permisos}
+        />
       </div>
     </div>
   );
