@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaSearch, FaFilter, FaEye, FaEdit } from 'react-icons/fa';
+import { FaSearch, FaEye, FaEdit } from 'react-icons/fa';
 import '../styles/TicketList.css';
 
 const PRIORITY_COLORS = {
@@ -15,7 +15,7 @@ const STATUS_COLORS = {
   cerrado: 'badge-gray',
 };
 
-export default function TicketList({ tickets = [], loading, onRefresh }) {
+export default function TicketList({ tickets = [], loading, onRefresh, onEditTicket, onViewTicket }) {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('todos');
 
@@ -23,9 +23,9 @@ export default function TicketList({ tickets = [], loading, onRefresh }) {
     const matchSearch =
       t.titulo?.toLowerCase().includes(search.toLowerCase()) ||
       t.descripcion?.toLowerCase().includes(search.toLowerCase());
-    if (filter === 'alta') return matchSearch && t.prioridad === 'alta';
-    if (filter === 'abiertos') return matchSearch && t.estado === 'abierto';
-    return matchSearch;
+
+    if (filter === 'todos') return matchSearch;
+    return matchSearch && t.estado === filter;
   });
 
   return (
@@ -41,10 +41,17 @@ export default function TicketList({ tickets = [], loading, onRefresh }) {
           />
         </div>
         <div className="filter-buttons">
-          <button className={`filter-btn ${filter === 'todos' ? 'active' : ''}`} onClick={() => setFilter('todos')}>Todos</button>
-          <button className={`filter-btn ${filter === 'alta' ? 'active' : ''}`} onClick={() => setFilter('alta')}>Alta Prioridad</button>
-          <button className={`filter-btn ${filter === 'abiertos' ? 'active' : ''}`} onClick={() => setFilter('abiertos')}>Abiertos</button>
-          <button className="filter-btn icon-btn"><FaFilter /></button>
+          <select
+            className="filter-select"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+          >
+            <option value="todos">Todos</option>
+            <option value="abierto">Abiertos</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="resuelto">Resueltos</option>
+            <option value="cerrado">Cerrados</option>
+          </select>
         </div>
       </div>
 
@@ -85,8 +92,8 @@ export default function TicketList({ tickets = [], loading, onRefresh }) {
                     <td>{ticket.asignado_a || 'Sin asignar'}</td>
                     <td>{ticket.fecha_creacion ? new Date(ticket.fecha_creacion).toLocaleDateString() : '-'}</td>
                     <td className="actions">
-                      <button className="action-btn" title="Ver"><FaEye /></button>
-                      <button className="action-btn" title="Editar"><FaEdit /></button>
+                      <button className="action-btn" title="Ver" onClick={() => onViewTicket?.(ticket)}><FaEye /></button>
+                      <button className="action-btn" title="Editar" onClick={() => onEditTicket(ticket)}><FaEdit /></button>
                     </td>
                   </tr>
                 ))

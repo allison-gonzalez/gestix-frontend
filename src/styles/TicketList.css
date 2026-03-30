@@ -47,6 +47,21 @@
   gap: 0.5rem;
 }
 
+.filter-select {
+  min-width: 200px;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: white;
+  color: #333;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
 .filter-btn {
   padding: 0.5rem 1rem;
   border: 1px solid #e0e0e0;

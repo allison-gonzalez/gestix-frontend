@@ -11,26 +11,51 @@ export default function Home() {
   const [stats, setStats] = useState({
     totalTickets: 0,
     ticketsAbiertos: 0,
+    ticketsPendientes: 0,
     ticketsResueltos: 0,
+    ticketsCerrados: 0,
     tiempoPromedio: 0,
     ticketsPorEstado: {},
   });
   const [loading, setLoading] = useState(true);
+
+  const TICKETS_STORAGE_KEY = 'gestix_tickets';
+
+  const loadStoredTickets = () => {
+    try {
+      const stored = localStorage.getItem(TICKETS_STORAGE_KEY);
+      return stored ? JSON.parse(stored) : null;
+    } catch (error) {
+      console.warn('No se pudieron cargar tickets locales', error);
+      return null;
+    }
+  };
+
+  const mergeStoredTickets = (apiTickets = [], storedTickets = []) => {
+    const apiIds = new Set(apiTickets.map((ticket) => ticket._id));
+    const preserved = storedTickets.filter((ticket) => !apiIds.has(ticket._id));
+    return [...apiTickets, ...preserved];
+  };
 
   useEffect(() => {
     fetchStats();
   }, []);
 
   const fetchStats = async () => {
+    const storedTickets = loadStoredTickets();
     try {
       setLoading(true);
       const ticketsRes = await ticketService.getAll();
-      const tickets = Array.isArray(ticketsRes.data) ? ticketsRes.data : ticketsRes.data.data || [];
+      let tickets = Array.isArray(ticketsRes.data) ? ticketsRes.data : ticketsRes.data.data || [];
+      if (storedTickets?.length) {
+        tickets = mergeStoredTickets(tickets, storedTickets);
+      }
 
       const totalTickets = tickets.length;
       const ticketsAbiertos = tickets.filter((t) => t.estado === 'abierto').length;
       const ticketsResueltos = tickets.filter((t) => t.estado === 'resuelto').length;
       const ticketsPendientes = tickets.filter((t) => t.estado === 'pendiente').length;
+      const ticketsCerrados = tickets.filter((t) => t.estado === 'cerrado').length;
 
       const ticketsConResolucion = tickets.filter((t) => t.fecha_resolucion && t.fecha_creacion);
       let tiempoPromedio = 0;
@@ -47,23 +72,59 @@ export default function Home() {
       setStats({
         totalTickets,
         ticketsAbiertos,
+        ticketsPendientes,
         ticketsResueltos,
+        ticketsCerrados,
         tiempoPromedio,
         ticketsPorEstado: {
           abierto: ticketsAbiertos,
           pendiente: ticketsPendientes,
           resuelto: ticketsResueltos,
+          cerrado: ticketsCerrados,
         },
       });
     } catch (error) {
       console.error('Error fetching stats:', error);
+      if (storedTickets?.length) {
+        const tickets = storedTickets;
+        const totalTickets = tickets.length;
+        const ticketsAbiertos = tickets.filter((t) => t.estado === 'abierto').length;
+        const ticketsResueltos = tickets.filter((t) => t.estado === 'resuelto').length;
+        const ticketsPendientes = tickets.filter((t) => t.estado === 'pendiente').length;
+        const ticketsCerrados = tickets.filter((t) => t.estado === 'cerrado').length;
+        const ticketsConResolucion = tickets.filter((t) => t.fecha_resolucion && t.fecha_creacion);
+        let tiempoPromedio = 0;
+        if (ticketsConResolucion.length > 0) {
+          const totalDias = ticketsConResolucion.reduce((sum, t) => {
+            const fechaCreacion = new Date(t.fecha_creacion);
+            const fechaResolucion = new Date(t.fecha_resolucion);
+            const dias = Math.ceil((fechaResolucion - fechaCreacion) / (1000 * 60 * 60 * 24));
+            return sum + dias;
+          }, 0);
+          tiempoPromedio = Math.round(totalDias / ticketsConResolucion.length);
+        }
+        setStats({
+          totalTickets,
+          ticketsAbiertos,
+          ticketsPendientes,
+          ticketsResueltos,
+          ticketsCerrados,
+          tiempoPromedio,
+          ticketsPorEstado: {
+            abierto: ticketsAbiertos,
+            pendiente: ticketsPendientes,
+            resuelto: ticketsResueltos,
+            cerrado: ticketsCerrados,
+          },
+        });
+      }
     } finally {
       setLoading(false);
     }
   };
 
   const chartData = {
-    labels: ['Abiertos', 'Pendientes', 'Resueltos'],
+    labels: ['Abiertos', 'Pendientes', 'Resueltos', 'Cerrados'],
     datasets: [
       {
         label: 'Cantidad de Tickets',
@@ -71,9 +132,10 @@ export default function Home() {
           stats.ticketsPorEstado.abierto || 0,
           stats.ticketsPorEstado.pendiente || 0,
           stats.ticketsPorEstado.resuelto || 0,
+          stats.ticketsPorEstado.cerrado || 0,
         ],
-        backgroundColor: ['#5DADE2', '#F4D03F', '#58D68D'],
-        borderColor: ['#5DADE2', '#F4D03F', '#58D68D'],
+        backgroundColor: ['#5DADE2', '#F4D03F', '#58D68D', '#7F8C8D'],
+        borderColor: ['#5DADE2', '#F4D03F', '#58D68D', '#7F8C8D'],
         borderWidth: 1,
         borderRadius: 4,
       },
@@ -98,37 +160,43 @@ export default function Home() {
         <h1 className="page-title">Dashboard</h1>
       </div>
       <div className="page-content">
-        <div className="dashboard-grid">
-          <div className="stat-card">
-            <div className="stat-icon stat-icon-blue"><FaTicketAlt /></div>
-            <div className="stat-content">
-              <h3>TOTAL DE TICKETS</h3>
-              <p className="stat-number">{loading ? '-' : stats.totalTickets}</p>
-              <span className="stat-change">↑ 12% vs mes anterior</span>
+        <div className="template-section">
+          <h2 className="section-title">Plantillas de Ticket</h2>
+          <div className="dashboard-grid">
+            <div className="stat-card">
+              <div className="stat-icon stat-icon-blue"><FaTicketAlt /></div>
+              <div className="stat-content">
+                <h3>TOTAL</h3>
+                <p className="stat-number">{loading ? '-' : stats.totalTickets}</p>
+              </div>
             </div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-icon stat-icon-yellow"><FaClock /></div>
-            <div className="stat-content">
-              <h3>TICKETS ABIERTOS</h3>
-              <p className="stat-number">{loading ? '-' : stats.ticketsAbiertos}</p>
-              <span className="stat-change">↑ 8 nuevos hoy</span>
+            <div className="stat-card">
+              <div className="stat-icon stat-icon-yellow"><FaClock /></div>
+              <div className="stat-content">
+                <h3>ABIERTOS</h3>
+                <p className="stat-number">{loading ? '-' : stats.ticketsAbiertos}</p>
+              </div>
             </div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-icon stat-icon-green"><FaCheckCircle /></div>
-            <div className="stat-content">
-              <h3>TICKETS RESUELTOS</h3>
-              <p className="stat-number">{loading ? '-' : stats.ticketsResueltos}</p>
-              <span className="stat-change">↑ 18% vs mes anterior</span>
+            <div className="stat-card">
+              <div className="stat-icon stat-icon-purple"><FaLightbulb /></div>
+              <div className="stat-content">
+                <h3>PENDIENTES</h3>
+                <p className="stat-number">{loading ? '-' : stats.ticketsPendientes}</p>
+              </div>
             </div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-icon stat-icon-purple"><FaLightbulb /></div>
-            <div className="stat-content">
-              <h3>TIEMPO PROMEDIO</h3>
-              <p className="stat-number">{loading ? '-' : stats.tiempoPromedio}</p>
-              <span className="stat-change">↑ 15% mejora</span>
+            <div className="stat-card">
+              <div className="stat-icon stat-icon-green"><FaCheckCircle /></div>
+              <div className="stat-content">
+                <h3>RESUELTOS</h3>
+                <p className="stat-number">{loading ? '-' : stats.ticketsResueltos}</p>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon stat-icon-gray"><FaTicketAlt /></div>
+              <div className="stat-content">
+                <h3>CERRADOS</h3>
+                <p className="stat-number">{loading ? '-' : stats.ticketsCerrados}</p>
+              </div>
             </div>
           </div>
         </div>
