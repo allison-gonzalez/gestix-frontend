@@ -80,17 +80,41 @@ export default function TicketModal({ ticket, usuarios = [], onClose, onSave, mo
         <div className="modal-body">
           {isViewMode ? (
             <div className="view-ticket-body">
-              <div className="view-field">
-                <label>Título</label>
-                <p>{ticket?.titulo || '-'}</p>
+              <div className="view-ticket-grid">
+                <div className="view-ticket-card">
+                  <label>Título</label>
+                  <p>{ticket?.titulo || '-'}</p>
+                </div>
+                <div className="view-ticket-card">
+                  <label>Estado</label>
+                  <p>{ticket?.estado ? ticket.estado.charAt(0).toUpperCase() + ticket.estado.slice(1) : '-'}</p>
+                </div>
+                <div className="view-ticket-card">
+                  <label>Prioridad</label>
+                  <p>{ticket?.prioridad ? ticket.prioridad.charAt(0).toUpperCase() + ticket.prioridad.slice(1) : '-'}</p>
+                </div>
+                <div className="view-ticket-card">
+                  <label>Fecha</label>
+                  <p>{ticket?.fecha_creacion ? new Date(ticket.fecha_creacion).toLocaleDateString() : '-'}</p>
+                </div>
               </div>
-              <div className="view-field">
-                <label>Fecha</label>
-                <p>{ticket?.fecha_creacion ? new Date(ticket.fecha_creacion).toLocaleDateString() : '-'}</p>
-              </div>
-              <div className="view-field">
+              <div className="view-ticket-card full-width">
                 <label>Descripción</label>
                 <p>{ticket?.descripcion || '-'}</p>
+              </div>
+              <div className="view-ticket-card full-width">
+                <label>Asignados</label>
+                {ticket?.asignados?.length > 0 ? (
+                  <div className="assigned-users">
+                    {ticket.asignados.map((id) => (
+                      <span key={id} className="assigned-user">
+                        {getUsuarioNombre(id)}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="no-assigned">No hay usuarios asignados</p>
+                )}
               </div>
             </div>
           ) : (
