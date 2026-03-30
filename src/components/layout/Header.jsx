@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaBell, FaUser, FaSignOutAlt } from 'react-icons/fa';
-import '../styles/Header.css';
-import { subscribeNotifications } from '../services/notificationBus';
+import '../../styles/Header.css';
+import { subscribeNotifications } from '../../services/notificationBus';
 
 const NOTIFICATIONS_STORAGE_KEY = 'gestix_notifications';
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import UsuariosList from '../components/UsuariosList';
+import UsuariosList from '../components/usuarios/UsuariosList';
 import { usuarioService } from '../services';
 
 export default function Usuarios() {

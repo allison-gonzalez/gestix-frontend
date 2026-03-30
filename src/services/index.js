@@ -32,11 +32,30 @@ export const categoriaService = {
   delete: (id) => api.delete(`/categorias/${id}`),
 };
 
+export const permisoService = {
+  getAll: () => api.get('/permisos'),
+  getById: (id) => api.get(`/permisos/${id}`),
+  create: (data) => api.post('/permisos', data),
+  update: (id, data) => api.put(`/permisos/${id}`, data),
+  delete: (id) => api.delete(`/permisos/${id}`),
+};
+
 export const comentarioService = {
   getAll: () => api.get('/comentarios'),
   getByTicket: (ticketId) => api.get(`/tickets/${ticketId}/comentarios`),
   create: (data) => api.post('/comentarios', data),
   delete: (id) => api.delete(`/comentarios/${id}`),
+};
+
+export const backupService = {
+  getInfo:        ()         => api.get('/backup/info'),
+  getList:        ()         => api.get('/backup/list'),
+  getSchedule:    ()         => api.get('/backup/schedule'),
+  updateSchedule: (data)     => api.put('/backup/schedule', data),
+  create:         ()         => api.post('/backup/create'),
+  download:       (filename) => api.get(`/backup/download/${filename}`, { responseType: 'blob' }),
+  delete:         (filename) => api.delete(`/backup/${filename}`),
+  restore:        (filename) => api.post(`/backup/restore/${filename}`),
 };
 
 export default api;

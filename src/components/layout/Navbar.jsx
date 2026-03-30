@@ -5,12 +5,13 @@ import {
   FaTicketAlt,
   FaUsers,
   FaChartBar,
-  FaCog,
+  FaDatabase,
   FaSignOutAlt,
   FaTimes,
   FaBars,
+  FaCog,
 } from 'react-icons/fa';
-import '../styles/Navbar.css';
+import '../../styles/Navbar.css';
 
 const SidebarContext = createContext();
 
@@ -47,7 +48,8 @@ function Navbar() {
     { path: '/tickets', label: 'Tickets', icon: FaTicketAlt },
     { path: '/usuarios', label: 'Usuarios', icon: FaUsers },
     { path: '/reportes', label: 'Reportes', icon: FaChartBar },
-    { path: '/perfil', label: 'Perfil', icon: FaCog },
+    { path: '/admin', label: 'Administración de Datos', icon: FaCog },
+    { path: '/administracion', label: 'Administración BD', icon: FaDatabase },
   ];
 
   const isActive = (path) => location.pathname === path;
