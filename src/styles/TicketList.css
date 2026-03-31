@@ -1,0 +1,132 @@
+.ticket-list-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+
+.ticket-list-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.75rem;
+  color: #999;
+  font-size: 0.9rem;
+}
+
+.search-box input {
+  padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  outline: none;
+  width: 250px;
+  transition: border-color 0.2s;
+}
+
+.search-box input:focus {
+  border-color: #3498db;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.filter-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid #e0e0e0;
+  background: white;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #666;
+}
+
+.filter-btn:hover { background: #f5f5f5; }
+.filter-btn.active { background: #1e3a5f; color: white; border-color: #1e3a5f; }
+.filter-btn.icon-btn { padding: 0.5rem 0.75rem; }
+
+.table-wrapper { overflow-x: auto; }
+
+.ticket-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.ticket-table th {
+  background: #f8f9fa;
+  padding: 0.875rem 1rem;
+  text-align: left;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.ticket-table td {
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid #f5f5f5;
+  color: #333;
+}
+
+.ticket-table tr:hover td { background: #fafafa; }
+
+.ticket-id { font-weight: 600; color: #666; }
+.ticket-title { font-weight: 500; }
+
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.badge-red { background: #fde8e8; color: #c0392b; }
+.badge-orange { background: #fef0e6; color: #e67e22; }
+.badge-blue { background: #e8f4fd; color: #2980b9; }
+.badge-green { background: #e8f8f0; color: #27ae60; }
+.badge-yellow { background: #fef9e7; color: #f39c12; }
+.badge-gray { background: #f0f0f0; color: #666; }
+
+.actions { display: flex; gap: 0.5rem; }
+
+.action-btn {
+  background: none;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 0.35rem 0.5rem;
+  cursor: pointer;
+  color: #666;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.action-btn:hover { background: #f0f0f0; color: #333; }
+
+.loading-state, .empty-state {
+  padding: 3rem;
+  text-align: center;
+  color: #999;
+  font-size: 0.95rem;
+}
