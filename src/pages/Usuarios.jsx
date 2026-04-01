@@ -3,14 +3,12 @@ import UsuariosList from '../components/usuarios/UsuariosList';
 import { usuarioService, departamentoService, permisoService } from '../services';
 
 export default function Usuarios() {
-  const [usuarios,     setUsuarios]     = useState([]);
-  const [departamentos,setDepartamentos]= useState([]);
-  const [permisos,     setPermisos]     = useState([]);
-  const [loading,      setLoading]      = useState(true);
+  const [usuarios,      setUsuarios]      = useState([]);
+  const [departamentos, setDepartamentos] = useState([]);
+  const [permisosCat,   setPermisosCat]   = useState([]);   // catálogo de permisos de BD
+  const [loading,       setLoading]       = useState(true);
 
-  useEffect(() => {
-    fetchAll();
-  }, []);
+  useEffect(() => { fetchAll(); }, []);
 
   const fetchAll = async () => {
     try {
@@ -20,18 +18,29 @@ export default function Usuarios() {
         departamentoService.getAll(),
         permisoService.getAll(),
       ]);
-
-      const toArray = (res) =>
-        Array.isArray(res.data) ? res.data : res.data?.data || [];
-
-      setUsuarios(toArray(uRes));
-      setDepartamentos(toArray(dRes));
-      setPermisos(toArray(pRes));
-    } catch (error) {
-      console.error('Error fetching data:', error);
+      const toArr = (r) => Array.isArray(r.data) ? r.data : r.data?.data || [];
+      setUsuarios(toArr(uRes));
+      setDepartamentos(toArr(dRes));
+      setPermisosCat(toArr(pRes));
+    } catch (err) {
+      console.error('Error cargando datos:', err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleUpdate = async (id, formData) => {
+    const payload = { ...formData };
+    if (!payload.contrasena) delete payload.contrasena;
+    await usuarioService.update(id, payload);
+  };
+
+  const handleCreate = async (formData) => {
+    await usuarioService.create(formData);
+  };
+
+  const handleDelete = async (id) => {
+    await usuarioService.delete(id);
   };
 
   return (
@@ -43,9 +52,12 @@ export default function Usuarios() {
         <UsuariosList
           usuarios={usuarios}
           loading={loading}
-          onRefresh={fetchAll}
           departamentos={departamentos}
-          permisos={permisos}
+          permisosCatalogo={permisosCat}
+          onRefresh={fetchAll}
+          onUpdate={handleUpdate}
+          onCreate={handleCreate}
+          onDelete={handleDelete}
         />
       </div>
     </div>
