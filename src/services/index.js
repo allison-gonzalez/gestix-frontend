@@ -1,10 +1,38 @@
 import api from './api';
 
+const buildMultipartRequest = (data) => {
+  const formData = new FormData();
+
+  Object.entries(data).forEach(([key, value]) => {
+    if (value instanceof File || value instanceof Blob) {
+      formData.append(key, value);
+    } else if (Array.isArray(value)) {
+      formData.append(key, JSON.stringify(value));
+    } else if (value !== undefined && value !== null) {
+      formData.append(key, value);
+    }
+  });
+
+  return formData;
+};
+
+const requestWithPossibleFile = (method, url, data) => {
+  const hasFile = data && Object.values(data).some((value) => value instanceof File || value instanceof Blob);
+  if (hasFile) {
+    return api[method](url, buildMultipartRequest(data), {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  }
+  return api[method](url, data);
+};
+
 export const ticketService = {
   getAll: () => api.get('/tickets'),
   getById: (id) => api.get(`/tickets/${id}`),
-  create: (data) => api.post('/tickets', data),
-  update: (id, data) => api.put(`/tickets/${id}`, data),
+  create: (data) => requestWithPossibleFile('post', '/tickets', data),
+  update: (id, data) => requestWithPossibleFile('put', `/tickets/${id}`, data),
   delete: (id) => api.delete(`/tickets/${id}`),
 };
 

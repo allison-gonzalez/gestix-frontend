@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaTimes, FaUser, FaClock, FaTag } from 'react-icons/fa';
+import { FaTimes, FaUser } from 'react-icons/fa';
 import '../styles/TicketModal.css';
 
 export default function TicketModal({ ticket, usuarios = [], onClose, onSave, mode = 'edit' }) {
@@ -10,6 +10,7 @@ export default function TicketModal({ ticket, usuarios = [], onClose, onSave, mo
     estado: 'abierto',
     fecha_creacion: new Date().toISOString().slice(0, 10),
     asignados: [],
+    adjunto: null,
   });
 
   const formatDateForInput = (value) => {
@@ -32,6 +33,7 @@ export default function TicketModal({ ticket, usuarios = [], onClose, onSave, mo
         estado: ticket.estado || 'abierto',
         fecha_creacion: formatDateForInput(ticket.fecha_creacion),
         asignados: ticket.asignados || [],
+        adjunto: ticket.adjunto || null,
       });
     }
   }, [ticket]);
@@ -41,6 +43,14 @@ export default function TicketModal({ ticket, usuarios = [], onClose, onSave, mo
     setFormData(prev => ({
       ...prev,
       [name]: value
+    }));
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0] || null;
+    setFormData(prev => ({
+      ...prev,
+      adjunto: file,
     }));
   };
 
@@ -54,10 +64,15 @@ export default function TicketModal({ ticket, usuarios = [], onClose, onSave, mo
   };
 
   const handleSave = () => {
-    onSave({
+    const payload = {
       _id: ticket._id,
-      ...formData
-    });
+      ...formData,
+      estado: isNewTicket ? 'abierto' : formData.estado,
+      fecha_creacion: isNewTicket ? new Date().toISOString().slice(0, 10) : formData.fecha_creacion,
+      asignados: isNewTicket ? [] : formData.asignados,
+    };
+
+    onSave(payload);
     onClose();
   };
 
@@ -156,74 +171,94 @@ export default function TicketModal({ ticket, usuarios = [], onClose, onSave, mo
                   </select>
                 </div>
 
-                <div className="form-group">
-                  <label>Estado</label>
-                  <select
-                    name="estado"
-                    value={formData.estado}
-                    onChange={handleChange}
-                    className="form-select"
-                  >
-                    <option value="abierto">Abierto</option>
-                    <option value="pendiente">Pendiente</option>
-                    <option value="resuelto">Resuelto</option>
-                    <option value="cerrado">Cerrado</option>
-                  </select>
-                </div>
+                {!isNewTicket && (
+                  <>
+                    <div className="form-group">
+                      <label>Estado</label>
+                      <select
+                        name="estado"
+                        value={formData.estado}
+                        onChange={handleChange}
+                        className="form-select"
+                      >
+                        <option value="abierto">Abierto</option>
+                        <option value="pendiente">Pendiente</option>
+                        <option value="resuelto">Resuelto</option>
+                        <option value="cerrado">Cerrado</option>
+                      </select>
+                    </div>
 
-                <div className="form-group">
-                  <label>Fecha</label>
-                  <input
-                    type="date"
-                    name="fecha_creacion"
-                    value={formData.fecha_creacion}
-                    onChange={handleChange}
-                    className="form-input"
-                  />
-                </div>
+                    <div className="form-group">
+                      <label>Fecha</label>
+                      <input
+                        type="date"
+                        name="fecha_creacion"
+                        value={formData.fecha_creacion}
+                        onChange={handleChange}
+                        className="form-input"
+                      />
+                    </div>
+                  </>
+                )}
               </div>
 
               <div className="form-group">
-                <label><FaUser className="icon" /> Asignar a Agentes/Usuarios</label>
-                <div className="agents-list">
-                  {usuarios.length === 0 ? (
-                    <p className="no-agents">No hay usuarios disponibles</p>
-                  ) : (
-                    usuarios.map(usuario => (
-                      <label key={usuario._id || usuario.id} className="agent-checkbox">
-                        <input
-                          type="checkbox"
-                          checked={formData.asignados.includes(usuario._id || usuario.id)}
-                          onChange={() => handleSelectAgent(usuario._id || usuario.id)}
-                        />
-                        <span className="agent-name">{usuario.nombre}</span>
-                        {usuario.departamento && (
-                          <span className="agent-dept">{usuario.departamento}</span>
-                        )}
-                      </label>
-                    ))
-                  )}
-                </div>
-                {formData.asignados.length > 0 && (
-                  <div className="selected-agents">
-                    <h4>Asignados a:</h4>
-                    <div className="agent-tags">
-                      {formData.asignados.map(id => (
-                        <span key={id} className="agent-tag">
-                          {getUsuarioNombre(id)}
-                          <button
-                            type="button"
-                            onClick={() => handleSelectAgent(id)}
-                            className="remove-tag"
-                          >
-                            ×
-                          </button>
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+                <label>Adjuntar archivo / imagen</label>
+                <input
+                  type="file"
+                  name="adjunto"
+                  accept="image/*,application/pdf"
+                  onChange={handleFileChange}
+                  className="form-input"
+                />
+                {formData.adjunto && (
+                  <p className="file-name">Archivo seleccionado: {formData.adjunto.name}</p>
                 )}
               </div>
+
+              {!isNewTicket && (
+                <div className="form-group">
+                  <label><FaUser className="icon" /> Asignar a Agentes/Usuarios</label>
+                  <div className="agents-list">
+                    {usuarios.length === 0 ? (
+                      <p className="no-agents">No hay usuarios disponibles</p>
+                    ) : (
+                      usuarios.map(usuario => (
+                        <label key={usuario._id || usuario.id} className="agent-checkbox">
+                          <input
+                            type="checkbox"
+                            checked={formData.asignados.includes(usuario._id || usuario.id)}
+                            onChange={() => handleSelectAgent(usuario._id || usuario.id)}
+                          />
+                          <span className="agent-name">{usuario.nombre}</span>
+                          {usuario.departamento && (
+                            <span className="agent-dept">{usuario.departamento}</span>
+                          )}
+                        </label>
+                      ))
+                    )}
+                  </div>
+                  {formData.asignados.length > 0 && (
+                    <div className="selected-agents">
+                      <h4>Asignados a:</h4>
+                      <div className="agent-tags">
+                        {formData.asignados.map(id => (
+                          <span key={id} className="agent-tag">
+                            {getUsuarioNombre(id)}
+                            <button
+                              type="button"
+                              onClick={() => handleSelectAgent(id)}
+                              className="remove-tag"
+                            >
+                              ×
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </>
           )}
         </div>
