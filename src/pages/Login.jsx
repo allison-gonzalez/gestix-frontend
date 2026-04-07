@@ -28,10 +28,9 @@ export default function Login() {
       });
 
       if (response.data.success) {
-        // Usar el contexto de autenticación
+        
         login(response.data.access_token, response.data.user);
         
-        // Redirigir a home
         navigate('/home');
       }
     } catch (err) {
@@ -63,7 +62,7 @@ export default function Login() {
               <input
                 type="email"
                 id="email"
-                placeholder="solotzano.ag@gestix.com"
+                placeholder="example@gmail.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
