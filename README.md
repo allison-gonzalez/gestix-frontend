@@ -1,6 +1,8 @@
 # Gestix Frontend
 
-Frontend del sistema de gestión de tickets Gestix, desarrollado con **React** y **Vite**.
+**Frontend del sistema de gestión de tickets Gestix** desarrollado con React y Vite.
+
+⚠️ **Importante:** Este repositorio solo debe contener archivos del frontend (React/JS/CSS). No agregar archivos del backend PHP/Laravel.
 
 ## Inicio Rápido
 
