@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 // Auth (HEAD)
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { useAuth } from './hooks/useAuth';
 import Login from './pages/Login';
 
 // Layout (MAIN)
@@ -58,16 +59,23 @@ function ProtectedLayout() {
   );
 }
 
+function PublicRoute({ children }) {
+  const { isAuthenticated, isLoading } = useAuth();
+  if (isLoading) return null;
+  if (isAuthenticated) return <Navigate to="/home" replace />;
+  return children;
+}
+
 function App() {
   return (
     <AuthProvider>
       <Router>
         <Routes>
           {/* Login (HEAD prioridad) */}
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
 
           {/* Redirect base */}
-          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/" element={<Navigate to="/login" replace />} />
 
           {/* Rutas protegidas */}
           <Route path="/*" element={<ProtectedLayout />} />

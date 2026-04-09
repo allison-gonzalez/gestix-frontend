@@ -11,6 +11,7 @@ import {
   FaBars,
   FaCog,
 } from 'react-icons/fa';
+import { useAuth } from '../../hooks/useAuth';
 import '../../styles/Navbar.css';
 
 const SidebarContext = createContext();
@@ -31,6 +32,7 @@ export function SidebarProvider({ children }) {
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useAuth();
   const [user, setUser] = useState(null);
   const { collapsed, setCollapsed } = useSidebarState();
 
@@ -95,7 +97,7 @@ function Navbar() {
 
       {/* Footer */}
       <div className="sidebar-footer">
-        <button className="logout-btn">
+        <button className="logout-btn" onClick={() => { logout(); navigate('/login'); }}>
           <FaSignOutAlt />
           <span className="logout-label">Cerrar Sesión</span>
         </button>
