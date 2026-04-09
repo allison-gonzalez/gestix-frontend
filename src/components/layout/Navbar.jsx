@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext, useContext } from 'react';
+import React, { useState, createContext, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   FaHome,
@@ -33,19 +33,24 @@ export function SidebarProvider({ children }) {
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout } = useAuth();
+  const { logout, user: authUser } = useAuth();
   const { hasPermission } = usePermission();
-  const [user, setUser] = useState(null);
   const { collapsed, setCollapsed } = useSidebarState();
 
-  useEffect(() => {
-    const currentUser = {
-      name: 'USUARIO DEMO',
-      initials: 'UD',
-      email: 'user@gestix.com',
-    };
-    setUser(currentUser);
-  }, []);
+  const getInitials = (name) => {
+    if (!name) return '';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0][0].toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  };
+
+  const userData = authUser
+    ? {
+        name: authUser.nombre || 'Sin nombre',
+        initials: getInitials(authUser.nombre),
+        email: authUser.correo || '',
+      }
+    : null;
 
   const allMenuItems = [
     { path: '/', label: 'Dashboard', icon: FaHome, requiredPermission: null },
@@ -76,11 +81,11 @@ function Navbar() {
       </div>
 
       {/* Usuario */}
-      {user && (
+      {userData && (
         <div className="user-section">
-          <div className="user-avatar">{user.initials}</div>
+          <div className="user-avatar">{userData.initials}</div>
           <div className="user-info">
-            <p className="user-name">{user.name}</p>
+            <p className="user-name">{userData.name}</p>
           </div>
         </div>
       )}
