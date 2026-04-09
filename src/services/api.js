@@ -10,7 +10,9 @@ export const registerLoadingCallback = (fn) => {
 };
 
 const updateLoading = () => {
-  if (loadingCallback) loadingCallback(activeRequests > 0);
+  if (loadingCallback) {
+    loadingCallback(activeRequests > 0);
+  }
 };
 
 const api = axios.create({
@@ -21,16 +23,21 @@ const api = axios.create({
   },
 });
 
+// REQUEST
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
   activeRequests++;
   updateLoading();
+
   return config;
 });
 
+// RESPONSE
 api.interceptors.response.use(
   (response) => {
     activeRequests = Math.max(0, activeRequests - 1);
@@ -40,9 +47,12 @@ api.interceptors.response.use(
   (error) => {
     activeRequests = Math.max(0, activeRequests - 1);
     updateLoading();
+
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
+      window.location.href = '/login';
     }
+
     return Promise.reject(error);
   }
 );
