@@ -12,6 +12,7 @@ import {
   FaCog,
 } from 'react-icons/fa';
 import { useAuth } from '../../hooks/useAuth';
+import { usePermission } from '../../hooks/usePermission';
 import '../../styles/Navbar.css';
 
 const SidebarContext = createContext();
@@ -33,6 +34,7 @@ function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { logout } = useAuth();
+  const { hasPermission } = usePermission();
   const [user, setUser] = useState(null);
   const { collapsed, setCollapsed } = useSidebarState();
 
@@ -45,14 +47,17 @@ function Navbar() {
     setUser(currentUser);
   }, []);
 
-  const menuItems = [
-    { path: '/', label: 'Dashboard', icon: FaHome },
-    { path: '/tickets', label: 'Tickets', icon: FaTicketAlt },
-    { path: '/usuarios', label: 'Usuarios', icon: FaUsers },
-    { path: '/reportes', label: 'Reportes', icon: FaChartBar },
-    { path: '/admin', label: 'Administración de Datos', icon: FaCog },
-    { path: '/administracion', label: 'Administración BD', icon: FaDatabase },
+  const allMenuItems = [
+    { path: '/', label: 'Dashboard', icon: FaHome, requiredPermission: null },
+    { path: '/tickets', label: 'Tickets', icon: FaTicketAlt, requiredPermission: 'crear_ticket' },
+    { path: '/usuarios', label: 'Usuarios', icon: FaUsers, requiredPermission: 'ver_usuarios' },
+    { path: '/reportes', label: 'Reportes', icon: FaChartBar, requiredPermission: 'ver_reportes' },
+    { path: '/admin', label: 'Administración de Datos', icon: FaCog, requiredPermission: 'acceso_admin' },
+    { path: '/administracion', label: 'Administración BD', icon: FaDatabase, requiredPermission: 'acceso_admin_datos' },
   ];
+
+  // Filtrar items según permisos
+  const menuItems = allMenuItems.filter((item) => !item.requiredPermission || hasPermission(item.requiredPermission));
 
   const isActive = (path) => location.pathname === path;
 
