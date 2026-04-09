@@ -1,5 +1,6 @@
 import api from './api';
 
+// Tickets
 export const ticketService = {
   getAll: () => api.get('/tickets'),
   getById: (id) => api.get(`/tickets/${id}`),
@@ -8,6 +9,7 @@ export const ticketService = {
   delete: (id) => api.delete(`/tickets/${id}`),
 };
 
+// Usuarios
 export const usuarioService = {
   getAll: () => api.get('/usuarios'),
   getById: (id) => api.get(`/usuarios/${id}`),
@@ -16,6 +18,7 @@ export const usuarioService = {
   delete: (id) => api.delete(`/usuarios/${id}`),
 };
 
+// Departamentos
 export const departamentoService = {
   getAll: () => api.get('/departamentos'),
   getById: (id) => api.get(`/departamentos/${id}`),
@@ -24,6 +27,7 @@ export const departamentoService = {
   delete: (id) => api.delete(`/departamentos/${id}`),
 };
 
+// Categorías
 export const categoriaService = {
   getAll: () => api.get('/categorias'),
   getById: (id) => api.get(`/categorias/${id}`),
@@ -32,11 +36,33 @@ export const categoriaService = {
   delete: (id) => api.delete(`/categorias/${id}`),
 };
 
+// Permisos (MAIN)
+export const permisoService = {
+  getAll: () => api.get('/permisos'),
+  getById: (id) => api.get(`/permisos/${id}`),
+  create: (data) => api.post('/permisos', data),
+  update: (id, data) => api.put(`/permisos/${id}`, data),
+  delete: (id) => api.delete(`/permisos/${id}`),
+};
+
+// Comentarios
 export const comentarioService = {
   getAll: () => api.get('/comentarios'),
   getByTicket: (ticketId) => api.get(`/tickets/${ticketId}/comentarios`),
   create: (data) => api.post('/comentarios', data),
   delete: (id) => api.delete(`/comentarios/${id}`),
+};
+
+// Backup (MAIN)
+export const backupService = {
+  getInfo: () => api.get('/backup/info'),
+  getList: () => api.get('/backup/list'),
+  getSchedule: () => api.get('/backup/schedule'),
+  updateSchedule: (data) => api.put('/backup/schedule', data),
+  create: () => api.post('/backup/create'),
+  download: (filename) => api.get(`/backup/download/${filename}`, { responseType: 'blob' }),
+  delete: (filename) => api.delete(`/backup/${filename}`),
+  restore: (filename) => api.post(`/backup/restore/${filename}`),
 };
 
 export default api;
