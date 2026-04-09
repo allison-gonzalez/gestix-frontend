@@ -28,9 +28,20 @@
 /* Dashboard Grid */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 2rem;
+  grid-template-columns: repeat(6, minmax(240px, 1fr));
+  gap: 1.5rem;
   margin-bottom: 3rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.dashboard-grid::-webkit-scrollbar {
+  height: 8px;
+}
+
+.dashboard-grid::-webkit-scrollbar-thumb {
+  background: rgba(51, 51, 51, 0.2);
+  border-radius: 999px;
 }
 
 /* Stat Card */
@@ -67,6 +78,8 @@
 .stat-icon-yellow { background-color: #FEF5E7; color: #F4D03F; }
 .stat-icon-green { background-color: #D5F4E6; color: #58D68D; }
 .stat-icon-purple { background-color: #EBDEF0; color: #AF7AC5; }
+.stat-icon-orange { background-color: #FDF2E9; color: #E67E22; }
+.stat-icon-pink { background-color: #FDE9F2; color: #D2527F; }
 
 .stat-content { flex: 1; }
 

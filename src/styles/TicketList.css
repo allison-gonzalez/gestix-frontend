@@ -112,17 +112,37 @@
 .actions { display: flex; gap: 0.5rem; }
 
 .action-btn {
-  background: none;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  padding: 0.35rem 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: none;
   cursor: pointer;
-  color: #666;
-  font-size: 0.85rem;
-  transition: all 0.2s;
+  color: white;
+  font-size: 1rem;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
 }
 
-.action-btn:hover { background: #f0f0f0; color: #333; }
+.action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+}
+
+.action-btn:active { transform: translateY(0); }
+
+.action-btn-view {
+  background: #3498db;
+}
+
+.action-btn-edit {
+  background: #1abc9c;
+}
+
+.action-btn-delete {
+  background: #e74c3c;
+}
 
 .loading-state, .empty-state {
   padding: 3rem;

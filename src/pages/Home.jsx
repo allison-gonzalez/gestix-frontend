@@ -11,7 +11,9 @@ export default function Home() {
   const [stats, setStats] = useState({
     totalTickets: 0,
     ticketsAbiertos: 0,
+    ticketsPendientes: 0,
     ticketsResueltos: 0,
+    ticketsCerrados: 0,
     tiempoPromedio: 0,
     ticketsPorEstado: {},
   });
@@ -29,8 +31,9 @@ export default function Home() {
 
       const totalTickets = tickets.length;
       const ticketsAbiertos = tickets.filter((t) => t.estado === 'abierto').length;
-      const ticketsResueltos = tickets.filter((t) => t.estado === 'resuelto').length;
       const ticketsPendientes = tickets.filter((t) => t.estado === 'pendiente').length;
+      const ticketsResueltos = tickets.filter((t) => t.estado === 'resuelto').length;
+      const ticketsCerrados = tickets.filter((t) => t.estado === 'cerrado').length;
 
       const ticketsConResolucion = tickets.filter((t) => t.fecha_resolucion && t.fecha_creacion);
       let tiempoPromedio = 0;
@@ -47,12 +50,15 @@ export default function Home() {
       setStats({
         totalTickets,
         ticketsAbiertos,
+        ticketsPendientes,
         ticketsResueltos,
+        ticketsCerrados,
         tiempoPromedio,
         ticketsPorEstado: {
           abierto: ticketsAbiertos,
           pendiente: ticketsPendientes,
           resuelto: ticketsResueltos,
+          cerrado: ticketsCerrados,
         },
       });
     } catch (error) {
@@ -63,7 +69,7 @@ export default function Home() {
   };
 
   const chartData = {
-    labels: ['Abiertos', 'Pendientes', 'Resueltos'],
+    labels: ['Abiertos', 'Pendientes', 'Resueltos', 'Cerrados'],
     datasets: [
       {
         label: 'Cantidad de Tickets',
@@ -71,9 +77,10 @@ export default function Home() {
           stats.ticketsPorEstado.abierto || 0,
           stats.ticketsPorEstado.pendiente || 0,
           stats.ticketsPorEstado.resuelto || 0,
+          stats.ticketsPorEstado.cerrado || 0,
         ],
-        backgroundColor: ['#5DADE2', '#F4D03F', '#58D68D'],
-        borderColor: ['#5DADE2', '#F4D03F', '#58D68D'],
+        backgroundColor: ['#5DADE2', '#F4D03F', '#58D68D', '#A569BD'],
+        borderColor: ['#5DADE2', '#F4D03F', '#58D68D', '#A569BD'],
         borderWidth: 1,
         borderRadius: 4,
       },
@@ -116,6 +123,14 @@ export default function Home() {
             </div>
           </div>
           <div className="stat-card">
+            <div className="stat-icon stat-icon-orange"><FaClock /></div>
+            <div className="stat-content">
+              <h3>TICKETS PENDIENTES</h3>
+              <p className="stat-number">{loading ? '-' : stats.ticketsPendientes}</p>
+              <span className="stat-change">↑ 5 en espera</span>
+            </div>
+          </div>
+          <div className="stat-card">
             <div className="stat-icon stat-icon-green"><FaCheckCircle /></div>
             <div className="stat-content">
               <h3>TICKETS RESUELTOS</h3>
@@ -125,6 +140,14 @@ export default function Home() {
           </div>
           <div className="stat-card">
             <div className="stat-icon stat-icon-purple"><FaLightbulb /></div>
+            <div className="stat-content">
+              <h3>TICKETS CERRADOS</h3>
+              <p className="stat-number">{loading ? '-' : stats.ticketsCerrados}</p>
+              <span className="stat-change">↑ 8% vs mes anterior</span>
+            </div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-icon stat-icon-pink"><FaLightbulb /></div>
             <div className="stat-content">
               <h3>TIEMPO PROMEDIO</h3>
               <p className="stat-number">{loading ? '-' : stats.tiempoPromedio}</p>
