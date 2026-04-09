@@ -1,0 +1,693 @@
+/* =====================================================
+   Administracion.css  — Gestix Backup Administration
+   Palette: #1B3A5C (navy) | #FFD100 (yellow) | #2DC4D4 (cyan)
+   ===================================================== */
+
+/* ── Alerts ──────────────────────────────────────── */
+.admin-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  animation: alert-in 0.25s ease;
+}
+
+@keyframes alert-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.admin-alert.success {
+  background: #d4f5e9;
+  color: #155724;
+  border-left: 4px solid #28a745;
+}
+
+.admin-alert.error {
+  background: #fde8e8;
+  color: #721c24;
+  border-left: 4px solid #dc3545;
+}
+
+.admin-alert svg {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.alert-close {
+  margin-left: auto;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: inherit;
+  opacity: 0.6;
+  line-height: 1;
+  padding: 0 4px;
+}
+
+.alert-close:hover {
+  opacity: 1;
+}
+
+/* ── Info Cards Grid ─────────────────────────────── */
+.admin-info-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+@media (max-width: 1100px) {
+  .admin-info-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.admin-info-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  border-left: 5px solid #2DC4D4;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.admin-info-card::after {
+  content: '';
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  opacity: 0.06;
+  background: currentColor;
+}
+
+.admin-info-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.11);
+}
+
+.admin-info-card.card-cyan  { border-left-color: #2DC4D4; color: #2DC4D4; }
+.admin-info-card.card-navy  { border-left-color: #1B3A5C; color: #1B3A5C; }
+.admin-info-card.card-yellow{ border-left-color: #FFD100; color: #b8940a; }
+.admin-info-card.card-green { border-left-color: #28a745; color: #28a745; }
+
+.admin-info-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.card-cyan  .admin-info-icon { background: #e0f7fa; color: #2DC4D4; }
+.card-navy  .admin-info-icon { background: #e8eef5; color: #1B3A5C; }
+.card-yellow .admin-info-icon { background: #fffde7; color: #b8940a; }
+.card-green .admin-info-icon { background: #e6f9f0; color: #28a745; }
+
+.admin-info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.admin-info-label {
+  font-size: 0.78rem;
+  color: #7a8a99;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+
+.admin-info-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1B3A5C;
+  line-height: 1;
+}
+
+/* ── Section Blocks ──────────────────────────────── */
+.admin-section {
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.admin-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 2px solid #f0f3f7;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.admin-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1B3A5C;
+  margin: 0;
+}
+
+.admin-section-title svg {
+  color: #2DC4D4;
+}
+
+.admin-section-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-section-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ── Tables: reutiliza .table-wrapper y .ticket-table de TicketList.css ── */
+
+/* ── Column: collection name ─────────────────────── */
+.col-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #1B3A5C;
+}
+
+.col-name svg {
+  color: #2DC4D4;
+  font-size: 0.95rem;
+}
+
+.backup-filename {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.82rem;
+  color: #374151;
+  word-break: break-all;
+}
+
+/* ── Badges ──────────────────────────────────────── */
+/* Extiende .badge de TicketList.css */
+.badge-cyan {
+  background: #e0f7fa;
+  color: #0097a7;
+  border: 1px solid #b2ebf2;
+}
+
+/* ── Buttons — generic ───────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  background: #FFD100;
+  color: #1B3A5C;
+  border: none;
+  border-radius: 7px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+  white-space: nowrap;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #e6bc00;
+  transform: translateY(-1px);
+}
+
+.btn-primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: transparent;
+  color: #1B3A5C;
+  border: 2px solid #1B3A5C;
+  border-radius: 7px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #1B3A5C;
+  color: #ffffff;
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Buttons — backup row actions ────────────────── */
+.backup-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+  white-space: nowrap;
+}
+
+.backup-btn:hover:not(:disabled) {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+.backup-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.backup-btn.download {
+  background: #2DC4D4;
+  color: #ffffff;
+}
+
+.backup-btn.restore {
+  background: #1B3A5C;
+  color: #ffffff;
+}
+
+.backup-btn.delete {
+  background: #e53e3e;
+  color: #ffffff;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* ── Empty / Loading States ──────────────────────── */
+.admin-empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+.admin-empty svg {
+  font-size: 2.5rem;
+  color: #d1d5db;
+  margin-bottom: 12px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.admin-loading {
+  padding: 40px 20px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+/* ── Skeleton loading ────────────────────────────── */
+.admin-skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+@media (max-width: 1100px) { .admin-skeleton-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px)  { .admin-skeleton-grid { grid-template-columns: 1fr; } }
+
+.admin-skeleton-card {
+  height: 92px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #f0f3f7 25%, #e4e8ed 50%, #f0f3f7 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Toggle btn (chevron solo) ───────────────────── */
+.btn-toggle {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f3f7;
+  border: none;
+  border-radius: 6px;
+  color: #1B3A5C;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.15s ease;
+}
+
+.btn-toggle:hover { background: #e0e6ee; }
+
+/* ── Icon-only btn (refresh) ─────────────────────── */
+.btn-icon-only {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 2px solid #e0e6ee;
+  border-radius: 7px;
+  color: #4a5568;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: border-color 0.15s ease, color 0.15s ease, transform 0.2s ease;
+}
+
+.btn-icon-only:hover {
+  border-color: #2DC4D4;
+  color: #2DC4D4;
+  transform: rotate(45deg);
+}
+
+/* ── Empty state mejorado ────────────────────────── */
+.admin-empty {
+  padding: 56px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-empty-icon {
+  width: 64px;
+  height: 64px;
+  background: #f0f3f7;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  color: #b0bec5;
+  margin-bottom: 8px;
+}
+
+.admin-empty-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #374151;
+  margin: 0;
+}
+
+.admin-empty-sub {
+  font-size: 0.88rem;
+  color: #9ca3af;
+  margin: 0 0 12px;
+}
+
+.spin {
+  display: inline-block;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ── Schedule Info Card ──────────────────────────── */
+.admin-schedule-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(135deg, #1B3A5C 0%, #22527a 100%);
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 14px rgba(27, 58, 92, 0.25);
+  color: #ffffff;
+  animation: alert-in 0.3s ease;
+}
+
+.admin-schedule-card.disabled {
+  background: linear-gradient(135deg, #4a5568 0%, #6b7280 100%);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+.admin-schedule-icon {
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: #FFD100;
+  flex-shrink: 0;
+}
+
+.admin-schedule-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-schedule-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.admin-schedule-detail {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.75);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-schedule-detail svg {
+  color: #2DC4D4;
+  font-size: 0.8rem;
+}
+
+.admin-schedule-next {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.admin-schedule-next strong {
+  color: #FFD100;
+}
+
+.admin-schedule-badge {
+  background: #28a745;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.admin-schedule-badge.off {
+  background: #6b7280;
+}
+
+@media (max-width: 600px) {
+  .admin-schedule-card { flex-wrap: wrap; }
+  .admin-schedule-badge { align-self: flex-start; }
+}
+
+/* ── Schedule Config Form ────────────────────────── */
+.admin-schedule-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 20px;
+  align-items: flex-end;
+}
+
+.schedule-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 140px;
+}
+
+.schedule-field label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #4a5568;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.schedule-field select,
+.schedule-field input[type="time"],
+.schedule-field input[type="number"] {
+  padding: 8px 12px;
+  border: 1.5px solid #e0e6ee;
+  border-radius: 7px;
+  font-size: 0.88rem;
+  color: #1B3A5C;
+  background: #f8fafc;
+  outline: none;
+  transition: border-color 0.15s ease;
+  width: 100%;
+}
+
+.schedule-field select:focus,
+.schedule-field input:focus {
+  border-color: #2DC4D4;
+  background: #ffffff;
+}
+
+.schedule-field-toggle {
+  min-width: 120px;
+}
+
+.schedule-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 7px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  width: 100%;
+  justify-content: center;
+}
+
+.schedule-toggle.on {
+  background: #d4f5e9;
+  color: #155724;
+}
+
+.schedule-toggle.off {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.schedule-toggle svg {
+  font-size: 1.15rem;
+}
+
+.schedule-toggle.on  svg { color: #28a745; }
+.schedule-toggle.off svg { color: #9ca3af; }
+
+.schedule-field-action {
+  min-width: unset;
+  margin-left: auto;
+  align-self: flex-end;
+}
+
+@media (max-width: 700px) {
+  .schedule-field-action { margin-left: 0; width: 100%; }
+  .schedule-field-action .btn-primary { width: 100%; justify-content: center; }
+}
+
+/* ── Help Tooltip ────────────────────────────────── */
+.help-tooltip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-left: 8px;
+  background: #e0f7fa;
+  color: #2DC4D4;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: help;
+  position: relative;
+  vertical-align: middle;
+  z-index: 10;
+}
+
+.help-tooltip:hover::after {
+  content: attr(title);
+  position: fixed;
+  background: #1B3A5C;
+  color: #ffffff;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  white-space: normal;
+  max-width: 260px;
+  z-index: 9999;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  pointer-events: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto;
+  bottom: auto;
+  top: calc(100% + 35px);
+  left: 50%;
+  transform: translateX(-50%);
+  line-height: 1.4;
+}
+
+.help-tooltip:hover::before {
+  content: '';
+  position: fixed;
+  border: 6px solid transparent;
+  border-bottom-color: #1B3A5C;
+  z-index: 9999;
+  pointer-events: none;
+  top: calc(100% + 23px);
+  left: 50%;
+  transform: translateX(-50%);
+}
