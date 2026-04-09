@@ -8,10 +8,12 @@ export function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Cargar usuario y token desde localStorage al montar
+  // Cargar usuario y token desde localStorage o sessionStorage al montar
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
+    const storedToken =
+      localStorage.getItem('token') || sessionStorage.getItem('token');
+    const storedUser =
+      localStorage.getItem('user') || sessionStorage.getItem('user');
 
     if (storedToken && storedUser) {
       try {
@@ -22,17 +24,20 @@ export function AuthProvider({ children }) {
         console.error('Error loading auth data:', err);
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('user');
       }
     }
     setIsLoading(false);
   }, []);
 
-  const login = useCallback((newToken, userData) => {
+  const login = useCallback((newToken, userData, rememberMe = false) => {
     setToken(newToken);
     setUser(userData);
     setIsAuthenticated(true);
-    localStorage.setItem('token', newToken);
-    localStorage.setItem('user', JSON.stringify(userData));
+    const storage = rememberMe ? localStorage : sessionStorage;
+    storage.setItem('token', newToken);
+    storage.setItem('user', JSON.stringify(userData));
   }, []);
 
   const logout = useCallback(() => {
@@ -41,6 +46,8 @@ export function AuthProvider({ children }) {
     setIsAuthenticated(false);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
   }, []);
 
   const value = {

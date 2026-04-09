@@ -28,9 +28,7 @@ export default function Login() {
       });
 
       if (response.data.success) {
-        
-        login(response.data.access_token, response.data.user);
-        
+        login(response.data.access_token, response.data.user, rememberMe);
         navigate('/home');
       }
     } catch (err) {
