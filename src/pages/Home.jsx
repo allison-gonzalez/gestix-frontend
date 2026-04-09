@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaTicketAlt, FaClock, FaCheckCircle, FaLightbulb, FaExclamationCircle, FaTimes } from 'react-icons/fa';
+import { FaTicketAlt, FaClock, FaCheckCircle, FaLightbulb, FaFilter, FaExclamationCircle, FaTimes } from 'react-icons/fa';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -20,9 +20,7 @@ export default function Home() {
     cambioResoltosMes: 0,
     cambioTiempoPromedio: 0,
   });
-
   const [loading, setLoading] = useState(true);
-
   const [filtros, setFiltros] = useState({
     rango: 'mes',
     prioridad: 'todas',
@@ -62,9 +60,10 @@ export default function Home() {
       setLoading(true);
       const ticketsRes = await ticketService.getAll();
       let tickets = Array.isArray(ticketsRes.data) ? ticketsRes.data : ticketsRes.data.data || [];
-
+      
       const { fechaInicio, ahora } = getDateRange();
 
+      // Aplicar filtros
       tickets = tickets.filter((t) => {
         const fechaCreacion = new Date(t.fecha_creacion);
         const estaEnRango = fechaCreacion >= fechaInicio && fechaCreacion <= ahora;
@@ -79,46 +78,82 @@ export default function Home() {
       const ticketsResueltos = tickets.filter((t) => t.estado === 'resuelto').length;
       const ticketsPendientes = tickets.filter((t) => t.estado === 'pendiente').length;
 
+      // Cálculo de dinámicas
       const hoy = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
-
       const ticketsHoy = tickets.filter((t) => {
+        const fechaCreacion = new Date(t.fecha_creacion);
+        const ticketHoy = new Date(fechaCreacion.getFullYear(), fechaCreacion.getMonth(), fechaCreacion.getDate());
+        return ticketHoy.getTime() === hoy.getTime();
+      }).length;
+
+      // Tickets en período actual y anterior
+      const hace30Dias = new Date(ahora.getFullYear(), ahora.getMonth() - 1, ahora.getDate());
+      const ticketsEstesMes = tickets.filter((t) => {
         const fecha = new Date(t.fecha_creacion);
-        const f = new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate());
-        return f.getTime() === hoy.getTime();
+        return fecha >= hace30Dias && fecha <= ahora;
       }).length;
 
-      const hace30 = new Date(ahora.getFullYear(), ahora.getMonth() - 1, ahora.getDate());
-      const hace60 = new Date(ahora.getFullYear(), ahora.getMonth() - 2, ahora.getDate());
-
-      const actuales = tickets.filter(t => new Date(t.fecha_creacion) >= hace30);
-      const anteriores = tickets.filter(t => {
-        const f = new Date(t.fecha_creacion);
-        return f >= hace60 && f < hace30;
-      });
-
-      const cambioTotalMes = anteriores.length > 0
-        ? Math.round(((actuales.length - anteriores.length) / anteriores.length) * 100)
-        : 0;
-
-      const resueltosActual = tickets.filter(t => t.estado === 'resuelto' && new Date(t.fecha_resolucion) >= hace30).length;
-      const resueltosAnterior = tickets.filter(t => {
-        const f = new Date(t.fecha_resolucion);
-        return t.estado === 'resuelto' && f >= hace60 && f < hace30;
+      const ticketsMesAnterior = tickets.filter((t) => {
+        const fecha = new Date(t.fecha_creacion);
+        const hace60Dias = new Date(ahora.getFullYear(), ahora.getMonth() - 2, ahora.getDate());
+        return fecha >= hace60Dias && fecha < hace30Dias;
       }).length;
 
-      const cambioResoltosMes = resueltosAnterior > 0
-        ? Math.round(((resueltosActual - resueltosAnterior) / resueltosAnterior) * 100)
+      const cambioTotalMes = ticketsMesAnterior > 0 
+        ? Math.round(((ticketsEstesMes - ticketsMesAnterior) / ticketsMesAnterior) * 100)
         : 0;
 
-      const ticketsConResolucion = tickets.filter(t => t.fecha_creacion && t.fecha_resolucion);
+      // Cambio en resueltos
+      const hace30Dias2 = new Date(ahora.getFullYear(), ahora.getMonth() - 1, ahora.getDate());
+      const hace60Dias2 = new Date(ahora.getFullYear(), ahora.getMonth() - 2, ahora.getDate());
+      
+      const resueltosMesAnterior = tickets.filter((t) => {
+        const fecha = new Date(t.fecha_resolucion);
+        return fecha && fecha >= hace60Dias2 && fecha < hace30Dias2;
+      }).length;
 
+      const resueltosMesActual = tickets.filter((t) => {
+        const fecha = new Date(t.fecha_resolucion);
+        return fecha && fecha >= hace30Dias2 && fecha <= ahora;
+      }).length;
+
+      const cambioResoltosMes = resueltosMesAnterior > 0
+        ? Math.round(((resueltosMesActual - resueltosMesAnterior) / resueltosMesAnterior) * 100)
+        : 0;
+
+      // Tiempo promedio
+      const ticketsConResolucion = tickets.filter((t) => t.fecha_resolucion && t.fecha_creacion);
       let tiempoPromedio = 0;
+      let tiempoPromedioAnterior = 0;
+
       if (ticketsConResolucion.length > 0) {
-        const total = ticketsConResolucion.reduce((sum, t) => {
-          return sum + Math.ceil((new Date(t.fecha_resolucion) - new Date(t.fecha_creacion)) / 86400000);
+        const totalDias = ticketsConResolucion.reduce((sum, t) => {
+          const fechaCreacion = new Date(t.fecha_creacion);
+          const fechaResolucion = new Date(t.fecha_resolucion);
+          const dias = Math.ceil((fechaResolucion - fechaCreacion) / (1000 * 60 * 60 * 24));
+          return sum + dias;
         }, 0);
-        tiempoPromedio = Math.round(total / ticketsConResolucion.length);
+        tiempoPromedio = Math.round(totalDias / ticketsConResolucion.length);
+
+        const ticketsConResolucionAnterior = ticketsConResolucion.filter((t) => {
+          const fecha = new Date(t.fecha_resolucion);
+          return fecha >= hace60Dias2 && fecha < hace30Dias2;
+        });
+
+        if (ticketsConResolucionAnterior.length > 0) {
+          const totalDiasAnterior = ticketsConResolucionAnterior.reduce((sum, t) => {
+            const fechaCreacion = new Date(t.fecha_creacion);
+            const fechaResolucion = new Date(t.fecha_resolucion);
+            const dias = Math.ceil((fechaResolucion - fechaCreacion) / (1000 * 60 * 60 * 24));
+            return sum + dias;
+          }, 0);
+          tiempoPromedioAnterior = Math.round(totalDiasAnterior / ticketsConResolucionAnterior.length);
+        }
       }
+
+      const cambioTiempoPromedio = tiempoPromedioAnterior > 0
+        ? Math.round(((tiempoPromedioAnterior - tiempoPromedio) / tiempoPromedioAnterior) * 100)
+        : 0;
 
       setStats({
         totalTickets,
@@ -133,20 +168,109 @@ export default function Home() {
         cambioTotalMes,
         ticketsHoy,
         cambioResoltosMes,
-        cambioTiempoPromedio: 0,
+        cambioTiempoPromedio,
       });
-
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error('Error fetching stats:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const getChangeText = (v) => {
-    if (v > 0) return `↑ ${v}%`;
-    if (v < 0) return `↓ ${Math.abs(v)}%`;
-    return `→ 0%`;
+  const chartData = {
+    labels: ['ABIERTOS', 'PENDIENTES', 'RESUELTOS'],
+    datasets: [
+      {
+        label: 'Cantidad de Tickets',
+        data: [
+          stats.ticketsPorEstado.abierto || 0,
+          stats.ticketsPorEstado.pendiente || 0,
+          stats.ticketsPorEstado.resuelto || 0,
+        ],
+        backgroundColor: ['#5DADE2', '#F4D03F', '#58D68D'],
+        borderColor: ['#3498db', '#F39C12', '#27ae60'],
+        borderWidth: 2,
+        borderRadius: 8,
+        datalabels: {
+          color: '#fff',
+          font: {
+            weight: 'bold',
+            size: 16,
+          },
+          anchor: 'center',
+          align: 'center',
+        },
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'x',
+    plugins: {
+      legend: { 
+        display: false, 
+        position: 'top',
+        labels: {
+          font: { size: 12 },
+          padding: 20,
+        }
+      },
+      title: { display: false },
+      tooltip: {
+        backgroundColor: 'rgba(0,0,0,0.8)',
+        padding: 12,
+        titleFont: { size: 14, weight: 'bold' },
+        bodyFont: { size: 13 },
+        displayColors: true,
+        callbacks: {
+          label: function(context) {
+            return `Cantidad: ${context.parsed.y} tickets`;
+          }
+        }
+      },
+      datalabels: {
+        color: '#fff',
+        font: {
+          weight: 'bold',
+          size: 16,
+        },
+      }
+    },
+    scales: {
+      y: { 
+        beginAtZero: true,
+        ticks: {
+          font: { size: 12 }
+        }
+      },
+      x: {
+        ticks: {
+          font: { size: 12, weight: 'bold' }
+        }
+      }
+    },
+  };
+
+  const getChangeText = (value) => {
+    if (value > 0) return `↑ ${Math.abs(value)}% vs mes anterior`;
+    if (value < 0) return `↓ ${Math.abs(value)}% vs mes anterior`;
+    return `→ 0% vs mes anterior`;
+  };
+
+  const getChangeTextTiempo = (value) => {
+    if (value > 0) return `↑ ${Math.abs(value)}% mejora`;
+    if (value < 0) return `↓ ${Math.abs(value)}% aumento`;
+    return `→ Sin cambio`;
+  };
+
+  const handleLimpiarFiltros = () => {
+    setFiltros({
+      rango: 'mes',
+      prioridad: 'todas',
+      estado: 'todos',
+    });
   };
 
   return (
@@ -156,81 +280,104 @@ export default function Home() {
       </div>
 
       <div className="page-content">
-
-        {/* FILTROS */}
         <div className="filters-panel">
-          <select value={filtros.rango} onChange={e => setFiltros({...filtros, rango: e.target.value})}>
-            <option value="semana">Semana</option>
-            <option value="mes">Mes</option>
-            <option value="trimestre">3 meses</option>
-            <option value="year">Año</option>
-          </select>
+          <div className="filter-group">
+            <label>Rango de Fechas</label>
+            <select 
+              value={filtros.rango}
+              onChange={(e) => setFiltros({...filtros, rango: e.target.value})}
+            >
+              <option value="semana">Última Semana</option>
+              <option value="mes">Último Mes</option>
+              <option value="trimestre">Últimos 3 Meses</option>
+              <option value="year">Último Año</option>
+            </select>
+          </div>
 
-          <select value={filtros.prioridad} onChange={e => setFiltros({...filtros, prioridad: e.target.value})}>
-            <option value="todas">Prioridad</option>
-            <option value="alta">Alta</option>
-            <option value="media">Media</option>
-          </select>
+          <div className="filter-group">
+            <label>Prioridad</label>
+            <select 
+              value={filtros.prioridad}
+              onChange={(e) => setFiltros({...filtros, prioridad: e.target.value})}
+            >
+              <option value="todas">Todas</option>
+              <option value="baja">Baja</option>
+              <option value="media">Media</option>
+              <option value="alta">Alta</option>
+              <option value="critica">Crítica</option>
+            </select>
+          </div>
 
-          <select value={filtros.estado} onChange={e => setFiltros({...filtros, estado: e.target.value})}>
-            <option value="todos">Estado</option>
-            <option value="abierto">Abierto</option>
-            <option value="pendiente">Pendiente</option>
-            <option value="resuelto">Resuelto</option>
-          </select>
+          <div className="filter-group">
+            <label>Estado</label>
+            <select 
+              value={filtros.estado}
+              onChange={(e) => setFiltros({...filtros, estado: e.target.value})}
+            >
+              <option value="todos">Todos</option>
+              <option value="abierto">Abierto</option>
+              <option value="pendiente">Pendiente</option>
+              <option value="resuelto">Resuelto</option>
+            </select>
+          </div>
 
-          <button onClick={() => setFiltros({ rango: 'mes', prioridad: 'todas', estado: 'todos' })}>
-            <FaTimes />
+          <button className="filter-clear-btn" onClick={handleLimpiarFiltros} title="Limpiar filtros">
+            <FaTimes /> Limpiar
           </button>
         </div>
 
-        {/* STATS */}
         <div className="dashboard-grid">
-          <div className="stat-card">
-            <FaTicketAlt />
-            <p>{loading ? '-' : stats.totalTickets}</p>
-            <span>{getChangeText(stats.cambioTotalMes)}</span>
+          <div className="stat-card" style={{ borderLeftColor: '#5DADE2' }}>
+            <div className="stat-icon stat-icon-blue"><FaTicketAlt /></div>
+            <div className="stat-content">
+              <h3>TOTAL DE TICKETS</h3>
+              <p className="stat-number">{loading ? '-' : stats.totalTickets}</p>
+              <span className="stat-change">{loading ? '-' : getChangeText(stats.cambioTotalMes)}</span>
+            </div>
           </div>
-
-          <div className="stat-card">
-            <FaClock />
-            <p>{loading ? '-' : stats.ticketsAbiertos}</p>
-            <span>{`+${stats.ticketsHoy} hoy`}</span>
+          <div className="stat-card" style={{ borderLeftColor: '#F4D03F' }}>
+            <div className="stat-icon stat-icon-yellow"><FaClock /></div>
+            <div className="stat-content">
+              <h3>TICKETS ABIERTOS</h3>
+              <p className="stat-number">{loading ? '-' : stats.ticketsAbiertos}</p>
+              <span className="stat-change">{loading ? '-' : `↑ ${stats.ticketsHoy} nuevos hoy`}</span>
+            </div>
           </div>
-
-          <div className="stat-card">
-            <FaExclamationCircle />
-            <p>{loading ? '-' : stats.ticketsPorEstado.pendiente}</p>
+          <div className="stat-card" style={{ borderLeftColor: '#E74C3C' }}>
+            <div className="stat-icon stat-icon-orange"><FaExclamationCircle /></div>
+            <div className="stat-content">
+              <h3>TICKETS PENDIENTES</h3>
+              <p className="stat-number">{loading ? '-' : stats.ticketsPorEstado.pendiente}</p>
+              <span className="stat-change">{loading ? '-' : getChangeText(stats.cambioTotalMes)}</span>
+            </div>
           </div>
-
-          <div className="stat-card">
-            <FaCheckCircle />
-            <p>{loading ? '-' : stats.ticketsResueltos}</p>
+          <div className="stat-card" style={{ borderLeftColor: '#58D68D' }}>
+            <div className="stat-icon stat-icon-green"><FaCheckCircle /></div>
+            <div className="stat-content">
+              <h3>TICKETS RESUELTOS</h3>
+              <p className="stat-number">{loading ? '-' : stats.ticketsResueltos}</p>
+              <span className="stat-change">{loading ? '-' : getChangeText(stats.cambioResoltosMes)}</span>
+            </div>
           </div>
-
-          <div className="stat-card">
-            <FaLightbulb />
-            <p>{loading ? '-' : `${stats.tiempoPromedio} días`}</p>
+          <div className="stat-card" style={{ borderLeftColor: '#AF7AC5' }}>
+            <div className="stat-icon stat-icon-purple"><FaLightbulb /></div>
+            <div className="stat-content">
+              <h3>TIEMPO PROMEDIO</h3>
+              <p className="stat-number">{loading ? '-' : `${stats.tiempoPromedio} ${stats.tiempoPromedio === 1 ? 'día' : 'días'}`}</p>
+              <span className="stat-change">{loading ? '-' : getChangeTextTiempo(stats.cambioTiempoPromedio)}</span>
+            </div>
           </div>
         </div>
 
-        {/* CHART */}
-        <div className="chart-container">
-          <Bar
-            data={{
-              labels: ['Abiertos', 'Pendientes', 'Resueltos'],
-              datasets: [{
-                data: [
-                  stats.ticketsPorEstado.abierto || 0,
-                  stats.ticketsPorEstado.pendiente || 0,
-                  stats.ticketsPorEstado.resuelto || 0,
-                ],
-                backgroundColor: ['#3498db', '#f1c40f', '#2ecc71']
-              }]
-            }}
-          />
-        </div>
+        <div className="chart-section">
+          <div className="chart-header">
+            <h2 className="chart-title">Tickets por Estado</h2>
+          </div>
 
+          <div className="chart-container">
+            <Bar data={chartData} options={chartOptions} />
+          </div>
+        </div>
       </div>
     </div>
   );
