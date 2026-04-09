@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext, useContext } from 'react';
+import React, { useState, createContext, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   FaHome,
@@ -11,6 +11,8 @@ import {
   FaBars,
   FaCog,
 } from 'react-icons/fa';
+import { useAuth } from '../../hooks/useAuth';
+import { usePermission } from '../../hooks/usePermission';
 import '../../styles/Navbar.css';
 
 const SidebarContext = createContext();
@@ -20,7 +22,7 @@ export function useSidebarState() {
 }
 
 export function SidebarProvider({ children }) {
-  const [collapsed, setCollapsed] = useState(true);
+  const [collapsed, setCollapsed] = useState(false);
   return (
     <SidebarContext.Provider value={{ collapsed, setCollapsed }}>
       {children}
@@ -31,26 +33,36 @@ export function SidebarProvider({ children }) {
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [user, setUser] = useState(null);
+  const { logout, user: authUser } = useAuth();
+  const { hasPermission } = usePermission();
   const { collapsed, setCollapsed } = useSidebarState();
 
-  useEffect(() => {
-    const currentUser = {
-      name: 'USUARIO DEMO',
-      initials: 'UD',
-      email: 'user@gestix.com',
-    };
-    setUser(currentUser);
-  }, []);
+  const getInitials = (name) => {
+    if (!name) return '';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0][0].toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  };
 
-  const menuItems = [
-    { path: '/', label: 'Dashboard', icon: FaHome },
-    { path: '/tickets', label: 'Tickets', icon: FaTicketAlt },
-    { path: '/usuarios', label: 'Usuarios', icon: FaUsers },
-    { path: '/reportes', label: 'Reportes', icon: FaChartBar },
-    { path: '/admin', label: 'Administración de Datos', icon: FaCog },
-    { path: '/administracion', label: 'Administración BD', icon: FaDatabase },
+  const userData = authUser
+    ? {
+        name: authUser.nombre || 'Sin nombre',
+        initials: getInitials(authUser.nombre),
+        email: authUser.correo || '',
+      }
+    : null;
+
+  const allMenuItems = [
+    { path: '/', label: 'Dashboard', icon: FaHome, requiredPermission: null },
+    { path: '/tickets', label: 'Tickets', icon: FaTicketAlt, requiredPermission: 'crear_ticket' },
+    { path: '/usuarios', label: 'Usuarios', icon: FaUsers, requiredPermission: 'ver_usuarios' },
+    { path: '/reportes', label: 'Reportes', icon: FaChartBar, requiredPermission: 'ver_reportes' },
+    { path: '/admin', label: 'Administración de Datos', icon: FaCog, requiredPermission: 'acceso_admin' },
+    { path: '/administracion', label: 'Administración BD', icon: FaDatabase, requiredPermission: 'acceso_admin_datos' },
   ];
+
+  // Filtrar items según permisos
+  const menuItems = allMenuItems.filter((item) => !item.requiredPermission || hasPermission(item.requiredPermission));
 
   const isActive = (path) => location.pathname === path;
 
@@ -69,11 +81,11 @@ function Navbar() {
       </div>
 
       {/* Usuario */}
-      {user && (
+      {userData && (
         <div className="user-section">
-          <div className="user-avatar">{user.initials}</div>
+          <div className="user-avatar">{userData.initials}</div>
           <div className="user-info">
-            <p className="user-name">{user.name}</p>
+            <p className="user-name">{userData.name}</p>
           </div>
         </div>
       )}
@@ -95,7 +107,7 @@ function Navbar() {
 
       {/* Footer */}
       <div className="sidebar-footer">
-        <button className="logout-btn">
+        <button className="logout-btn" onClick={() => { logout(); navigate('/login'); }}>
           <FaSignOutAlt />
           <span className="logout-label">Cerrar Sesión</span>
         </button>

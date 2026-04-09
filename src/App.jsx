@@ -3,7 +3,11 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 
 // Auth (HEAD)
 import { AuthProvider } from './contexts/AuthContext';
+import { PermissionsProvider } from './contexts/PermissionsContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { ProtectedRouteWithPermission } from './components/ProtectedRouteWithPermission';
+import { useAuth } from './hooks/useAuth';
+import { usePermission } from './hooks/usePermission';
 import Login from './pages/Login';
 
 // Layout (MAIN)
@@ -24,6 +28,7 @@ import './styles/index.css';
 
 function AppContent() {
   const { collapsed } = useSidebarState();
+  const { hasPermission } = usePermission();
 
   return (
     <div className="app-layout">
@@ -34,11 +39,56 @@ function AppContent() {
         <main className="app-main">
           <Routes>
             <Route path="/home" element={<Home />} />
-            <Route path="/tickets" element={<Tickets />} />
-            <Route path="/usuarios" element={<Usuarios />} />
-            <Route path="/administracion" element={<Administracion />} />
-            <Route path="/admin" element={<AdminModule />} />
-            <Route path="/reportes" element={<Reportes />} />
+            <Route
+              path="/tickets"
+              element={
+                hasPermission('crear_ticket') || hasPermission('ver_reportes') ? (
+                  <Tickets />
+                ) : (
+                  <PermissionGuardFallback />
+                )
+              }
+            />
+            <Route
+              path="/usuarios"
+              element={
+                hasPermission('ver_usuarios') ? (
+                  <Usuarios />
+                ) : (
+                  <PermissionGuardFallback />
+                )
+              }
+            />
+            <Route
+              path="/reportes"
+              element={
+                hasPermission('ver_reportes') ? (
+                  <Reportes />
+                ) : (
+                  <PermissionGuardFallback />
+                )
+              }
+            />
+            <Route
+              path="/administracion"
+              element={
+                hasPermission('acceso_admin_datos') ? (
+                  <Administracion />
+                ) : (
+                  <PermissionGuardFallback />
+                )
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                hasPermission('acceso_admin') ? (
+                  <AdminModule />
+                ) : (
+                  <PermissionGuardFallback />
+                )
+              }
+            />
           </Routes>
         </main>
       </div>
@@ -46,16 +96,43 @@ function AppContent() {
   );
 }
 
+function PermissionGuardFallback() {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        flexDirection: 'column',
+        gap: '20px',
+      }}
+    >
+      <h2>Acceso Denegado</h2>
+      <p>No tienes permisos para acceder a este módulo.</p>
+    </div>
+  );
+}
+
 function ProtectedLayout() {
   return (
     <ProtectedRoute>
-      <LoadingProvider>
-        <SidebarProvider>
-          <AppContent />
-        </SidebarProvider>
-      </LoadingProvider>
+      <PermissionsProvider>
+        <LoadingProvider>
+          <SidebarProvider>
+            <AppContent />
+          </SidebarProvider>
+        </LoadingProvider>
+      </PermissionsProvider>
     </ProtectedRoute>
   );
+}
+
+function PublicRoute({ children }) {
+  const { isAuthenticated, isLoading } = useAuth();
+  if (isLoading) return null;
+  if (isAuthenticated) return <Navigate to="/home" replace />;
+  return children;
 }
 
 function App() {
@@ -64,10 +141,10 @@ function App() {
       <Router>
         <Routes>
           {/* Login (HEAD prioridad) */}
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
 
           {/* Redirect base */}
-          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/" element={<Navigate to="/login" replace />} />
 
           {/* Rutas protegidas */}
           <Route path="/*" element={<ProtectedLayout />} />
