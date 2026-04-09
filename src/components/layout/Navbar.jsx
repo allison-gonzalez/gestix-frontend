@@ -22,7 +22,7 @@ export function useSidebarState() {
 }
 
 export function SidebarProvider({ children }) {
-  const [collapsed, setCollapsed] = useState(true);
+  const [collapsed, setCollapsed] = useState(false);
   return (
     <SidebarContext.Provider value={{ collapsed, setCollapsed }}>
       {children}
