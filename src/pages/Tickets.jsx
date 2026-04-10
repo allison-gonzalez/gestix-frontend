@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { FaPaperPlane } from 'react-icons/fa';
 import TicketList from '../components/TicketList';
-import { ticketService, categoriaService, departamentoService } from '../services';
+import { ticketService, comentarioService, categoriaService, departamentoService } from '../services';
 import '../styles/Tickets.css';
 
 export default function Tickets() {
@@ -12,6 +13,11 @@ export default function Tickets() {
   const [showViewModal, setShowViewModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [commentText, setCommentText] = useState('');
+  const [commentFile, setCommentFile] = useState(null);
+  const [commentLoading, setCommentLoading] = useState(false);
+  const [commentError, setCommentError] = useState('');
   const [formData, setFormData] = useState({
     titulo: '',
     descripcion: '',
@@ -27,6 +33,23 @@ export default function Tickets() {
     fetchCategorias();
     fetchDepartamentos();
   }, []);
+
+  useEffect(() => {
+    let intervalId;
+
+    if (showViewModal && selectedTicket) {
+      fetchComments(selectedTicket.id);
+      intervalId = setInterval(() => {
+        fetchComments(selectedTicket.id);
+      }, 5000);
+    }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [showViewModal, selectedTicket]);
 
   const sortTicketsNewestFirst = (tickets) => {
     return [...tickets].sort((a, b) => {
@@ -90,6 +113,74 @@ export default function Tickets() {
 
   const handleFileChange = (e) => {
     setFormData(prev => ({ ...prev, archivo: e.target.files[0] }));
+  };
+
+  const fetchComments = async (ticketId) => {
+    try {
+      const res = await comentarioService.getByTicket(ticketId);
+      const data = Array.isArray(res.data) ? res.data : res.data.data || [];
+      setComments(data);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+    }
+  };
+
+  const handleCommentFileChange = (e) => {
+    setCommentFile(e.target.files[0]);
+  };
+
+  const handleSubmitComment = async (e) => {
+    e.preventDefault();
+    if (!commentText.trim() || !selectedTicket) {
+      return;
+    }
+
+    setCommentLoading(true);
+    setCommentError('');
+
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const rawUserId = user?.id || user?._id;
+      const rawTicketId = selectedTicket.id;
+      const userId = typeof rawUserId === 'number' ? rawUserId : rawUserId?.toString();
+      const ticketId = typeof rawTicketId === 'number' ? rawTicketId : rawTicketId?.toString();
+
+      if (!userId) {
+        setCommentError('Debes iniciar sesión para agregar un comentario.');
+        return;
+      }
+
+      const data = new FormData();
+      data.append('ticket_id', ticketId);
+      data.append('comentario', commentText.trim());
+      data.append('usuario_autor_id', userId);
+      if (commentFile) {
+        data.append('evidencia', commentFile);
+      }
+
+      const response = await comentarioService.create(data);
+      const newComment = response.data?.data;
+      if (newComment) {
+        setComments((prev) => [...prev, newComment]);
+      }
+      setCommentText('');
+      setCommentFile(null);
+    } catch (error) {
+      const responseData = error.response?.data;
+      console.error('Error creating comment:', responseData || error.message);
+      if (responseData?.errors) {
+        const validationMessage = Object.values(responseData.errors)
+          .flat()
+          .join(' ');
+        setCommentError(validationMessage || 'No se pudo agregar el comentario. Intenta de nuevo.');
+      } else if (responseData?.error) {
+        setCommentError(responseData.error);
+      } else {
+        setCommentError('No se pudo agregar el comentario. Intenta de nuevo.');
+      }
+    } finally {
+      setCommentLoading(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -318,7 +409,7 @@ export default function Tickets() {
 
       {showViewModal && selectedTicket && (
         <div className="modal-overlay">
-          <div className="modal-content">
+          <div className="modal-content modal-large">
             <div className="modal-header">
               <h2>Ver Ticket</h2>
               <button 
@@ -326,6 +417,10 @@ export default function Tickets() {
                 onClick={() => {
                   setShowViewModal(false);
                   setSelectedTicket(null);
+                  setComments([]);
+                  setCommentText('');
+                  setCommentFile(null);
+                  setCommentError('');
                 }}
               >
                 ×
@@ -368,6 +463,63 @@ export default function Tickets() {
                   </a>
                 </div>
               )}
+            </div>
+
+            <div className="comment-section">
+              <div className="comment-section-header">
+                <h3>Comentarios</h3>
+                <small>Actualiza cada 5 segundos</small>
+              </div>
+
+              <div className="comment-thread">
+                {comments.length === 0 ? (
+                  <div className="comment-empty">Aún no hay comentarios en este ticket.</div>
+                ) : (
+                  comments.map((comment) => (
+                    <div key={comment.id} className="comment-item">
+                      <div className="comment-header">
+                        <strong>{comment.usuario_autor_nombre}</strong>
+                        <span>{new Date(comment.fecha).toLocaleString()}</span>
+                      </div>
+                      <div className="comment-body">
+                        <p>{comment.comentario}</p>
+                        {comment.url_evidencia && (
+                          <a href={comment.url_evidencia} target="_blank" rel="noopener noreferrer" className="comment-file-link">
+                            Ver archivo adjunto
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              <form className="comment-form" onSubmit={handleSubmitComment}>
+                <div className="form-group">
+                  <label htmlFor="comentario">Agregar comentario</label>
+                  <textarea
+                    id="comentario"
+                    value={commentText}
+                    onChange={(e) => setCommentText(e.target.value)}
+                    rows="3"
+                    placeholder="Escribe tu comentario aquí..."
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="commentFile">Adjuntar archivo o imagen</label>
+                  <input
+                    id="commentFile"
+                    type="file"
+                    onChange={handleCommentFileChange}
+                  />
+                  {commentFile && <small>Archivo seleccionado: {commentFile.name}</small>}
+                </div>
+                {commentError && <div className="comment-error">{commentError}</div>}
+                <button type="submit" className="comment-send-button" disabled={commentLoading} title="Enviar comentario">
+                  {commentLoading ? 'Enviando...' : <FaPaperPlane />}
+                </button>
+              </form>
             </div>
           </div>
         </div>
