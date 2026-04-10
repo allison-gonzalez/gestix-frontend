@@ -249,7 +249,7 @@ export default function AdminModule() {
                   <FaSearch className="search-icon" />
                   <input type="text" placeholder="Buscar departamento..." value={deptSearch} onChange={(e) => setDeptSearch(e.target.value)} />
                 </div>
-                <PermissionGuard permiso={PERMISSIONS.CREAR_TICKET}>
+                <PermissionGuard permiso="crear_ticket">
                   <button className="btn-primary" onClick={() => { setEditingDept(null); setDeptForm({ nombre: '', estatus: 1 }); setShowDeptModal(true); }}>
                     <FaPlus /> Nuevo
                   </button>
@@ -265,10 +265,10 @@ export default function AdminModule() {
                 { label: 'ESTADO', render: (d) => <span className={`badge ${d.estatus ? 'badge-green' : 'badge-red'}`}>{d.estatus ? 'Activo' : 'Inactivo'}</span> },
                 { label: 'ACCIONES', render: (d) => (
                   <div className="admin-actions">
-                    <PermissionGuard permiso={PERMISSIONS.EDITAR_TICKET}>
+                    <PermissionGuard permiso="editar_ticket">
                       <button className="backup-btn download" onClick={() => handleEditDept(d)} title="Editar"><FaPencilAlt /></button>
                     </PermissionGuard>
-                    <PermissionGuard permiso={PERMISSIONS.ELIMINAR_TICKET}>
+                    <PermissionGuard permiso="eliminar_ticket">
                       <button className="backup-btn delete" onClick={() => handleDeleteDept(d._id)} title="Eliminar"><FaTrash /></button>
                     </PermissionGuard>
                   </div>
@@ -287,7 +287,7 @@ export default function AdminModule() {
                   <FaSearch className="search-icon" />
                   <input type="text" placeholder="Buscar permiso..." value={permSearch} onChange={(e) => setPermSearch(e.target.value)} />
                 </div>
-                <PermissionGuard permiso={PERMISSIONS.CREAR_TICKET}>
+                <PermissionGuard permiso="crear_ticket">
                   <button className="btn-primary" onClick={() => { setEditingPerm(null); setPermForm({ nombre: '', descripcion: '', estatus: 1 }); setShowPermModal(true); }}>
                     <FaPlus /> Nuevo
                   </button>
@@ -304,10 +304,10 @@ export default function AdminModule() {
                 { label: 'ESTADO', render: (p) => <span className={`badge ${p.estatus ? 'badge-green' : 'badge-red'}`}>{p.estatus ? 'Activo' : 'Inactivo'}</span> },
                 { label: 'ACCIONES', render: (p) => (
                   <div className="admin-actions">
-                    <PermissionGuard permiso={PERMISSIONS.EDITAR_TICKET}>
+                    <PermissionGuard permiso="editar_ticket">
                       <button className="backup-btn download" onClick={() => handleEditPerm(p)} title="Editar"><FaPencilAlt /></button>
                     </PermissionGuard>
-                    <PermissionGuard permiso={PERMISSIONS.ELIMINAR_TICKET}>
+                    <PermissionGuard permiso="eliminar_ticket">
                       <button className="backup-btn delete" onClick={() => handleDeletePerm(p._id)} title="Eliminar"><FaTrash /></button>
                     </PermissionGuard>
                   </div>
@@ -326,7 +326,7 @@ export default function AdminModule() {
                   <FaSearch className="search-icon" />
                   <input type="text" placeholder="Buscar categoría..." value={catSearch} onChange={(e) => setCatSearch(e.target.value)} />
                 </div>
-                <PermissionGuard permiso={PERMISSIONS.CREAR_TICKET}>
+                <PermissionGuard permiso="crear_ticket">
                   <button className="btn-primary" onClick={() => { setEditingCat(null); setCatForm({ nombre: '', departamento_id: '', estatus: 1 }); setShowCatModal(true); }}>
                     <FaPlus /> Nuevo
                   </button>
@@ -343,10 +343,10 @@ export default function AdminModule() {
                 { label: 'ESTADO', render: (c) => <span className={`badge ${c.estatus ? 'badge-green' : 'badge-red'}`}>{c.estatus ? 'Activo' : 'Inactivo'}</span> },
                 { label: 'ACCIONES', render: (c) => (
                   <div className="admin-actions">
-                    <PermissionGuard permiso={PERMISSIONS.EDITAR_TICKET}>
+                    <PermissionGuard permiso="editar_ticket">
                       <button className="backup-btn download" onClick={() => handleEditCat(c)} title="Editar"><FaPencilAlt /></button>
                     </PermissionGuard>
-                    <PermissionGuard permiso={PERMISSIONS.ELIMINAR_TICKET}>
+                    <PermissionGuard permiso="eliminar_ticket">
                       <button className="backup-btn delete" onClick={() => handleDeleteCat(c._id)} title="Eliminar"><FaTrash /></button>
                     </PermissionGuard>
                   </div>
