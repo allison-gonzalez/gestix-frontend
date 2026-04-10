@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FaBell, FaUser, FaSignOutAlt } from 'react-icons/fa';
+import { useAuth } from '../../hooks/useAuth';
 import '../../styles/Header.css';
 
 function Header() {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
   const [notifications] = useState(3);
   const [showNotifications, setShowNotifications] = useState(false);
 
@@ -53,7 +57,7 @@ function Header() {
         </button>
 
         {/* Logout */}
-        <button className="header-icon-btn" title="Cerrar sesión">
+        <button className="header-icon-btn" title="Cerrar sesión" onClick={() => { logout(); navigate('/login'); }}>
           <FaSignOutAlt />
         </button>
       </div>
