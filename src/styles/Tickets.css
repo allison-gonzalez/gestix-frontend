@@ -58,7 +58,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -293,4 +293,45 @@
 
 .modal-large {
   max-width: 800px;
+}
+
+/* Actions Styles (from AdminModule) */
+.admin-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.backup-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.backup-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(0.9);
+}
+
+.backup-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.backup-btn.delete {
+  background: #e53e3e;
+  color: #ffffff;
+}
+
+.backup-btn.download {
+  background: #2DC4D4;
+  color: #ffffff;
 }

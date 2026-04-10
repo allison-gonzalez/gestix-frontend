@@ -90,13 +90,15 @@ export default function TicketList({ tickets = [], loading, onRefresh, onView, o
                     </td>
                     <td>{ticket.asignado_a || 'Sin asignar'}</td>
                     <td>{ticket.fecha_creacion ? new Date(ticket.fecha_creacion).toLocaleDateString() : '-'}</td>
-                    <td className="actions">
-                      <button className="action-btn action-btn-view" title="Ver" onClick={() => onView && onView(ticket)}>
-                        <FaEye />
-                      </button>
-                      <button className="action-btn action-btn-edit" title="Editar" onClick={() => onEdit && onEdit(ticket)}>
-                        <FaPen />
-                      </button>
+                    <td>
+                      <div className="admin-actions">
+                        <button className="backup-btn restore" title="Ver" onClick={() => onView && onView(ticket)}>
+                          <FaEye />
+                        </button>
+                        <button className="backup-btn download" title="Editar" onClick={() => onEdit && onEdit(ticket)}>
+                          <FaPen />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))

@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { FaPaperPlane } from 'react-icons/fa';
 import TicketList from '../components/TicketList';
 import { ticketService, comentarioService, categoriaService, departamentoService } from '../services';
+import { useAuth } from '../hooks/useAuth';
 import '../styles/Tickets.css';
 
 export default function Tickets() {
+  const { user: authUser } = useAuth();
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [departamentos, setDepartamentos] = useState([]);
@@ -35,20 +37,9 @@ export default function Tickets() {
   }, []);
 
   useEffect(() => {
-    let intervalId;
-
     if (showViewModal && selectedTicket) {
       fetchComments(selectedTicket.id);
-      intervalId = setInterval(() => {
-        fetchComments(selectedTicket.id);
-      }, 5000);
     }
-
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
   }, [showViewModal, selectedTicket]);
 
   const sortTicketsNewestFirst = (tickets) => {
@@ -139,21 +130,15 @@ export default function Tickets() {
     setCommentError('');
 
     try {
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      const rawUserId = user?.id || user?._id;
-      const rawTicketId = selectedTicket.id;
-      const userId = typeof rawUserId === 'number' ? rawUserId : rawUserId?.toString();
-      const ticketId = typeof rawTicketId === 'number' ? rawTicketId : rawTicketId?.toString();
-
-      if (!userId) {
+      if (!authUser?.id) {
         setCommentError('Debes iniciar sesión para agregar un comentario.');
         return;
       }
 
       const data = new FormData();
-      data.append('ticket_id', ticketId);
+      data.append('ticket_id', selectedTicket.id);
       data.append('comentario', commentText.trim());
-      data.append('usuario_autor_id', userId);
+      data.append('usuario_autor_id', authUser.id);
       if (commentFile) {
         data.append('evidencia', commentFile);
       }
@@ -192,9 +177,8 @@ export default function Tickets() {
       data.append('descripcion', formData.descripcion);
       data.append('prioridad', formData.prioridad);
       data.append('categoria_id', formData.categoria_id);
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      if (user?.id) {
-        data.append('usuario_autor_id', user.id);
+      if (authUser?.id) {
+        data.append('usuario_autor_id', authUser.id);
       }
       if (formData.departamento_id) {
         data.append('departamento_id', formData.departamento_id);
@@ -468,7 +452,6 @@ export default function Tickets() {
             <div className="comment-section">
               <div className="comment-section-header">
                 <h3>Comentarios</h3>
-                <small>Actualiza cada 5 segundos</small>
               </div>
 
               <div className="comment-thread">
