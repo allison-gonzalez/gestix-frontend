@@ -23,6 +23,7 @@ import Usuarios from './pages/Usuarios';
 import Administracion from './pages/Administracion';
 import AdminModule from './pages/AdminModule';
 import Reportes from './pages/Reportes';
+import Profile from './pages/Profile';
 
 import './styles/index.css';
 
@@ -39,6 +40,10 @@ function AppContent() {
         <main className="app-main">
           <Routes>
             <Route path="/home" element={<Home />} />
+            
+            {/* Ruta del Perfil de Usuario */}
+            <Route path="/perfil" element={<Profile />} />
+
             <Route
               path="/tickets"
               element={
