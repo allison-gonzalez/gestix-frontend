@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaPaperPlane, FaBuilding, FaUser, FaTimes, FaTicketAlt, FaEye } from 'react-icons/fa';
 import TicketList from '../components/TicketList';
-import { ticketService, comentarioService, categoriaService, departamentoService, usuarioService } from '../services';
+import { ticketService, comentarioService, categoriaService, departamentoService, usuarioService, archivoService } from '../services';
 import { useAuth } from '../hooks/useAuth';
 import '../styles/Tickets.css';
 
@@ -37,14 +37,15 @@ export default function Tickets() {
     categoria_id: null,
   });
   const [updatingView, setUpdatingView] = useState(false);
+  const [ticketArchivos, setTicketArchivos] = useState([]);
 
   const canAssign = Array.isArray(authUser?.permisos) && authUser.permisos.some(p => Number(p) === 4);
 
   // Calcular tickets filtrados
-  const ticketsDepartamento = tickets.filter(t => 
+  const ticketsDepartamento = tickets.filter(t =>
     authUser?.departamento_id && String(t.departamento_id) === String(authUser.departamento_id)
   );
-  const ticketsCreados = tickets.filter(t => 
+  const ticketsCreados = tickets.filter(t =>
     authUser?.id && Number(t.usuario_autor_id) === Number(authUser.id)
   );
 
@@ -271,7 +272,7 @@ export default function Tickets() {
     }
   };
 
-  const handleView = (ticket) => {
+  const handleView = async (ticket) => {
     setSelectedTicket(ticket);
     setUpdateViewData({
       asignado_a_id: ticket.asignado_a_id || null,
@@ -280,6 +281,12 @@ export default function Tickets() {
       categoria_id: ticket.categoria_id || null,
     });
     setShowViewModal(true);
+    try {
+      const res = await archivoService.getByEntidad('ticket', ticket.id);
+      setTicketArchivos(res.data?.data || []);
+    } catch {
+      setTicketArchivos([]);
+    }
   };
 
   return (
@@ -290,14 +297,14 @@ export default function Tickets() {
       <div className="page-content">
         <div className="admin-panel">
           <div className="admin-tabs">
-            <button 
-              className={`admin-tab ${activeTab === 'departamento' ? 'active' : ''}`} 
+            <button
+              className={`admin-tab ${activeTab === 'departamento' ? 'active' : ''}`}
               onClick={() => setActiveTab('departamento')}
             >
               <FaBuilding /> Tickets del Departamento
             </button>
-            <button 
-              className={`admin-tab ${activeTab === 'creados' ? 'active' : ''}`} 
+            <button
+              className={`admin-tab ${activeTab === 'creados' ? 'active' : ''}`}
               onClick={() => setActiveTab('creados')}
             >
               <FaUser /> Mis Tickets
@@ -305,9 +312,9 @@ export default function Tickets() {
           </div>
 
           {activeTab === 'departamento' && (
-            <TicketList 
-              tickets={ticketsDepartamento} 
-              loading={loading} 
+            <TicketList
+              tickets={ticketsDepartamento}
+              loading={loading}
               onRefresh={fetchTickets}
               onView={handleView}
               onCreateTicket={() => setShowCreateModal(true)}
@@ -318,9 +325,9 @@ export default function Tickets() {
           )}
 
           {activeTab === 'creados' && (
-            <TicketList 
-              tickets={ticketsCreados} 
-              loading={loading} 
+            <TicketList
+              tickets={ticketsCreados}
+              loading={loading}
               onRefresh={fetchTickets}
               onView={handleView}
               onCreateTicket={() => setShowCreateModal(true)}
@@ -337,8 +344,8 @@ export default function Tickets() {
           <div className="modal-content">
             <div className="modal-header">
               <h2><FaTicketAlt /> Crear Nuevo Ticket</h2>
-              <button 
-                className="modal-close" 
+              <button
+                className="modal-close"
                 onClick={() => setShowCreateModal(false)}
               >
                 <FaTimes />
@@ -423,16 +430,16 @@ export default function Tickets() {
                 />
               </div>
               <div className="form-actions">
-                <button 
-                  type="button" 
-                  className="btn-secondary" 
+                <button
+                  type="button"
+                  className="btn-secondary"
                   onClick={() => setShowCreateModal(false)}
                 >
                   Cancelar
                 </button>
-                <button 
-                  type="submit" 
-                  className="btn-primary" 
+                <button
+                  type="submit"
+                  className="btn-primary"
                   disabled={submitting}
                 >
                   {submitting ? 'Creando...' : 'Crear Ticket'}
@@ -448,8 +455,8 @@ export default function Tickets() {
           <div className="modal-content modal-large">
             <div className="modal-header">
               <h2><FaEye /> Ver Ticket</h2>
-              <button 
-                className="modal-close" 
+              <button
+                className="modal-close"
                 onClick={() => {
                   setShowViewModal(false);
                   setSelectedTicket(null);
@@ -457,6 +464,7 @@ export default function Tickets() {
                   setCommentText('');
                   setCommentFile(null);
                   setCommentError('');
+                  setTicketArchivos([]);
                 }}
               >
                 <FaTimes />
@@ -495,7 +503,11 @@ export default function Tickets() {
                   </div>
                   <div className="view-field">
                     <label>Asignado a</label>
-                    <span>{usuarios.find(u => String(u.id) === String(selectedTicket.asignado_a_id))?.nombre || 'Sin asignar'}</span>
+                    <span>
+                      {selectedTicket.asignado_a_id
+                        ? (usuarios.find(u => Number(u.id) === Number(selectedTicket.asignado_a_id))?.nombre ?? 'Sin asignar')
+                        : 'Sin asignar'}
+                    </span>
                   </div>
                   {selectedTicket.fecha_asignacion && (
                     <div className="view-field">
@@ -509,12 +521,23 @@ export default function Tickets() {
                       <span>{new Date(selectedTicket.fecha_resolucion).toLocaleString()}</span>
                     </div>
                   )}
-                  {selectedTicket.archivo_path && (
+                  {(ticketArchivos.length > 0 || selectedTicket.archivo_path) && (
                     <div className="view-field full-width">
-                      <label>Archivo adjunto</label>
-                      <a href={`http://localhost:8000/storage/${selectedTicket.archivo_path}`} target="_blank" rel="noopener noreferrer">
-                        Ver archivo
-                      </a>
+                      <label>Archivos adjuntos</label>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        {ticketArchivos.length > 0
+                          ? ticketArchivos.map(archivo => (
+                              <a key={archivo.id} href={archivo.url} target="_blank" rel="noopener noreferrer">
+                                {archivo.nombre_original}
+                              </a>
+                            ))
+                          : (
+                              <a href={`http://localhost:8000/storage/${selectedTicket.archivo_path}`} target="_blank" rel="noopener noreferrer">
+                                Ver archivo adjunto
+                              </a>
+                            )
+                        }
+                      </div>
                     </div>
                   )}
                 </div>

@@ -65,4 +65,10 @@ export const backupService = {
   restore: (filename) => api.post(`/backup/restore/${filename}`),
 };
 
+// Archivos
+export const archivoService = {
+  getByEntidad: (tipo, id) => api.get(`/archivos/${tipo}/${id}`),
+  delete: (id) => api.delete(`/archivos/${id}`),
+};
+
 export default api;
