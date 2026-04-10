@@ -54,19 +54,36 @@ const avatarColor = (str = 'U') => {
 function ModalDetalle({ usuario, departamentos, permisosCatalogo, onClose, onEdit }) {
   if (!usuario) return null;
 
-  /* Búsqueda robusta de departamento: compara _id, id y nombre de campo */
-  const deptNombre = departamentos.find(d => {
-    const dId = String(d._id || d.id || '');
-    const uId = String(usuario.departamento_id || '');
-    return dId && uId && dId === uId;
-  })?.nombre || (usuario.departamento_id ? `Dept. ${usuario.departamento_id}` : '—');
+  /* Búsqueda robusta de departamento */
+  const uId = String(usuario.departamento_id ?? '');
+  let deptNombre = '—';
+  if (uId) {
+    const found = departamentos.find(d => {
+      const dId = String(d._id || d.id || '');
+      return dId && dId === uId;
+    });
+    if (found) {
+      deptNombre = found.nombre;
+    } else if (/^\d+$/.test(uId)) {
+      // Legacy: departamento_id guardado como entero 1-based
+      const idx = parseInt(uId, 10) - 1;
+      deptNombre = departamentos[idx]?.nombre || `Dept. ${uId}`;
+    } else {
+      deptNombre = `Dept. ${uId}`;
+    }
+  }
 
-  /* Permisos: busca por _id o id en el catálogo */
+  /* Permisos: busca por _id o id en el catálogo, con fallback para enteros legacy */
   const permisosArr = toArr(usuario.permisos);
-  const permisosEncontrados = permisosArr.map(id => {
-    const found = permisosCatalogo.find(
-      p => String(p._id || p.id) === String(id)
-    );
+  const permisosEncontrados = permisosArr.map((id, arrayIdx) => {
+    const strId = String(id);
+    // Búsqueda exacta por _id
+    let found = permisosCatalogo.find(p => String(p._id || p.id) === strId);
+    // Fallback: si es entero 1-based, buscar por índice
+    if (!found && /^\d+$/.test(strId)) {
+      const idx = parseInt(strId, 10) - 1;
+      found = permisosCatalogo[idx];
+    }
     return found ? found.nombre : null;
   }).filter(Boolean);
 
@@ -165,18 +182,51 @@ function ModalDetalle({ usuario, departamentos, permisosCatalogo, onClose, onEdi
 function ModalEditar({ usuario, onClose, onSave, departamentos, permisosCatalogo }) {
   const esNuevo = !usuario;
 
-  /* Normalizar permisos del usuario a string[] para comparaciones.
-     Acepta: ObjectId, string hexadecimal, número entero, etc.        */
-  const permisosIniciales = toArr(usuario?.permisos).map(v => String(v));
+  /* Resuelve el departamento_id inicial: si es un entero legacy (1, 2, 3...),
+     intenta mapearlo al _id real del departamento en el catálogo.            */
+  const resolverDeptId = (rawId) => {
+    if (!rawId && rawId !== 0) return '';
+    const str = String(rawId);
+    // Si ya existe como _id en el catálogo, usar directo
+    const exact = departamentos.find(d => String(d._id || d.id || '') === str);
+    if (exact) return str;
+    // Legacy: entero 1-based → buscar por índice
+    if (/^\d+$/.test(str)) {
+      const idx = parseInt(str, 10) - 1;
+      const byIdx = departamentos[idx];
+      if (byIdx) return String(byIdx._id || byIdx.id || '');
+    }
+    return str;
+  };
+
+  /* Toggle permiso — compara todo como string para evitar problemas de tipo.
+     También resuelve IDs enteros legacy al ObjectId real del catálogo.        */
+  const resolverPermisoId = (rawId) => {
+    const str = String(rawId);
+    const exact = permisosCatalogo.find(p => String(p._id || p.id) === str);
+    if (exact) return str;
+    if (/^\d+$/.test(str)) {
+      const idx = parseInt(str, 10) - 1;
+      const byIdx = permisosCatalogo[idx];
+      if (byIdx) return String(byIdx._id || byIdx.id || str);
+    }
+    return str;
+  };
+
+  // Obtener permisos iniciales del usuario (normalizados a array)
+const permisosIniciales = toArr(usuario?.permisos);
+
+// Normalizar permisos iniciales resolviendo IDs legacy
+const permisosNormalizados = permisosIniciales.map(resolverPermisoId);
 
   const [form, setForm] = useState({
     nombre:          usuario?.nombre    || '',
     correo:          usuario?.correo    || usuario?.email || '',
     telefono:        usuario?.telefono  || '',
     contrasena:      '',
-    departamento_id: String(usuario?.departamento_id || ''),
+    departamento_id: resolverDeptId(usuario?.departamento_id),
     estatus:         usuario?.estatus   ?? 1,
-    permisos:        permisosIniciales,
+    permisos:        permisosNormalizados,
   });
 
   const [errors,  setErrors]  = useState({});
@@ -435,11 +485,19 @@ export default function UsuariosList({
 
   /* ── Helper: nombre de departamento ───────────────── */
   const getDeptNombre = (id) => {
-    if (!id) return '—';
+    if (!id && id !== 0) return '—';
+    const strId = String(id);
     const found = departamentos.find(d => {
-      const dId = String(d._id || d.id || '');
-      return dId && dId === String(id);
+      // Comparar contra _id, id, o contra índice numérico (datos legacy)
+      const dId  = String(d._id || d.id || '');
+      const dIdx = String(d.index ?? '');
+      return (dId && dId === strId) || (dIdx && dIdx === strId);
     });
+    // Fallback: si el id es un número pequeño (1, 2, 3...) usarlo como índice 1-based
+    if (!found && /^\d+$/.test(strId)) {
+      const idx = parseInt(strId, 10) - 1;
+      if (departamentos[idx]) return departamentos[idx].nombre;
+    }
     return found?.nombre || '—';
   };
 

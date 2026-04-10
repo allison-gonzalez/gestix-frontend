@@ -5,7 +5,7 @@ import { usuarioService, departamentoService, permisoService } from '../services
 export default function Usuarios() {
   const [usuarios,      setUsuarios]      = useState([]);
   const [departamentos, setDepartamentos] = useState([]);
-  const [permisosCat,   setPermisosCat]   = useState([]);   // catálogo de permisos de BD
+  const [permisosCat,   setPermisosCat]   = useState([]);
   const [loading,       setLoading]       = useState(true);
 
   useEffect(() => { fetchAll(); }, []);

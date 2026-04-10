@@ -742,7 +742,7 @@
   .modal-editar  { max-height: 95vh; }
   .permisos-grid { grid-template-columns: 1fr 1fr; }
 }
-/* ── Alert toast (agregado) ────────────────────────── */
+/* ── Alert toast ───────────────────────────────────── */
 .ul-alert {
   display: flex;
   align-items: center;
@@ -752,13 +752,14 @@
   font-size: 0.875rem;
   font-weight: 500;
   animation: slideUp 0.2s ease;
+  margin-bottom: 8px;
 }
 .ul-alert-success { background: #d1fae5; color: #065f46; border-left: 4px solid #10b981; }
 .ul-alert-error   { background: #fee2e2; color: #7f1d1d; border-left: 4px solid #ef4444; }
 .ul-alert button  { margin-left: auto; background: none; border: none; cursor: pointer; opacity: .6; font-size: .9rem; }
 .ul-alert button:hover { opacity: 1; }
 
-/* ── Dept badge en tabla (agregado) ────────────────── */
+/* ── Dept badge en tabla ───────────────────────────── */
 .ul-dept-badge {
   display: inline-block;
   padding: 2px 9px;
