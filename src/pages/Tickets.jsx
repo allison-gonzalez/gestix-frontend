@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { FaPaperPlane } from 'react-icons/fa';
+import { FaPaperPlane, FaBuilding, FaUser, FaTimes, FaTicketAlt, FaEye, FaEdit } from 'react-icons/fa';
 import TicketList from '../components/TicketList';
-import { ticketService, comentarioService, categoriaService, departamentoService } from '../services';
+import { ticketService, comentarioService, categoriaService, departamentoService, usuarioService } from '../services';
 import { useAuth } from '../hooks/useAuth';
 import '../styles/Tickets.css';
 
 export default function Tickets() {
   const { user: authUser } = useAuth();
+  const [activeTab, setActiveTab] = useState('departamento');
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [departamentos, setDepartamentos] = useState([]);
   const [categorias, setCategorias] = useState([]);
+  const [usuarios, setUsuarios] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -30,10 +32,19 @@ export default function Tickets() {
   });
   const [submitting, setSubmitting] = useState(false);
 
+  // Calcular tickets filtrados
+  const ticketsDepartamento = tickets.filter(t => 
+    authUser?.departamento_id && String(t.departamento_id) === String(authUser.departamento_id)
+  );
+  const ticketsCreados = tickets.filter(t => 
+    authUser?.id && Number(t.usuario_autor_id) === Number(authUser.id)
+  );
+
   useEffect(() => {
     fetchTickets();
     fetchCategorias();
     fetchDepartamentos();
+    fetchUsuarios();
   }, []);
 
   useEffect(() => {
@@ -80,6 +91,26 @@ export default function Tickets() {
       setDepartamentos(data);
     } catch (error) {
       console.error('Error fetching departamentos:', error);
+    }
+  };
+
+  const fetchUsuarios = async () => {
+    try {
+      const res = await usuarioService.getAll();
+      const data = Array.isArray(res.data) ? res.data : res.data.data || [];
+      setUsuarios(data);
+    } catch (error) {
+      console.error('Error fetching usuarios:', error);
+    }
+  };
+
+  const handleAssign = async (ticketId, asignadoAId) => {
+    if (!ticketId) return;
+    try {
+      await ticketService.update(ticketId, { asignado_a_id: asignadoAId });
+      fetchTickets();
+    } catch (error) {
+      console.error('Error asignando ticket:', error);
     }
   };
 
@@ -263,33 +294,64 @@ export default function Tickets() {
     <div className="page-container">
       <div className="page-header">
         <h1 className="page-title">Tickets</h1>
-        <button 
-          className="btn-primary" 
-          onClick={() => setShowCreateModal(true)}
-        >
-          Crear Ticket
-        </button>
       </div>
       <div className="page-content">
-        <TicketList 
-          tickets={tickets} 
-          loading={loading} 
-          onRefresh={fetchTickets}
-          onView={handleView}
-          onEdit={handleEdit}
-        />
+        <div className="admin-panel">
+          <div className="admin-tabs">
+            <button 
+              className={`admin-tab ${activeTab === 'departamento' ? 'active' : ''}`} 
+              onClick={() => setActiveTab('departamento')}
+            >
+              <FaBuilding /> Tickets del Departamento
+            </button>
+            <button 
+              className={`admin-tab ${activeTab === 'creados' ? 'active' : ''}`} 
+              onClick={() => setActiveTab('creados')}
+            >
+              <FaUser /> Mis Tickets
+            </button>
+          </div>
+
+          {activeTab === 'departamento' && (
+            <TicketList 
+              tickets={ticketsDepartamento} 
+              loading={loading} 
+              onRefresh={fetchTickets}
+              onView={handleView}
+              onEdit={handleEdit}
+              onCreateTicket={() => setShowCreateModal(true)}
+              usuarios={usuarios}
+              authUser={authUser}
+              onAssign={handleAssign}
+            />
+          )}
+
+          {activeTab === 'creados' && (
+            <TicketList 
+              tickets={ticketsCreados} 
+              loading={loading} 
+              onRefresh={fetchTickets}
+              onView={handleView}
+              onEdit={handleEdit}
+              onCreateTicket={() => setShowCreateModal(true)}
+              usuarios={usuarios}
+              authUser={authUser}
+              onAssign={handleAssign}
+            />
+          )}
+        </div>
       </div>
 
       {showCreateModal && (
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header">
-              <h2>Crear Nuevo Ticket</h2>
+              <h2><FaTicketAlt /> Crear Nuevo Ticket</h2>
               <button 
                 className="modal-close" 
                 onClick={() => setShowCreateModal(false)}
               >
-                ×
+                <FaTimes />
               </button>
             </div>
             <form onSubmit={handleSubmit} className="ticket-form">
@@ -395,7 +457,7 @@ export default function Tickets() {
         <div className="modal-overlay">
           <div className="modal-content modal-large">
             <div className="modal-header">
-              <h2>Ver Ticket</h2>
+              <h2><FaEye /> Ver Ticket</h2>
               <button 
                 className="modal-close" 
                 onClick={() => {
@@ -407,43 +469,43 @@ export default function Tickets() {
                   setCommentError('');
                 }}
               >
-                ×
+                <FaTimes />
               </button>
             </div>
             <div className="ticket-view">
               <div className="view-field">
-                <label>ID:</label>
+                <label>ID</label>
                 <span>#{selectedTicket.id}</span>
               </div>
               <div className="view-field">
-                <label>Título:</label>
-                <span>{selectedTicket.titulo}</span>
-              </div>
-              <div className="view-field">
-                <label>Descripción:</label>
-                <span>{selectedTicket.descripcion}</span>
-              </div>
-              <div className="view-field">
-                <label>Prioridad:</label>
-                <span className={`badge ${selectedTicket.prioridad === 'alta' ? 'badge-red' : selectedTicket.prioridad === 'media' ? 'badge-orange' : 'badge-blue'}`}>
+                <label>Prioridad</label>
+                <span className={`badge ${selectedTicket.prioridad === 'alta' || selectedTicket.prioridad === 'critica' ? 'badge-red' : selectedTicket.prioridad === 'media' ? 'badge-orange' : 'badge-blue'}`}>
                   {selectedTicket.prioridad}
                 </span>
               </div>
+              <div className="view-field full-width">
+                <label>Título</label>
+                <span>{selectedTicket.titulo}</span>
+              </div>
+              <div className="view-field full-width">
+                <label>Descripción</label>
+                <span>{selectedTicket.descripcion}</span>
+              </div>
               <div className="view-field">
-                <label>Estado:</label>
-                <span className={`badge ${selectedTicket.estado === 'abierto' ? 'badge-green' : 'badge-gray'}`}>
+                <label>Estado</label>
+                <span className={`badge ${selectedTicket.estado === 'abierto' ? 'badge-green' : selectedTicket.estado === 'en_progreso' ? 'badge-blue' : 'badge-gray'}`}>
                   {selectedTicket.estado}
                 </span>
               </div>
               <div className="view-field">
-                <label>Fecha de Creación:</label>
+                <label>Fecha de Creación</label>
                 <span>{new Date(selectedTicket.fecha_creacion).toLocaleString()}</span>
               </div>
               {selectedTicket.archivo_path && (
-                <div className="view-field">
-                  <label>Archivo:</label>
+                <div className="view-field full-width">
+                  <label>Archivo</label>
                   <a href={`http://localhost:8000/storage/${selectedTicket.archivo_path}`} target="_blank" rel="noopener noreferrer">
-                    Ver Archivo
+                    Ver Archivo adjunto
                   </a>
                 </div>
               )}
@@ -490,18 +552,20 @@ export default function Tickets() {
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="commentFile">Adjuntar archivo o imagen</label>
+                  <label htmlFor="commentFile">Adjuntar archivo o imagen (opcional)</label>
                   <input
                     id="commentFile"
                     type="file"
                     onChange={handleCommentFileChange}
                   />
-                  {commentFile && <small>Archivo seleccionado: {commentFile.name}</small>}
+                  {commentFile && <small style={{color:'#718096', marginTop: '4px'}}>{commentFile.name}</small>}
                 </div>
                 {commentError && <div className="comment-error">{commentError}</div>}
-                <button type="submit" className="comment-send-button" disabled={commentLoading} title="Enviar comentario">
-                  {commentLoading ? 'Enviando...' : <FaPaperPlane />}
-                </button>
+                <div className="comment-send-row">
+                  <button type="submit" className="comment-send-button" disabled={commentLoading}>
+                    {commentLoading ? 'Enviando...' : <><FaPaperPlane /> Enviar</>}
+                  </button>
+                </div>
               </form>
             </div>
           </div>
@@ -512,7 +576,7 @@ export default function Tickets() {
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header">
-              <h2>Editar Ticket</h2>
+              <h2><FaEdit /> Editar Ticket</h2>
               <button 
                 className="modal-close" 
                 onClick={() => {
@@ -528,7 +592,7 @@ export default function Tickets() {
                   });
                 }}
               >
-                ×
+                <FaTimes />
               </button>
             </div>
             <form onSubmit={handleUpdate} className="ticket-form">

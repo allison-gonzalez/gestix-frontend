@@ -365,41 +365,44 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 24px 16px;
-  border-bottom: 2px solid #f0f3f7;
+  padding: 18px 24px;
+  background: #1B3A5C;
 }
 
 .modal-title {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 700;
-  color: #1B3A5C;
+  color: #ffffff;
   margin: 0;
+  letter-spacing: 0.01em;
 }
 
 .modal-title svg {
-  color: #2DC4D4;
+  color: #FFD100;
 }
 
 .modal-close {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.12);
   border: none;
-  color: #a0aec0;
-  font-size: 1rem;
+  color: #ffffff;
+  font-size: 0.9rem;
   cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
-  transition: color 0.15s ease, background 0.15s ease;
+  padding: 6px;
+  border-radius: 6px;
+  transition: background 0.15s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 30px;
+  height: 30px;
 }
 
 .modal-close:hover {
-  color: #e53e3e;
-  background: #fff0f0;
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
 }
 
 .modal-body {
