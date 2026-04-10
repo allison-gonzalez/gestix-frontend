@@ -99,10 +99,61 @@
   animation: slideUp 0.2s ease;
   overflow: hidden;
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
 }
 
 .modal-content.modal-large {
-  max-width: 700px;
+  max-width: 1400px;
+  width: 96vw;
+  display: flex;
+  flex-direction: column;
+  max-height: 92vh;
+  overflow: hidden;
+}
+
+.modal-large-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.modal-left-panel {
+  flex: 0 0 50%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px 28px;
+  border-right: 2px solid #f0f3f7;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-sizing: border-box;
+}
+
+.modal-right-panel {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  background: #f8fafc;
+  box-sizing: border-box;
+}
+
+.modal-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #718096;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin: 0 0 14px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #f0f3f7;
 }
 
 .modal-header {
@@ -201,17 +252,17 @@
 
 /* View Ticket Styles */
 .ticket-view {
-  padding: 20px 24px;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0 24px;
+  gap: 4px 24px;
 }
 
 .view-field {
-  margin-bottom: 16px;
+  margin-bottom: 14px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
+  min-width: 0;
 }
 
 .view-field.full-width {
@@ -228,9 +279,12 @@
 
 .view-field span {
   color: #1B3A5C;
-  font-size: 0.95rem;
+  font-size: 0.93rem;
   line-height: 1.5;
   font-weight: 500;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  min-width: 0;
 }
 
 .view-field a {
@@ -243,10 +297,82 @@
   text-decoration: underline;
 }
 
+.update-section {
+  padding: 18px 20px;
+  border: 1.5px solid #e0e6ee;
+  border-radius: 10px;
+  background: #f4f6f9;
+  flex-shrink: 0;
+}
+
+.update-section h3 {
+  margin: 0 0 14px 0;
+  color: #4a5568;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e0e6ee;
+}
+
+.update-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 16px;
+  align-items: start;
+}
+
+.update-form .btn-primary {
+  grid-column: 1 / -1;
+  justify-self: flex-end;
+  margin-top: 4px;
+}
+
+.update-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 0;
+  min-width: 0;
+}
+
+.update-form .form-group label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #4a5568;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.update-form .form-group select {
+  padding: 8px 10px;
+  border: 1.5px solid #e0e6ee;
+  background: #ffffff;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: #1B3A5C;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s ease;
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.update-form .form-group select:focus {
+  border-color: #2DC4D4;
+}
+
 .comment-section {
   padding: 20px 24px;
-  border-top: 2px solid #f0f3f7;
-  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  box-sizing: border-box;
+  min-height: 0;
 }
 
 .comment-section-header {
@@ -273,6 +399,8 @@
   flex-direction: column;
   gap: 12px;
   margin-bottom: 20px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .comment-empty {
@@ -302,7 +430,9 @@
   margin: 0;
   color: #2d3748;
   line-height: 1.6;
-  font-size: 0.95rem;
+  font-size: 0.93rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .comment-file-link {
@@ -385,10 +515,6 @@
 
 .form-group input[type="file"]::file-selector-button:hover {
   background: #152a42;
-}
-
-.modal-content.modal-large {
-  max-width: 700px;
 }
 
 .modal-body {

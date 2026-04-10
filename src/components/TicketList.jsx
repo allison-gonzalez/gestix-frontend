@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaSearch, FaEye, FaPen, FaPlus } from 'react-icons/fa';
+import { FaSearch, FaEye, FaPlus } from 'react-icons/fa';
 import '../styles/TicketList.css';
 
 const PRIORITY_COLORS = {
@@ -15,7 +15,7 @@ const STATUS_COLORS = {
   cerrado: 'badge-gray',
 };
 
-export default function TicketList({ tickets = [], loading, onRefresh, onView, onEdit, onCreateTicket, usuarios = [], authUser, onAssign }) {
+export default function TicketList({ tickets = [], loading, onRefresh, onView, onCreateTicket, usuarios = [], authUser, onAssign }) {
   const [search, setSearch] = useState('');
   const [filterEstado, setFilterEstado] = useState('todos');
   const [filterPrioridad, setFilterPrioridad] = useState('todas');
@@ -142,9 +142,6 @@ export default function TicketList({ tickets = [], loading, onRefresh, onView, o
                       <div className="admin-actions">
                         <button className="backup-btn restore" title="Ver" onClick={() => onView && onView(ticket)}>
                           <FaEye />
-                        </button>
-                        <button className="backup-btn download" title="Editar" onClick={() => onEdit && onEdit(ticket)}>
-                          <FaPen />
                         </button>
                       </div>
                     </td>

@@ -8,6 +8,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { ProtectedRouteWithPermission } from './components/ProtectedRouteWithPermission';
 import { useAuth } from './hooks/useAuth';
 import { usePermission } from './hooks/usePermission';
+import { usePermissionsMap } from './contexts/PermissionsContext';
 import Login from './pages/Login';
 
 // Layout (MAIN)
@@ -29,6 +30,11 @@ import './styles/index.css';
 function AppContent() {
   const { collapsed } = useSidebarState();
   const { hasPermission } = usePermission();
+  const { isLoading: permissionsLoading } = usePermissionsMap();
+
+  if (permissionsLoading) {
+    return <div style={{ width: '100%', height: '100vh' }} />;
+  }
 
   return (
     <div className="app-layout">

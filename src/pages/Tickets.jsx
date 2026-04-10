@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaPaperPlane, FaBuilding, FaUser, FaTimes, FaTicketAlt, FaEye, FaEdit } from 'react-icons/fa';
+import { FaPaperPlane, FaBuilding, FaUser, FaTimes, FaTicketAlt, FaEye } from 'react-icons/fa';
 import TicketList from '../components/TicketList';
 import { ticketService, comentarioService, categoriaService, departamentoService, usuarioService } from '../services';
 import { useAuth } from '../hooks/useAuth';
@@ -15,7 +15,6 @@ export default function Tickets() {
   const [usuarios, setUsuarios] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
@@ -31,6 +30,15 @@ export default function Tickets() {
     archivo: null,
   });
   const [submitting, setSubmitting] = useState(false);
+  const [updateViewData, setUpdateViewData] = useState({
+    asignado_a_id: null,
+    prioridad: 'media',
+    estado: 'abierto',
+    categoria_id: null,
+  });
+  const [updatingView, setUpdatingView] = useState(false);
+
+  const canAssign = Array.isArray(authUser?.permisos) && authUser.permisos.some(p => Number(p) === 4);
 
   // Calcular tickets filtrados
   const ticketsDepartamento = tickets.filter(t => 
@@ -236,58 +244,42 @@ export default function Tickets() {
     }
   };
 
-  const handleView = (ticket) => {
-    setSelectedTicket(ticket);
-    setShowViewModal(true);
-  };
-
-  const handleEdit = (ticket) => {
-    const category = categorias.find((cat) => (cat.id || cat._id)?.toString() === ticket.categoria_id?.toString());
-    setSelectedTicket(ticket);
-    setFormData({
-      titulo: ticket.titulo,
-      descripcion: ticket.descripcion,
-      prioridad: ticket.prioridad,
-      departamento_id: category?.departamento_id?.toString() || '',
-      categoria_id: ticket.categoria_id,
-      archivo: null,
-    });
-    setShowEditModal(true);
-  };
-
-  const handleUpdate = async (e) => {
+  const handleViewUpdate = async (e) => {
     e.preventDefault();
-    setSubmitting(true);
+    if (!selectedTicket?.id) return;
+    setUpdatingView(true);
     try {
-      const data = new FormData();
-      data.append('titulo', formData.titulo);
-      data.append('descripcion', formData.descripcion);
-      data.append('prioridad', formData.prioridad);
-      data.append('categoria_id', formData.categoria_id);
-      if (formData.departamento_id) {
-        data.append('departamento_id', formData.departamento_id);
-      }
-      if (formData.archivo) {
-        data.append('archivo', formData.archivo);
-      }
-
-      await ticketService.update(selectedTicket.id, data);
-      setShowEditModal(false);
-      setSelectedTicket(null);
-      setFormData({
-        titulo: '',
-        descripcion: '',
-        prioridad: 'media',
-        departamento_id: '',
-        categoria_id: '',
-        archivo: null,
+      await ticketService.update(selectedTicket.id, {
+        asignado_a_id: updateViewData.asignado_a_id,
+        prioridad: updateViewData.prioridad,
+        estado: updateViewData.estado,
+        categoria_id: updateViewData.categoria_id,
       });
+      // Actualizar ticket seleccionado en estado local
+      setSelectedTicket(prev => ({
+        ...prev,
+        asignado_a_id: updateViewData.asignado_a_id,
+        prioridad: updateViewData.prioridad,
+        estado: updateViewData.estado,
+        categoria_id: updateViewData.categoria_id,
+      }));
       fetchTickets();
     } catch (error) {
-      console.error('Error updating ticket:', error);
+      console.error('Error actualizando ticket:', error);
     } finally {
-      setSubmitting(false);
+      setUpdatingView(false);
     }
+  };
+
+  const handleView = (ticket) => {
+    setSelectedTicket(ticket);
+    setUpdateViewData({
+      asignado_a_id: ticket.asignado_a_id || null,
+      prioridad: ticket.prioridad || 'media',
+      estado: ticket.estado || 'abierto',
+      categoria_id: ticket.categoria_id || null,
+    });
+    setShowViewModal(true);
   };
 
   return (
@@ -318,7 +310,6 @@ export default function Tickets() {
               loading={loading} 
               onRefresh={fetchTickets}
               onView={handleView}
-              onEdit={handleEdit}
               onCreateTicket={() => setShowCreateModal(true)}
               usuarios={usuarios}
               authUser={authUser}
@@ -332,7 +323,6 @@ export default function Tickets() {
               loading={loading} 
               onRefresh={fetchTickets}
               onView={handleView}
-              onEdit={handleEdit}
               onCreateTicket={() => setShowCreateModal(true)}
               usuarios={usuarios}
               authUser={authUser}
@@ -472,238 +462,204 @@ export default function Tickets() {
                 <FaTimes />
               </button>
             </div>
-            <div className="ticket-view">
-              <div className="view-field">
-                <label>ID</label>
-                <span>#{selectedTicket.id}</span>
-              </div>
-              <div className="view-field">
-                <label>Prioridad</label>
-                <span className={`badge ${selectedTicket.prioridad === 'alta' || selectedTicket.prioridad === 'critica' ? 'badge-red' : selectedTicket.prioridad === 'media' ? 'badge-orange' : 'badge-blue'}`}>
-                  {selectedTicket.prioridad}
-                </span>
-              </div>
-              <div className="view-field full-width">
-                <label>Título</label>
-                <span>{selectedTicket.titulo}</span>
-              </div>
-              <div className="view-field full-width">
-                <label>Descripción</label>
-                <span>{selectedTicket.descripcion}</span>
-              </div>
-              <div className="view-field">
-                <label>Estado</label>
-                <span className={`badge ${selectedTicket.estado === 'abierto' ? 'badge-green' : selectedTicket.estado === 'en_progreso' ? 'badge-blue' : 'badge-gray'}`}>
-                  {selectedTicket.estado}
-                </span>
-              </div>
-              <div className="view-field">
-                <label>Fecha de Creación</label>
-                <span>{new Date(selectedTicket.fecha_creacion).toLocaleString()}</span>
-              </div>
-              {selectedTicket.archivo_path && (
-                <div className="view-field full-width">
-                  <label>Archivo</label>
-                  <a href={`http://localhost:8000/storage/${selectedTicket.archivo_path}`} target="_blank" rel="noopener noreferrer">
-                    Ver Archivo adjunto
-                  </a>
-                </div>
-              )}
-            </div>
-
-            <div className="comment-section">
-              <div className="comment-section-header">
-                <h3>Comentarios</h3>
-              </div>
-
-              <div className="comment-thread">
-                {comments.length === 0 ? (
-                  <div className="comment-empty">Aún no hay comentarios en este ticket.</div>
-                ) : (
-                  comments.map((comment) => (
-                    <div key={comment.id} className="comment-item">
-                      <div className="comment-header">
-                        <strong>{comment.usuario_autor_nombre}</strong>
-                        <span>{new Date(comment.fecha).toLocaleString()}</span>
-                      </div>
-                      <div className="comment-body">
-                        <p>{comment.comentario}</p>
-                        {comment.url_evidencia && (
-                          <a href={comment.url_evidencia} target="_blank" rel="noopener noreferrer" className="comment-file-link">
-                            Ver archivo adjunto
-                          </a>
-                        )}
-                      </div>
+            <div className="modal-large-body">
+              <div className="modal-left-panel">
+                <div className="ticket-view">
+                  <div className="view-field">
+                    <label>ID</label>
+                    <span>#{selectedTicket.id}</span>
+                  </div>
+                  <div className="view-field">
+                    <label>Estado</label>
+                    <span className={`badge ${selectedTicket.estado === 'abierto' ? 'badge-green' : selectedTicket.estado === 'en_progreso' ? 'badge-blue' : 'badge-gray'}`}>
+                      {selectedTicket.estado}
+                    </span>
+                  </div>
+                  <div className="view-field full-width">
+                    <label>Título</label>
+                    <span>{selectedTicket.titulo}</span>
+                  </div>
+                  <div className="view-field full-width">
+                    <label>Descripción</label>
+                    <span>{selectedTicket.descripcion}</span>
+                  </div>
+                  <div className="view-field">
+                    <label>Prioridad</label>
+                    <span className={`badge ${selectedTicket.prioridad === 'alta' || selectedTicket.prioridad === 'critica' ? 'badge-red' : selectedTicket.prioridad === 'media' ? 'badge-orange' : 'badge-blue'}`}>
+                      {selectedTicket.prioridad}
+                    </span>
+                  </div>
+                  <div className="view-field">
+                    <label>Fecha de Creación</label>
+                    <span>{new Date(selectedTicket.fecha_creacion).toLocaleString()}</span>
+                  </div>
+                  <div className="view-field">
+                    <label>Asignado a</label>
+                    <span>{usuarios.find(u => String(u.id) === String(selectedTicket.asignado_a_id))?.nombre || 'Sin asignar'}</span>
+                  </div>
+                  {selectedTicket.fecha_asignacion && (
+                    <div className="view-field">
+                      <label>Fecha Asignación</label>
+                      <span>{new Date(selectedTicket.fecha_asignacion).toLocaleString()}</span>
                     </div>
-                  ))
+                  )}
+                  {selectedTicket.fecha_resolucion && (
+                    <div className="view-field">
+                      <label>Fecha Resolución</label>
+                      <span>{new Date(selectedTicket.fecha_resolucion).toLocaleString()}</span>
+                    </div>
+                  )}
+                  {selectedTicket.archivo_path && (
+                    <div className="view-field full-width">
+                      <label>Archivo adjunto</label>
+                      <a href={`http://localhost:8000/storage/${selectedTicket.archivo_path}`} target="_blank" rel="noopener noreferrer">
+                        Ver archivo
+                      </a>
+                    </div>
+                  )}
+                </div>
+
+                {canAssign && (
+                  <div className="update-section">
+                    <h3>Actualizar Ticket</h3>
+                    <form onSubmit={handleViewUpdate} className="update-form">
+                      <div className="form-group">
+                        <label htmlFor="assign-user">Asignar a</label>
+                        <select
+                          id="assign-user"
+                          value={updateViewData.asignado_a_id ?? ''}
+                          onChange={(e) => setUpdateViewData(prev => ({
+                            ...prev,
+                            asignado_a_id: e.target.value ? Number(e.target.value) : null
+                          }))}
+                        >
+                          <option value="">Sin asignar</option>
+                          {usuarios
+                            .filter(u => String(u.departamento_id) === String(selectedTicket.departamento_id) && u.estatus === 1)
+                            .map(u => (
+                              <option key={u.id} value={u.id}>{u.nombre}</option>
+                            ))
+                          }
+                        </select>
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor="priority">Prioridad</label>
+                        <select
+                          id="priority"
+                          value={updateViewData.prioridad}
+                          onChange={(e) => setUpdateViewData(prev => ({
+                            ...prev,
+                            prioridad: e.target.value
+                          }))}
+                        >
+                          <option value="baja">Baja</option>
+                          <option value="media">Media</option>
+                          <option value="alta">Alta</option>
+                          <option value="critica">Crítica</option>
+                        </select>
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor="estado">Estado</label>
+                        <select
+                          id="estado"
+                          value={updateViewData.estado}
+                          onChange={(e) => setUpdateViewData(prev => ({
+                            ...prev,
+                            estado: e.target.value
+                          }))}
+                        >
+                          <option value="abierto">Abierto</option>
+                          <option value="en_progreso">En progreso</option>
+                          <option value="resuelto">Resuelto</option>
+                          <option value="cerrado">Cerrado</option>
+                        </select>
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor="categoria">Categoría</label>
+                        <select
+                          id="categoria"
+                          value={updateViewData.categoria_id ?? ''}
+                          onChange={(e) => setUpdateViewData(prev => ({
+                            ...prev,
+                            categoria_id: e.target.value ? Number(e.target.value) : null
+                          }))}
+                        >
+                          <option value="">Sin categoría</option>
+                          {categorias
+                            .filter(cat => String(cat.departamento_id) === String(selectedTicket.departamento_id))
+                            .map(cat => (
+                              <option key={cat.id} value={cat.id}>{cat.nombre}</option>
+                            ))}
+                        </select>
+                      </div>
+                      <button type="submit" className="btn-primary" disabled={updatingView}>
+                        {updatingView ? 'Actualizando...' : 'Guardar cambios'}
+                      </button>
+                    </form>
+                  </div>
                 )}
               </div>
 
-              <form className="comment-form" onSubmit={handleSubmitComment}>
-                <div className="form-group">
-                  <label htmlFor="comentario">Agregar comentario</label>
-                  <textarea
-                    id="comentario"
-                    value={commentText}
-                    onChange={(e) => setCommentText(e.target.value)}
-                    rows="3"
-                    placeholder="Escribe tu comentario aquí..."
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="commentFile">Adjuntar archivo o imagen (opcional)</label>
-                  <input
-                    id="commentFile"
-                    type="file"
-                    onChange={handleCommentFileChange}
-                  />
-                  {commentFile && <small style={{color:'#718096', marginTop: '4px'}}>{commentFile.name}</small>}
-                </div>
-                {commentError && <div className="comment-error">{commentError}</div>}
-                <div className="comment-send-row">
-                  <button type="submit" className="comment-send-button" disabled={commentLoading}>
-                    {commentLoading ? 'Enviando...' : <><FaPaperPlane /> Enviar</>}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
+              <div className="modal-right-panel">
+                <div className="comment-section">
+                  <div className="comment-section-header">
+                    <h3>Comentarios</h3>
+                  </div>
 
-      {showEditModal && selectedTicket && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h2><FaEdit /> Editar Ticket</h2>
-              <button 
-                className="modal-close" 
-                onClick={() => {
-                  setShowEditModal(false);
-                  setSelectedTicket(null);
-                  setFormData({
-                    titulo: '',
-                    descripcion: '',
-                    prioridad: 'media',
-                    departamento_id: '',
-                    categoria_id: '',
-                    archivo: null,
-                  });
-                }}
-              >
-                <FaTimes />
-              </button>
+                  <div className="comment-thread">
+                    {comments.length === 0 ? (
+                      <div className="comment-empty">Aún no hay comentarios en este ticket.</div>
+                    ) : (
+                      comments.map((comment) => (
+                        <div key={comment.id} className="comment-item">
+                          <div className="comment-header">
+                            <strong>{comment.usuario_autor_nombre}</strong>
+                            <span>{new Date(comment.fecha).toLocaleString()}</span>
+                          </div>
+                          <div className="comment-body">
+                            <p>{comment.comentario}</p>
+                            {comment.url_evidencia && (
+                              <a href={comment.url_evidencia} target="_blank" rel="noopener noreferrer" className="comment-file-link">
+                                Ver archivo adjunto
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+
+                  <form className="comment-form" onSubmit={handleSubmitComment}>
+                    <div className="form-group">
+                      <label htmlFor="comentario">Agregar comentario</label>
+                      <textarea
+                        id="comentario"
+                        value={commentText}
+                        onChange={(e) => setCommentText(e.target.value)}
+                        rows="3"
+                        placeholder="Escribe tu comentario aquí..."
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="commentFile">Adjuntar archivo o imagen (opcional)</label>
+                      <input
+                        id="commentFile"
+                        type="file"
+                        onChange={handleCommentFileChange}
+                      />
+                      {commentFile && <small style={{color:'#718096', marginTop: '4px'}}>{commentFile.name}</small>}
+                    </div>
+                    {commentError && <div className="comment-error">{commentError}</div>}
+                    <div className="comment-send-row">
+                      <button type="submit" className="comment-send-button" disabled={commentLoading}>
+                        {commentLoading ? 'Enviando...' : <><FaPaperPlane /> Enviar</>}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
             </div>
-            <form onSubmit={handleUpdate} className="ticket-form">
-              <div className="form-group">
-                <label htmlFor="edit-titulo">Título</label>
-                <input
-                  type="text"
-                  id="edit-titulo"
-                  name="titulo"
-                  value={formData.titulo}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="edit-descripcion">Descripción del Problema</label>
-                <textarea
-                  id="edit-descripcion"
-                  name="descripcion"
-                  value={formData.descripcion}
-                  onChange={handleInputChange}
-                  rows="4"
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="edit-departamento_id">Departamento</label>
-                <select
-                  id="edit-departamento_id"
-                  name="departamento_id"
-                  value={formData.departamento_id}
-                  onChange={handleInputChange}
-                  required
-                >
-                  <option value="">Seleccionar departamento</option>
-                  {departamentos.map((dep) => (
-                    <option key={dep.id || dep._id} value={(dep.id || dep._id).toString()}>{dep.nombre}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="form-group">
-                <label htmlFor="edit-categoria_id">Categoría</label>
-                <select
-                  id="edit-categoria_id"
-                  name="categoria_id"
-                  value={formData.categoria_id}
-                  onChange={handleInputChange}
-                  required
-                  disabled={!formData.departamento_id}
-                >
-                  <option value="">Seleccionar categoría</option>
-                  {filteredCategorias.map(cat => (
-                    <option key={cat.id || cat._id} value={cat.id || cat._id}>{cat.nombre}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="form-group">
-                <label htmlFor="edit-prioridad">Prioridad</label>
-                <select
-                  id="edit-prioridad"
-                  name="prioridad"
-                  value={formData.prioridad}
-                  onChange={handleInputChange}
-                >
-                  <option value="baja">Baja</option>
-                  <option value="media">Media</option>
-                  <option value="alta">Alta</option>
-                  <option value="critica">Crítica</option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label htmlFor="edit-archivo">Nuevo Archivo de Evidencia (opcional)</label>
-                <input
-                  type="file"
-                  id="edit-archivo"
-                  name="archivo"
-                  onChange={handleFileChange}
-                  accept="image/*,.pdf,.doc,.docx"
-                />
-                {selectedTicket.archivo_path && (
-                  <small>Archivo actual: <a href={`http://localhost:8000/storage/${selectedTicket.archivo_path}`} target="_blank" rel="noopener noreferrer">Ver</a></small>
-                )}
-              </div>
-              <div className="form-actions">
-                <button 
-                  type="button" 
-                  className="btn-secondary" 
-                  onClick={() => {
-                    setShowEditModal(false);
-                    setSelectedTicket(null);
-                    setFormData({
-                      titulo: '',
-                      descripcion: '',
-                      prioridad: 'media',
-                      departamento_id: '',
-                      categoria_id: '',
-                      archivo: null,
-                    });
-                  }}
-                >
-                  Cancelar
-                </button>
-                <button 
-                  type="submit" 
-                  className="btn-primary" 
-                  disabled={submitting}
-                >
-                  {submitting ? 'Actualizando...' : 'Actualizar Ticket'}
-                </button>
-              </div>
-            </form>
           </div>
         </div>
       )}
