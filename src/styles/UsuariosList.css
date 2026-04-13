@@ -1,40 +1,3 @@
-<<<<<<< Updated upstream
-/* ===================================================
-   UsuariosList.css  —  Gestix · Módulo de Usuarios
-   Paleta: #1B3A5C navy | #2DC4D4 cyan | #FFD100 yellow
-   =================================================== */
-
-/* ── Variables ─────────────────────────────────────── */
-:root {
-  --navy:   #1B3A5C;
-  --cyan:   #2DC4D4;
-  --yellow: #FFD100;
-  --cyan-light: #e0f7fa;
-  --red:    #e53e3e;
-  --green:  #27ae60;
-  --gray-bg: #f5f7fa;
-  --border: #e0e6ee;
-  --text:   #1B3A5C;
-  --text-soft: #7a8a99;
-  --white:  #ffffff;
-  --shadow-sm: 0 2px 8px rgba(0,0,0,0.07);
-  --shadow-md: 0 8px 24px rgba(0,0,0,0.12);
-  --shadow-lg: 0 20px 60px rgba(0,0,0,0.18);
-  --radius: 12px;
-  --radius-sm: 7px;
-}
-
-/* ── Container ─────────────────────────────────────── */
-.ul-container {
-  background: var(--white);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
-  overflow: hidden;
-  border: 1px solid var(--border);
-}
-
-/* ── Toolbar ───────────────────────────────────────── */
-=======
 /* ════════════════════════════════════════════════════════════
    UsuariosList.css  — Gestix Users Management
    Palette: #1B3A5C navy | #FFD100 yellow | #2DC4D4 cyan
@@ -51,18 +14,11 @@
 }
 
 /* ── Toolbar ──────────────────────────────────────────────── */
->>>>>>> Stashed changes
 .ul-toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-<<<<<<< Updated upstream
-  padding: 1.25rem 1.5rem;
-  border-bottom: 2px solid var(--gray-bg);
-  gap: 1rem;
-=======
   gap: 12px;
->>>>>>> Stashed changes
   flex-wrap: wrap;
   padding: 16px 20px;
   background: #ffffff;
@@ -71,17 +27,6 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-<<<<<<< Updated upstream
-.ul-toolbar-left {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex: 1;
-  flex-wrap: wrap;
-}
-
-/* Search */
-=======
 .ul-toolbar__left {
   display: flex;
   align-items: center;
@@ -91,59 +36,21 @@
 }
 
 /* ── Search ───────────────────────────────────────────────── */
->>>>>>> Stashed changes
 .ul-search {
   position: relative;
   display: flex;
   align-items: center;
-<<<<<<< Updated upstream
-  flex: 1;
-  min-width: 220px;
-  max-width: 360px;
-}
-
-.ul-search-icon {
-  position: absolute;
-  left: 0.85rem;
-  color: var(--text-soft);
-=======
 }
 
 .ul-search__icon {
   position: absolute;
   left: 11px;
   color: #9aa5b4;
->>>>>>> Stashed changes
   font-size: 0.85rem;
   pointer-events: none;
 }
 
 .ul-search input {
-<<<<<<< Updated upstream
-  width: 100%;
-  padding: 0.6rem 2.2rem 0.6rem 2.2rem;
-  border: 1.5px solid var(--border);
-  border-radius: 8px;
-  font-size: 0.88rem;
-  color: var(--text);
-  background: var(--gray-bg);
-  outline: none;
-  transition: border-color 0.15s, background 0.15s;
-}
-
-.ul-search input:focus {
-  border-color: var(--cyan);
-  background: var(--white);
-}
-
-.ul-search-clear {
-  position: absolute;
-  right: 0.6rem;
-  background: none;
-  border: none;
-  color: var(--text-soft);
-  cursor: pointer;
-=======
   padding: 8px 32px 8px 32px;
   border: 1.5px solid #e0e6ee;
   border-radius: 8px;
@@ -167,103 +74,10 @@
   border: none;
   cursor: pointer;
   color: #9aa5b4;
->>>>>>> Stashed changes
   font-size: 0.8rem;
   display: flex;
   align-items: center;
   padding: 2px;
-<<<<<<< Updated upstream
-  border-radius: 50%;
-  transition: color 0.15s;
-}
-.ul-search-clear:hover { color: var(--red); }
-
-/* Sort */
-.ul-sort {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.ul-sort-icon {
-  position: absolute;
-  left: 0.75rem;
-  color: var(--text-soft);
-  font-size: 0.8rem;
-  pointer-events: none;
-}
-
-.ul-sort select {
-  padding: 0.6rem 0.85rem 0.6rem 2.1rem;
-  border: 1.5px solid var(--border);
-  border-radius: 8px;
-  font-size: 0.85rem;
-  color: var(--text);
-  background: var(--gray-bg);
-  outline: none;
-  cursor: pointer;
-  transition: border-color 0.15s;
-  appearance: none;
-  -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237a8a99'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.6rem center;
-  padding-right: 1.8rem;
-}
-.ul-sort select:focus { border-color: var(--cyan); }
-
-/* Botón nuevo usuario */
-.ul-btn-nuevo {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0.6rem 1.25rem;
-  background: var(--yellow);
-  color: var(--navy);
-  border: none;
-  border-radius: 8px;
-  font-size: 0.88rem;
-  font-weight: 700;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background 0.15s, transform 0.1s;
-}
-.ul-btn-nuevo:hover { background: #e6bc00; transform: translateY(-1px); }
-
-/* Count */
-.ul-count {
-  padding: 0.5rem 1.5rem;
-  font-size: 0.8rem;
-  color: var(--text-soft);
-  background: var(--gray-bg);
-  border-bottom: 1px solid var(--border);
-}
-
-/* ── Loading ───────────────────────────────────────── */
-.ul-loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  padding: 4rem;
-  color: var(--text-soft);
-}
-
-.ul-spinner {
-  width: 36px;
-  height: 36px;
-  border: 3px solid var(--border);
-  border-top-color: var(--cyan);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* ── Table ─────────────────────────────────────────── */
-.ul-table-wrapper { overflow-x: auto; }
-
-=======
   transition: color 0.1s;
 }
 .ul-search__clear:hover { color: #1B3A5C; }
@@ -354,39 +168,12 @@
 }
 
 /* ── Table ────────────────────────────────────────────────── */
->>>>>>> Stashed changes
 .ul-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.88rem;
 }
 
-<<<<<<< Updated upstream
-.ul-table th {
-  background: #f0f3f7;
-  padding: 0.85rem 1rem;
-  text-align: left;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--text-soft);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  border-bottom: 2px solid var(--border);
-  white-space: nowrap;
-}
-
-.ul-table td {
-  padding: 0.9rem 1rem;
-  border-bottom: 1px solid #f5f7fa;
-  color: var(--text);
-  vertical-align: middle;
-}
-
-.ul-table tbody tr {
-  transition: background 0.12s;
-}
-.ul-table tbody tr:hover td { background: #f8fafc; }
-=======
 .ul-table thead tr {
   background: #f8fafc;
   border-bottom: 2px solid #e8ecf1;
@@ -415,195 +202,36 @@
   color: #374151;
   vertical-align: middle;
 }
->>>>>>> Stashed changes
 
 /* User cell */
 .ul-user-cell {
   display: flex;
   align-items: center;
-<<<<<<< Updated upstream
-  gap: 0.75rem;
-=======
   gap: 10px;
->>>>>>> Stashed changes
 }
 
 .ul-avatar {
   width: 38px;
   height: 38px;
   border-radius: 50%;
-<<<<<<< Updated upstream
-  background: linear-gradient(135deg, var(--navy), var(--cyan));
-  color: white;
-=======
   background: linear-gradient(135deg, #1B3A5C 0%, #2a5580 100%);
   color: #ffffff;
   font-size: 0.95rem;
   font-weight: 700;
->>>>>>> Stashed changes
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 0.95rem;
   flex-shrink: 0;
   letter-spacing: -0.5px;
 }
 
 .ul-user-name {
-<<<<<<< Updated upstream
-  font-weight: 600;
-  color: var(--navy);
-  font-size: 0.88rem;
-}
-
-.ul-user-email {
-  font-size: 0.78rem;
-  color: var(--text-soft);
-  margin-top: 1px;
-}
-
-.ul-dept { color: var(--text-soft); font-size: 0.85rem; }
-
-.ul-permisos-count {
-  display: inline-flex;
-  align-items: center;
-  background: var(--cyan-light);
-  color: #007b8a;
-  padding: 2px 8px;
-  border-radius: 20px;
-  font-size: 0.76rem;
-  font-weight: 600;
-}
-
-/* Empty */
-.ul-empty {
-  padding: 4rem;
-  text-align: center;
-  color: var(--text-soft);
-}
-.ul-empty-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
-.ul-empty p { font-size: 0.9rem; margin: 0; }
-
-/* ── Badges ────────────────────────────────────────── */
-.badge {
-  display: inline-block;
-  padding: 0.22rem 0.65rem;
-  border-radius: 20px;
-  font-size: 0.76rem;
-  font-weight: 700;
-  text-transform: capitalize;
-}
-.badge-red    { background: #fde8e8; color: #c0392b; }
-.badge-orange { background: #fef0e6; color: #e67e22; }
-.badge-blue   { background: #e8f4fd; color: #2980b9; }
-.badge-green  { background: #e8f8f0; color: #27ae60; }
-.badge-gray   { background: #f0f0f0; color: #666; }
-
-.badge-estado-sm {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px 10px;
-  border-radius: 20px;
-  font-size: 0.76rem;
-  font-weight: 700;
-}
-.badge-estado-sm.activo   { background: #e8f8f0; color: #27ae60; }
-.badge-estado-sm.inactivo { background: #f3f4f6; color: #9ca3af; }
-
-/* ── Action Buttons ────────────────────────────────── */
-.ul-actions {
-  display: flex;
-  gap: 0.4rem;
-  align-items: center;
-}
-
-.ul-action-btn {
-  width: 34px;
-  height: 34px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.85rem;
-  transition: opacity 0.15s, transform 0.1s;
-  color: white;
-=======
   display: block;
   font-weight: 600;
   color: #1B3A5C;
   line-height: 1.2;
->>>>>>> Stashed changes
-}
-.ul-action-btn:hover { opacity: 0.85; transform: translateY(-1px); }
-.ul-action-btn:active { transform: translateY(0); }
-
-<<<<<<< Updated upstream
-/* Color exacto de los botones en la imagen: cyan/teal para ver y editar, rojo para eliminar */
-.ul-btn-ver    { background: #2DC4D4; }
-.ul-btn-edit   { background: #2DC4D4; }
-.ul-btn-delete { background: #e53e3e; }
-
-/* ══════════════════════════════════════════════════════
-   MODALES
-══════════════════════════════════════════════════════ */
-
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(10, 20, 40, 0.55);
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-  padding: 1rem;
-  animation: fadeIn 0.15s ease;
 }
 
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-.modal-card {
-  background: var(--white);
-  border-radius: 16px;
-  box-shadow: var(--shadow-lg);
-  width: 100%;
-  animation: slideUp 0.2s ease;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.modal-detalle { max-width: 540px; }
-.modal-editar  { max-width: 620px; max-height: 90vh; }
-.modal-confirm { max-width: 420px; padding: 2.5rem; text-align: center; }
-
-/* Modal Header */
-.modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1.4rem 1.6rem 1.2rem;
-  background: linear-gradient(135deg, var(--navy) 0%, #22527a 100%);
-  color: white;
-}
-
-.modal-header-left {
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-}
-
-.modal-avatar {
-=======
 .ul-user-email {
   display: block;
   font-size: 0.78rem;
@@ -744,7 +372,6 @@
 }
 
 .ul-modal__head-icon {
->>>>>>> Stashed changes
   width: 46px;
   height: 46px;
   background: rgba(255,255,255,0.12);
@@ -1048,181 +675,24 @@
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.15);
   border: 2px solid rgba(255,255,255,0.3);
   display: flex;
   align-items: center;
   justify-content: center;
-<<<<<<< Updated upstream
-  font-weight: 800;
-  font-size: 1.1rem;
-  color: white;
-=======
   font-size: 1.3rem;
   font-weight: 700;
   color: #FFD100;
->>>>>>> Stashed changes
   flex-shrink: 0;
   letter-spacing: -0.5px;
 }
-<<<<<<< Updated upstream
-
-.modal-avatar-edit {
-  background: var(--yellow);
-  color: var(--navy);
-  border-color: var(--yellow);
-}
-
-.modal-title {
-  margin: 0;
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: white;
-}
-
-.modal-subtitle {
-  margin: 2px 0 0;
-  font-size: 0.8rem;
-  color: rgba(255,255,255,0.7);
-}
-
-.modal-close {
-  width: 32px;
-  height: 32px;
-  background: rgba(255,255,255,0.15);
-  border: none;
-  border-radius: 50%;
-  color: white;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.85rem;
-  transition: background 0.15s;
-  flex-shrink: 0;
-}
-.modal-close:hover { background: rgba(255,255,255,0.28); }
-
-/* Modal Body */
-.modal-body {
-  padding: 1.6rem;
-=======
 
 .ul-drawer__name  { margin: 0; font-size: 1.05rem; font-weight: 700; }
 .ul-drawer__email { margin: 3px 0 0; font-size: 0.8rem; color: rgba(255,255,255,0.65); }
 
 .ul-drawer__body {
->>>>>>> Stashed changes
   flex: 1;
-}
-
-.modal-body-scroll {
   overflow-y: auto;
-<<<<<<< Updated upstream
-  max-height: calc(90vh - 180px);
-}
-
-/* Detail Grid */
-.detail-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-
-.detail-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  padding: 0.85rem;
-  background: var(--gray-bg);
-  border-radius: 10px;
-  border: 1px solid var(--border);
-}
-
-.detail-item-full { grid-column: 1 / -1; }
-
-.detail-icon {
-  width: 32px;
-  height: 32px;
-  background: var(--cyan-light);
-  color: var(--cyan);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.85rem;
-  flex-shrink: 0;
-}
-
-.detail-label {
-  display: block;
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: var(--text-soft);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 3px;
-}
-
-.detail-value {
-  font-size: 0.88rem;
-  font-weight: 500;
-  color: var(--navy);
-}
-
-/* Permisos chips en detalle */
-.permisos-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin-top: 3px;
-}
-
-.permiso-chip {
-  background: var(--cyan-light);
-  color: #007b8a;
-  padding: 3px 10px;
-  border-radius: 20px;
-  font-size: 0.76rem;
-  font-weight: 600;
-}
-
-/* Badge estado en modal detalle */
-.badge-estado {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-}
-.badge-estado.activo   { background: #e8f8f0; color: var(--green); border: 1.5px solid #c6f0d8; }
-.badge-estado.inactivo { background: #f3f4f6; color: #9ca3af;       border: 1.5px solid #e5e7eb; }
-
-/* ── Form Grid ─────────────────────────────────────── */
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.form-field-full { grid-column: 1 / -1; }
-
-.form-label {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--text-soft);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-=======
   padding: 20px 24px;
 }
 
@@ -1267,7 +737,6 @@
 }
 
 .ul-drawer__permisos {
->>>>>>> Stashed changes
   display: flex;
   flex-wrap: wrap;
   gap: 7px;
@@ -1277,237 +746,6 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-<<<<<<< Updated upstream
-}
-
-.form-input {
-  padding: 0.6rem 0.85rem;
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-size: 0.88rem;
-  color: var(--navy);
-  background: var(--gray-bg);
-  outline: none;
-  transition: border-color 0.15s, background 0.15s;
-  width: 100%;
-}
-.form-input:focus {
-  border-color: var(--cyan);
-  background: white;
-}
-
-.form-select { cursor: pointer; }
-
-.has-error .form-input { border-color: var(--red); }
-
-.form-error {
-  font-size: 0.76rem;
-  color: var(--red);
-  font-weight: 500;
-}
-
-.form-error-banner {
-  background: #fde8e8;
-  color: var(--red);
-  border: 1px solid #f5c6c6;
-  border-radius: 8px;
-  padding: 0.75rem 1rem;
-  font-size: 0.85rem;
-  margin-bottom: 1rem;
-}
-
-/* Password requirements */
-.pw-requirements {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin-top: 3px;
-}
-.req-ok   { font-size: 0.76rem; color: var(--green); font-weight: 600; }
-.req-fail { font-size: 0.76rem; color: var(--red);   font-weight: 600; }
-
-/* Permisos grid en form */
-.permisos-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 0.5rem;
-  margin-top: 4px;
-}
-
-.permiso-toggle {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 0.5rem 0.75rem;
-  border: 1.5px solid var(--border);
-  border-radius: 8px;
-  background: var(--gray-bg);
-  color: var(--text-soft);
-  font-size: 0.82rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s;
-  text-align: left;
-}
-
-.permiso-toggle:hover {
-  border-color: var(--cyan);
-  color: var(--navy);
-}
-
-.permiso-toggle.selected {
-  border-color: var(--cyan);
-  background: var(--cyan-light);
-  color: #007b8a;
-  font-weight: 700;
-}
-
-.permiso-check {
-  width: 16px;
-  height: 16px;
-  border-radius: 4px;
-  border: 1.5px solid currentColor;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.65rem;
-  flex-shrink: 0;
-  background: transparent;
-}
-
-.permiso-toggle.selected .permiso-check {
-  background: var(--cyan);
-  border-color: var(--cyan);
-  color: white;
-}
-
-/* ── Modal Footer ──────────────────────────────────── */
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.75rem;
-  padding: 1rem 1.6rem 1.4rem;
-  border-top: 1px solid var(--border);
-  background: var(--gray-bg);
-}
-
-.modal-footer-center { justify-content: center; border-top: none; padding-top: 0; }
-
-/* Buttons */
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0.6rem 1.2rem;
-  background: var(--yellow);
-  color: var(--navy);
-  border: none;
-  border-radius: 8px;
-  font-size: 0.88rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 0.15s, transform 0.1s;
-}
-.btn-primary:hover:not(:disabled) { background: #e6bc00; transform: translateY(-1px); }
-.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-
-.btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0.6rem 1.2rem;
-  background: transparent;
-  color: var(--navy);
-  border: 1.5px solid var(--border);
-  border-radius: 8px;
-  font-size: 0.88rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.btn-secondary:hover:not(:disabled) { border-color: var(--navy); background: #f0f3f7; }
-.btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
-
-.btn-danger {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0.6rem 1.2rem;
-  background: var(--red);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.88rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 0.15s, transform 0.1s;
-}
-.btn-danger:hover:not(:disabled) { background: #c53030; transform: translateY(-1px); }
-.btn-danger:disabled { opacity: 0.5; cursor: not-allowed; }
-
-/* ── Confirm Modal ─────────────────────────────────── */
-.confirm-icon { font-size: 3rem; margin-bottom: 1rem; }
-
-.confirm-title {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--navy);
-  margin: 0 0 0.75rem;
-}
-
-.confirm-desc {
-  font-size: 0.9rem;
-  color: var(--text-soft);
-  margin: 0 0 1.5rem;
-  line-height: 1.5;
-}
-
-/* ── Responsive ────────────────────────────────────── */
-@media (max-width: 700px) {
-  .detail-grid   { grid-template-columns: 1fr; }
-  .form-grid     { grid-template-columns: 1fr; }
-  .ul-toolbar    { flex-direction: column; align-items: stretch; }
-  .ul-toolbar-left { flex-direction: column; }
-  .ul-search     { max-width: 100%; }
-  .modal-editar  { max-height: 95vh; }
-  .permisos-grid { grid-template-columns: 1fr 1fr; }
-}
-/* ── Alert toast ───────────────────────────────────── */
-.ul-alert {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  animation: slideUp 0.2s ease;
-  margin-bottom: 8px;
-}
-.ul-alert-success { background: #d1fae5; color: #065f46; border-left: 4px solid #10b981; }
-.ul-alert-error   { background: #fee2e2; color: #7f1d1d; border-left: 4px solid #ef4444; }
-.ul-alert button  { margin-left: auto; background: none; border: none; cursor: pointer; opacity: .6; font-size: .9rem; }
-.ul-alert button:hover { opacity: 1; }
-
-/* ── Dept badge en tabla ───────────────────────────── */
-.ul-dept-badge {
-  display: inline-block;
-  padding: 2px 9px;
-  background: #eff6ff;
-  color: #1d4ed8;
-  border-radius: 6px;
-  font-size: 0.76rem;
-  font-weight: 600;
-}
-
-/* ── form-label-hint ───────────────────────────────── */
-.form-label-hint {
-  font-weight: 400;
-  text-transform: none;
-  letter-spacing: 0;
-  color: #9ca3af;
-  font-size: 0.7rem;
-=======
   padding: 5px 10px;
   background: #e0f7fa;
   color: #0097a7;
@@ -1638,18 +876,4 @@
   .ul-table td:nth-child(3),
   .ul-table th:nth-child(4),
   .ul-table td:nth-child(4) { display: none; }
-}
-/* ── Perm tags cell (table) ───────────────────────────────── */
-.ul-perm-tags-cell {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  align-items: center;
-}
-
-.ul-perm-pill--more {
-  background: #e8ecf1;
-  color: #4a5568;
-  border-color: #ccd4e0;
->>>>>>> Stashed changes
 }
