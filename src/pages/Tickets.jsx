@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaPaperPlane, FaBuilding, FaUser, FaTimes, FaTicketAlt, FaEye } from 'react-icons/fa';
 import TicketList from '../components/TicketList';
-import { ticketService, comentarioService, categoriaService, departamentoService, usuarioService, archivoService } from '../services';
+import { ticketService, comentarioService, categoriaService, departamentoService, usuarioService, archivoService, STORAGE_BASE_URL } from '../services';
 import { useAuth } from '../hooks/useAuth';
 import '../styles/Tickets.css';
 
@@ -273,7 +273,9 @@ export default function Tickets() {
   };
 
   const handleView = async (ticket) => {
+    // Mostrar modal inmediatamente con datos del listado
     setSelectedTicket(ticket);
+    setTicketArchivos(ticket.archivos || []);
     setUpdateViewData({
       asignado_a_id: ticket.asignado_a_id || null,
       prioridad: ticket.prioridad || 'media',
@@ -281,11 +283,16 @@ export default function Tickets() {
       categoria_id: ticket.categoria_id || null,
     });
     setShowViewModal(true);
+    // Recargar datos frescos del ticket (incluye archivos desde el backend)
     try {
-      const res = await archivoService.getByEntidad('ticket', ticket.id);
-      setTicketArchivos(res.data?.data || []);
-    } catch {
-      setTicketArchivos([]);
+      const res = await ticketService.getById(ticket.id);
+      const fresh = res.data?.data || res.data;
+      if (fresh) {
+        setSelectedTicket(fresh);
+        setTicketArchivos(fresh.archivos || []);
+      }
+    } catch (err) {
+      console.error('Error al cargar ticket completo:', err);
     }
   };
 
@@ -532,7 +539,7 @@ export default function Tickets() {
                               </a>
                             ))
                           : (
-                              <a href={`http://localhost:8000/storage/${selectedTicket.archivo_path}`} target="_blank" rel="noopener noreferrer">
+                              <a href={`${STORAGE_BASE_URL}/${selectedTicket.archivo_path}`} target="_blank" rel="noopener noreferrer">
                                 Ver archivo adjunto
                               </a>
                             )

@@ -1,4 +1,5 @@
 import api from './api';
+export { STORAGE_BASE_URL } from './api';
 
 // Tickets
 export const ticketService = {
