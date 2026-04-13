@@ -4,6 +4,8 @@ let activeRequests = 0;
 let loadingCallback = null;
 
 export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+export const STORAGE_BASE_URL = import.meta.env.VITE_STORAGE_URL
+  || API_BASE_URL.replace(/\/api$/, '') + '/storage';
 
 export const registerLoadingCallback = (fn) => {
   loadingCallback = fn;
@@ -31,6 +33,9 @@ api.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${token}`;
   }
 
+  if (config.data instanceof FormData) {
+    delete config.headers['Content-Type'];
+  }
   activeRequests++;
   updateLoading();
 

@@ -9,7 +9,7 @@ export function usePermission() {
     if (!user?.permisos) return false;
     const permissionId = permissionsMap[permissionName];
     if (permissionId === undefined) return false;
-    return user.permisos.includes(permissionId);
+    return user.permisos.some(p => Number(p) === Number(permissionId));
   };
 
   const hasAnyPermission = (permissionNames) => {

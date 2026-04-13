@@ -7,18 +7,52 @@
 
 .ticket-list-toolbar {
   display: flex;
+  align-items: flex-end;
   justify-content: space-between;
-  align-items: center;
   padding: 1.25rem 1.5rem;
   border-bottom: 1px solid #f0f0f0;
   gap: 1rem;
   flex-wrap: wrap;
 }
 
+.search-and-filters {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-end;
+  flex: 1;
+}
+
+.btn-create-ticket {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  padding: 8px 18px;
+  font-size: 0.88rem;
+  border: none;
+  border-radius: 7px;
+  background: #FFD100;
+  color: #1B3A5C;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+  font-weight: 700;
+}
+
+.btn-create-ticket:hover {
+  background: #e6bc00;
+  transform: translateY(-1px);
+}
+
+.btn-create-ticket:active {
+  transform: translateY(0);
+}}
+
 .search-box {
   position: relative;
   display: flex;
   align-items: center;
+  flex: 1;
+  min-width: 250px;
 }
 
 .search-icon {
@@ -34,33 +68,55 @@
   border-radius: 6px;
   font-size: 0.9rem;
   outline: none;
-  width: 250px;
+  width: 100%;
   transition: border-color 0.2s;
 }
 
 .search-box input:focus {
-  border-color: #3498db;
+  border-color: #2DC4D4;
 }
 
 .filter-buttons {
   display: flex;
-  gap: 0.5rem;
+  gap: 1.5rem;
+  align-items: flex-end;
 }
 
-.filter-btn {
-  padding: 0.5rem 1rem;
-  border: 1px solid #e0e0e0;
-  background: white;
-  border-radius: 6px;
-  font-size: 0.85rem;
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.filter-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #4a5568;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.filter-select {
+  padding: 8px 12px;
+  border: 1.5px solid #e0e6ee;
+  background: #f8fafc;
+  border-radius: 7px;
+  font-size: 0.88rem;
+  color: #1B3A5C;
   cursor: pointer;
-  transition: all 0.2s;
-  color: #666;
+  outline: none;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+  font-weight: 500;
 }
 
-.filter-btn:hover { background: #f5f5f5; }
-.filter-btn.active { background: #1e3a5f; color: white; border-color: #1e3a5f; }
-.filter-btn.icon-btn { padding: 0.5rem 0.75rem; }
+.filter-select:hover {
+  border-color: #c5d3e0;
+}
+
+.filter-select:focus {
+  border-color: #2DC4D4;
+  background: #ffffff;
+}
 
 .table-wrapper { overflow-x: auto; }
 
@@ -71,27 +127,27 @@
 }
 
 .ticket-table th {
-  background: #f8f9fa;
-  padding: 0.875rem 1rem;
+  background: #ffffff;
+  padding: 12px 16px;
   text-align: left;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #888;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #1B3A5C;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border-bottom: 1px solid #e0e0e0;
+  letter-spacing: 0.04em;
+  border-bottom: 2px solid #f0f3f7;
 }
 
 .ticket-table td {
-  padding: 0.875rem 1rem;
-  border-bottom: 1px solid #f5f5f5;
-  color: #333;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f3f7;
+  color: #2d3748;
 }
 
-.ticket-table tr:hover td { background: #fafafa; }
+.ticket-table tr:hover td { background: #f8fafc; }
 
-.ticket-id { font-weight: 600; color: #666; }
-.ticket-title { font-weight: 500; }
+.ticket-id { font-weight: 700; color: #1B3A5C; }
+.ticket-title { font-weight: 500; color: #2d3748; }
 
 .badge {
   display: inline-block;
@@ -112,17 +168,60 @@
 .actions { display: flex; gap: 0.5rem; }
 
 .action-btn {
-  background: none;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  padding: 0.35rem 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: none;
   cursor: pointer;
-  color: #666;
-  font-size: 0.85rem;
-  transition: all 0.2s;
+  color: white;
+  font-size: 1rem;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
 }
 
-.action-btn:hover { background: #f0f0f0; color: #333; }
+.action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+}
+
+.action-btn:active { transform: translateY(0); }
+
+.action-btn-view {
+  background: #2DC4D4;
+}
+
+.action-btn-edit {
+  background: #FFD100;
+  color: #1B3A5C;
+}
+
+.action-btn-delete {
+  background: #e53e3e;
+}
+
+.assign-select {
+  padding: 5px 8px;
+  border: 1.5px solid #e0e6ee;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  color: #1B3A5C;
+  background: #f8fafc;
+  cursor: pointer;
+  outline: none;
+  max-width: 160px;
+  transition: border-color 0.15s ease;
+}
+
+.assign-select:hover {
+  border-color: #2DC4D4;
+}
+
+.assign-select:focus {
+  border-color: #2DC4D4;
+  background: #ffffff;
+}
 
 .loading-state, .empty-state {
   padding: 3rem;
