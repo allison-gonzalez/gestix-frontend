@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaSearch, FaEye, FaPlus } from 'react-icons/fa';
+import { FaSearch, FaEye, FaPlus, FaSpinner } from 'react-icons/fa';
 import '../styles/TicketList.css';
 
 const PRIORITY_COLORS = {
@@ -85,7 +85,10 @@ export default function TicketList({ tickets = [], loading, onRefresh, onView, o
       </div>
 
       {loading ? (
-        <div className="loading-state">Cargando tickets...</div>
+        <div className="ul-state ul-state--loading">
+          <FaSpinner className="spin" />
+          <span>Cargando tickets…</span>
+        </div>
       ) : (
         <div className="table-wrapper">
           <table className="ticket-table">

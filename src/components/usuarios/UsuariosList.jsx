@@ -572,10 +572,6 @@ export default function UsuariosList({
                           onClick={() => setModal(u)}>
                           <FaEdit />
                         </button>
-                        <button className="ul-icon-btn ul-icon-btn--del" title="Eliminar"
-                          onClick={() => setConfirm({ id: u._id || u.id, nombre: u.nombre })}>
-                          <FaTrash />
-                        </button>
                       </div>
                     </td>
                   </tr>

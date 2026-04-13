@@ -284,27 +284,32 @@
 }
 
 .ul-icon-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 7px;
-  border: 1.5px solid transparent;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  border: none;
+  font-size: 1.1rem;
   cursor: pointer;
-  font-size: 0.82rem;
-  transition: all 0.14s ease;
-  background: transparent;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
 }
 
-.ul-icon-btn--view  { color: #2DC4D4; border-color: #b2ebf2; }
-.ul-icon-btn--view:hover  { background: #e0f7fa; }
+.ul-icon-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(0.9);
+}
 
-.ul-icon-btn--edit  { color: #1B3A5C; border-color: #d0dae6; }
-.ul-icon-btn--edit:hover  { background: #edf2f7; }
+.ul-icon-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
-.ul-icon-btn--del   { color: #e53e3e; border-color: #fcd0d0; }
-.ul-icon-btn--del:hover   { background: #fff0f0; }
+.ul-icon-btn--view { background: #2DC4D4; color: #ffffff; }
+.ul-icon-btn--edit { background: #1B3A5C; color: #ffffff; }
+.ul-icon-btn--del  { background: #e53e3e; color: #ffffff; }
 
 /* ── State / empty ────────────────────────────────────────── */
 .ul-state {

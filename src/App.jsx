@@ -9,6 +9,7 @@ import { ProtectedRouteWithPermission } from './components/ProtectedRouteWithPer
 import { useAuth } from './hooks/useAuth';
 import { usePermission } from './hooks/usePermission';
 import { usePermissionsMap } from './contexts/PermissionsContext';
+import { FaSpinner } from 'react-icons/fa';
 import Login from './pages/Login';
 
 // Layout (MAIN)
@@ -26,15 +27,12 @@ import AdminModule from './pages/AdminModule';
 import Reportes from './pages/Reportes';
 
 import './styles/index.css';
+import './styles/TicketList.css';
 
 function AppContent() {
   const { collapsed } = useSidebarState();
   const { hasPermission } = usePermission();
   const { isLoading: permissionsLoading } = usePermissionsMap();
-
-  if (permissionsLoading) {
-    return <div style={{ width: '100%', height: '100vh' }} />;
-  }
 
   return (
     <div className="app-layout">
@@ -43,6 +41,14 @@ function AppContent() {
       <div className={`main-content ${!collapsed ? 'sidebar-expanded' : ''}`}>
         <Header />
         <main className="app-main">
+          {permissionsLoading ? (
+            <div className="page-container">
+              <div className="ul-state ul-state--loading" style={{ padding: '80px 20px' }}>
+                <FaSpinner style={{ fontSize: '2.5rem', animation: 'ul-spin 0.9s linear infinite' }} />
+                <span>Cargando…</span>
+              </div>
+            </div>
+          ) : (
           <Routes>
             <Route path="/home" element={<Home />} />
             <Route
@@ -96,6 +102,7 @@ function AppContent() {
               }
             />
           </Routes>
+          )}
         </main>
       </div>
     </div>

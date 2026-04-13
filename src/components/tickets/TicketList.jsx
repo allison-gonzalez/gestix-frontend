@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaSearch, FaEye, FaEdit } from 'react-icons/fa';
+import { FaSearch, FaEye, FaEdit, FaSpinner } from 'react-icons/fa';
 import DataTable from '../common/DataTable';
 import '../../styles/TicketList.css';
 
@@ -67,6 +67,17 @@ export default function TicketList({ tickets = [], loading, onRefresh, usuarios 
     )},
   ];
 
+  if (loading) {
+    return (
+      <div className="ticket-list-container">
+        <div className="ul-state ul-state--loading">
+          <FaSpinner className="spin" />
+          <span>Cargando tickets…</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="ticket-list-container">
       <div className="ticket-list-toolbar">
@@ -114,7 +125,6 @@ export default function TicketList({ tickets = [], loading, onRefresh, usuarios 
       </div>
 
       <DataTable
-        loading={loading}
         rows={filtered}
         columns={columns}
         emptyText="No se encontraron tickets"
