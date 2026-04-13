@@ -100,12 +100,27 @@ function UsuarioModal({ usuario, departamentos, permisos, onClose, onSave }) {
     }));
   };
 
+  const validatePassword = (pwd) => {
+    if (!pwd) return 'La contraseña es requerida';
+    if (pwd.length < 8) return 'Mínimo 8 caracteres';
+    if (!/[A-Z]/.test(pwd)) return 'Debe incluir al menos una mayúscula';
+    if (!/[a-z]/.test(pwd)) return 'Debe incluir al menos una minúscula';
+    if (!/[0-9]/.test(pwd)) return 'Debe incluir al menos un número';
+    if (!/[^A-Za-z0-9]/.test(pwd)) return 'Debe incluir al menos un carácter especial';
+    return null;
+  };
+
   const validate = () => {
     const e = {};
     if (!form.nombre.trim()) e.nombre = 'El nombre es requerido';
     if (!form.correo.trim()) e.correo = 'El correo es requerido';
-    if (!isEdit && !form.contrasena.trim()) e.contrasena = 'La contraseña es requerida';
-    if (!isEdit && form.contrasena.length < 4) e.contrasena = 'Mínimo 4 caracteres';
+    if (!isEdit) {
+      const pwdErr = validatePassword(form.contrasena);
+      if (pwdErr) e.contrasena = pwdErr;
+    } else if (form.contrasena) {
+      const pwdErr = validatePassword(form.contrasena);
+      if (pwdErr) e.contrasena = pwdErr;
+    }
     return e;
   };
 
@@ -198,7 +213,7 @@ function UsuarioModal({ usuario, departamentos, permisos, onClose, onSave }) {
                   type={showPass ? 'text' : 'password'}
                   value={form.contrasena}
                   onChange={e => setForm(f => ({ ...f, contrasena: e.target.value }))}
-                  placeholder={isEdit ? '••••••••' : 'Mínimo 4 caracteres'}
+                  placeholder={isEdit ? '••••••••' : 'Mín. 8 cars., mayús., núm. y especial'}
                   className={errors.contrasena ? 'is-error' : ''}
                 />
                 <button type="button" className="ul-pass-eye"
