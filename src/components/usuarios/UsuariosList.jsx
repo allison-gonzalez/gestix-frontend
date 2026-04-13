@@ -407,6 +407,7 @@ export default function UsuariosList({
   const [permisos,      setPermisos]      = useState([]);
   const [search,        setSearch]        = useState('');
   const [filterEstatus, setFilterEstatus] = useState('todos');
+  const [filterDepto,   setFilterDepto]   = useState('');
   const [modal,         setModal]         = useState(null);
   const [drawer,        setDrawer]        = useState(null);
   const [confirm,       setConfirm]       = useState(null);
@@ -475,7 +476,9 @@ export default function UsuariosList({
       (u.telefono ?? '').toLowerCase().includes(q);
     const matchEstatus =
       filterEstatus === 'todos' || String(u.estatus) === filterEstatus;
-    return matchSearch && matchEstatus;
+    const matchDepto =
+      filterDepto === '' || String(toNum(u.departamento_id)) === filterDepto;
+    return matchSearch && matchEstatus && matchDepto;
   });
 
   // Department name lookup using integer id
@@ -492,34 +495,48 @@ export default function UsuariosList({
       {/* Toolbar */}
       <div className="ul-toolbar">
         <div className="ul-toolbar__left">
-          <div className="ul-search">
-            <FaSearch className="ul-search__icon" />
-            <input
-              placeholder="Buscar por nombre, correo…"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-            />
-            {search && (
-              <button className="ul-search__clear" onClick={() => setSearch('')}>
-                <FaTimes />
-              </button>
-            )}
+          <div className="filter-group">
+            <label className="filter-label">Buscar</label>
+            <div className="ul-search">
+              <FaSearch className="ul-search__icon" />
+              <input
+                placeholder="Nombre, correo, teléfono"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+              />
+              {search && (
+                <button className="ul-search__clear" onClick={() => setSearch('')}>
+                  <FaTimes />
+                </button>
+              )}
+            </div>
           </div>
 
-          <div className="ul-filter-tabs">
-            {[
-              { key: 'todos', label: 'Todos'     },
-              { key: '1',     label: 'Activos'   },
-              { key: '0',     label: 'Inactivos' },
-            ].map(tab => (
-              <button
-                key={tab.key}
-                className={`ul-filter-tab ${filterEstatus === tab.key ? 'is-active' : ''}`}
-                onClick={() => setFilterEstatus(tab.key)}
-              >
-                {tab.label}
-              </button>
-            ))}
+          <div className="filter-group">
+            <label className="filter-label">Estado</label>
+            <select
+              className="ul-filter-select"
+              value={filterEstatus}
+              onChange={e => setFilterEstatus(e.target.value)}
+            >
+              <option value="todos">Todos</option>
+              <option value="1">Activo</option>
+              <option value="0">Inactivo</option>
+            </select>
+          </div>
+
+          <div className="filter-group">
+            <label className="filter-label">Departamento</label>
+            <select
+              className="ul-filter-select"
+              value={filterDepto}
+              onChange={e => setFilterDepto(e.target.value)}
+            >
+              <option value="">Todos</option>
+              {departamentos.map(d => (
+                <option key={docId(d)} value={String(docId(d))}>{d.nombre}</option>
+              ))}
+            </select>
           </div>
         </div>
 
@@ -572,7 +589,7 @@ export default function UsuariosList({
                         </div>
                       </div>
                     </td>
-                    <td className="ul-mono">{u.telefono || '—'}</td>
+                    <td className="ul-mono" title={u.telefono || ''}>{u.telefono || '—'}</td>
                     <td>{deptoNombre(u.departamento_id)}</td>
                     <td>
                       <span className={`ul-badge ${est.cls}`}>{est.label}</span>

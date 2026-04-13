@@ -29,7 +29,7 @@
 
 .ul-toolbar__left {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 10px;
   flex-wrap: wrap;
   flex: 1;
@@ -109,6 +109,25 @@
   background: #1B3A5C;
   border-color: #1B3A5C;
   color: #ffffff;
+}
+
+.ul-filter-select {
+  padding: 8px 12px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  border: 1.5px solid #e0e6ee;
+  border-radius: 7px;
+  background: #f8fafc;
+  color: #1B3A5C;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.ul-filter-select:hover { border-color: #c5d3e0; }
+.ul-filter-select:focus {
+  border-color: #2DC4D4;
+  background: #ffffff;
 }
 
 /* ── Buttons ──────────────────────────────────────────────── */
@@ -241,8 +260,9 @@
 
 .ul-mono {
   font-family: 'Courier New', monospace;
-  font-size: 0.82rem;
-  color: #555;
+  font-size: 0.88rem;
+  color: #9aa5b4;
+  white-space: nowrap;
 }
 
 .ul-none {
