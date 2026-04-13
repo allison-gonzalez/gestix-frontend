@@ -336,8 +336,7 @@
 .ul-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(27, 58, 92, 0.45);
-  backdrop-filter: blur(3px);
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
