@@ -1,4 +1,5 @@
 import React from 'react';
+import { FaSpinner } from 'react-icons/fa';
 
 /**
  * DataTable — Tabla genérica reutilizable.
@@ -18,7 +19,12 @@ export default function DataTable({
   keyField,
 }) {
   if (loading) {
-    return <div className="loading-state">Cargando...</div>;
+    return (
+      <div className="ul-state ul-state--loading">
+        <FaSpinner className="spin" />
+        <span>Cargando…</span>
+      </div>
+    );
   }
 
   const getKey = (row, index) => {

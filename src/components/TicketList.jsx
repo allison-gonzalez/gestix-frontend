@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaSearch, FaEye, FaPlus } from 'react-icons/fa';
+import { FaSearch, FaEye, FaPlus, FaSpinner, FaTimes } from 'react-icons/fa';
 import '../styles/TicketList.css';
 
 const PRIORITY_COLORS = {
@@ -35,14 +35,22 @@ export default function TicketList({ tickets = [], loading, onRefresh, onView, o
     <div className="ticket-list-container">
       <div className="ticket-list-toolbar">
         <div className="search-and-filters">
-          <div className="search-box">
-            <FaSearch className="search-icon" />
-            <input
-              type="text"
-              placeholder="Buscar tickets..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+          <div className="filter-group">
+            <label className="filter-label">Buscar</label>
+            <div className="search-box">
+              <FaSearch className="search-icon" />
+              <input
+                type="text"
+                placeholder="Buscar tickets..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              {search && (
+                <button className="search-box-clear" onClick={() => setSearch('')}>
+                  <FaTimes />
+                </button>
+              )}
+            </div>
           </div>
           <div className="filter-buttons">
             <div className="filter-group">
@@ -74,6 +82,20 @@ export default function TicketList({ tickets = [], loading, onRefresh, onView, o
               </select>
             </div>
           </div>
+
+          {(search || filterEstado !== 'todos' || filterPrioridad !== 'todas') && (
+            <button 
+              className="btn-secondary"
+              onClick={() => {
+                setSearch('');
+                setFilterEstado('todos');
+                setFilterPrioridad('todas');
+              }}
+              title="Limpiar todos los filtros"
+            >
+              <FaTimes /> Limpiar
+            </button>
+          )}
         </div>
         <button 
           className="btn-primary btn-create-ticket"
@@ -85,7 +107,10 @@ export default function TicketList({ tickets = [], loading, onRefresh, onView, o
       </div>
 
       {loading ? (
-        <div className="loading-state">Cargando tickets...</div>
+        <div className="ul-state ul-state--loading">
+          <FaSpinner className="spin" />
+          <span>Cargando tickets…</span>
+        </div>
       ) : (
         <div className="table-wrapper">
           <table className="ticket-table">

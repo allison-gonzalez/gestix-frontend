@@ -461,7 +461,11 @@ export default function Tickets() {
         <div className="modal-overlay">
           <div className="modal-content modal-large">
             <div className="modal-header">
-              <h2><FaEye /> Ver Ticket</h2>
+              <div className="modal-header-icon"><FaTicketAlt /></div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <h2 className="modal-header-title">Ticket #{selectedTicket.id}</h2>
+                <p className="modal-header-sub">{selectedTicket.titulo}</p>
+              </div>
               <button
                 className="modal-close"
                 onClick={() => {

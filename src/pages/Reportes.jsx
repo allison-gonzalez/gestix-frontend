@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  FaChartBar, FaTicketAlt, FaCheckCircle, FaClock, FaExclamationTriangle, FaFileExcel,
+  FaChartBar, FaTicketAlt, FaCheckCircle, FaClock, FaExclamationTriangle, FaFileExcel, FaSpinner,
 } from 'react-icons/fa';
 import { Bar, Doughnut } from 'react-chartjs-2';
 import {
@@ -11,6 +11,7 @@ import {
 import * as XLSX from 'xlsx';
 import api from '../services/api';
 import '../styles/Reportes.css';
+import '../styles/TicketList.css';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
@@ -236,8 +237,8 @@ export default function Reportes() {
   if (loading) {
     return (
       <div className="page-container">
-        <div className="rpt-loading">
-          <div className="rpt-spinner" />
+        <div className="ul-state ul-state--loading" style={{ padding: '80px 20px' }}>
+          <FaSpinner className="spin" />
           <span>Cargando reportes…</span>
         </div>
       </div>

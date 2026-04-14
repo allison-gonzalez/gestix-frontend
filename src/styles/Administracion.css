@@ -195,6 +195,10 @@
   flex-wrap: wrap;
 }
 
+.admin-toolbar-spacer {
+  flex: 1;
+}
+
 /* ── Tables: reutiliza .table-wrapper y .ticket-table de TicketList.css ── */
 
 /* ── Column: collection name ─────────────────────── */
