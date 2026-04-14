@@ -29,12 +29,17 @@ export function NotificacionesProvider({ children }) {
   // ── Cargar notificaciones históricas desde la API ───────────────────────────
   const cargarNotificaciones = useCallback(async () => {
     if (!isAuthenticated) return;
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (!token) return;
     try {
       const res = await notificacionService.getAll();
       setNotificaciones(res.data.data ?? []);
       setNoLeidas(res.data.no_leidas ?? 0);
-    } catch {
-      // silenciar errores de red
+    } catch (err) {
+      // silenciar errores de red (no relanzar para no romper el flujo)
+      if (err?.response?.status !== 401) {
+        console.warn('[NotificacionesContext] Error cargando notificaciones:', err?.message);
+      }
     }
   }, [isAuthenticated]);
 

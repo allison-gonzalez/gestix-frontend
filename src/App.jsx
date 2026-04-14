@@ -160,8 +160,7 @@ function PublicRoute({ children }) {
 function App() {
   return (
     <AuthProvider>
-      {/* Temporalmente deshabilitado para debugging */}
-      {/* <NotificacionesProvider> */}
+      <NotificacionesProvider>
         <Router>
           <Routes>
             {/* Login (HEAD prioridad) */}
@@ -174,7 +173,7 @@ function App() {
             <Route path="/*" element={<ProtectedLayout />} />
           </Routes>
         </Router>
-      {/* </NotificacionesProvider> */}
+      </NotificacionesProvider>
     </AuthProvider>
   );
 }
