@@ -50,6 +50,16 @@ export function AuthProvider({ children }) {
     sessionStorage.removeItem('user');
   }, []);
 
+  const updateUser = useCallback((newData) => {
+    const updatedUser = { ...user, ...newData };
+    setUser(updatedUser);
+    if (localStorage.getItem('token')) {
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+    } else {
+      sessionStorage.setItem('user', JSON.stringify(updatedUser));
+    }
+  }, [user]);
+
   const value = {
     user,
     token,
@@ -57,6 +67,7 @@ export function AuthProvider({ children }) {
     isLoading,
     login,
     logout,
+    updateUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

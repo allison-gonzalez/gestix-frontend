@@ -52,7 +52,7 @@ function Header() {
         </div>
 
         {/* User Profile */}
-        <button className="header-icon-btn" title="Perfil">
+        <button className="header-icon-btn" title="Perfil" onClick={() => navigate('/perfil')}>
           <FaUser />
         </button>
 

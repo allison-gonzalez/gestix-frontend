@@ -350,7 +350,7 @@ export default function Tickets() {
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header">
-              <h2><FaTicketAlt /> Crear Nuevo Ticket</h2>
+              <h2 className="modal-title"><FaTicketAlt /> Crear Nuevo Ticket</h2>
               <button
                 className="modal-close"
                 onClick={() => setShowCreateModal(false)}

@@ -1,103 +1,200 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import {
+  FaKey, FaUser, FaEnvelope, FaPhone,
+  FaEye, FaEyeSlash, FaCheck, FaTimes,
+  FaEdit, FaSave, FaBan, FaLock,
+} from 'react-icons/fa';
+import { useProfile } from '../hooks/useProfile';
+import '../styles/Profile.css';
+
+const getInitials = (name = '') =>
+  name.trim().split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase() || 'U';
 
 const Profile = () => {
-  const [passwordData, setPasswordData] = useState({
-    current: '',
-    new: '',
-    confirm: ''
-  });
+  const {
+    user,
+    loading, error, success, updatePassword,
+    updating, profileError, profileSuccess, updateProfileData,
+  } = useProfile();
 
-  const handleUpdate = async (e) => {
+  /* ── Password state ─────────────────────────── */
+  const [passwordData, setPasswordData] = useState({ current: '', new: '', confirm: '' });
+  const [showPasswords, setShowPasswords] = useState({ current: false, new: false, confirm: false });
+  const [localError, setLocalError] = useState('');
+
+  /* ── Edit profile state ──────────────────────── */
+  const [editMode, setEditMode] = useState(false);
+  const [editData, setEditData] = useState({ nombre: '', correo: '', telefono: '' });
+
+  useEffect(() => {
+    if (user) setEditData({ nombre: user.nombre || '', correo: user.correo || '', telefono: user.telefono || '' });
+  }, [user]);
+
+  /* ── Password rules ──────────────────────────── */
+  const rules = {
+    length:    passwordData.new.length >= 8,
+    lowercase: /[a-z]/.test(passwordData.new),
+    uppercase: /[A-Z]/.test(passwordData.new),
+    special:   /[^a-zA-Z0-9]/.test(passwordData.new),
+  };
+  const allRulesMet = Object.values(rules).every(Boolean);
+
+  /* ── Handlers ────────────────────────────────── */
+  const handlePasswordUpdate = async (e) => {
     e.preventDefault();
-    
-    if(passwordData.new !== passwordData.confirm) {
-      alert("Las contraseña nueva no coincide");
-      return;
-    }
-
-    try {
-      // Obtenemos el token de la sesión actual
-      const token = localStorage.getItem('auth_token'); 
-
-      const response = await fetch('http://127.0.0.1:8000/api/perfil/cambiar-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${token}` 
-        },
-        body: JSON.stringify({
-          current: passwordData.current,
-          new: passwordData.new
-        })
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        alert("✅ " + data.message);
-        setPasswordData({ current: '', new: '', confirm: '' }); // Limpia campos
-      } else {
-        alert("Error: " + data.message);
-      }
-
-    } catch (error) {
-      alert("Ocurrió un problema de conexión con el servidor.");
-      console.error(error);
-    }
+    setLocalError('');
+    if (passwordData.new !== passwordData.confirm) { setLocalError('Las contraseñas no coinciden'); return; }
+    if (!allRulesMet) { setLocalError('La contraseña no cumple los requisitos'); return; }
+    const ok = await updatePassword(passwordData.current, passwordData.new);
+    if (ok) setPasswordData({ current: '', new: '', confirm: '' });
   };
 
-  return (
-    <div style={containerStyle}>
-      <h2 style={{ color: '#00d4ff' }}>Configuración de Perfil</h2>
-      
-      <div style={cardStyle}>
-        <h3>Información Personal</h3>
-        <p><strong>Usuario:</strong> {localStorage.getItem('user_name') || 'Aomar Alexc'}</p>
-        <p><strong>Email:</strong> {localStorage.getItem('user_email') || 'alexc@gestix.com'}</p>
-      </div>
+  const handleProfileSave = async () => {
+    const ok = await updateProfileData(editData);
+    if (ok) setEditMode(false);
+  };
 
-      <div style={cardStyle}>
-        <h3>Seguridad y Contraseña</h3>
-        <form onSubmit={handleUpdate}>
-          <label style={labelStyle}>Contraseña Actual</label>
-          <input 
-            type="password" 
-            style={inputStyle} 
-            value={passwordData.current}
-            onChange={(e) => setPasswordData({...passwordData, current: e.target.value})}
-          />
-          
-          <label style={labelStyle}>Nueva Contraseña</label>
-          <input 
-            type="password" 
-            style={inputStyle} 
-            value={passwordData.new}
-            onChange={(e) => setPasswordData({...passwordData, new: e.target.value})}
-          />
-          
-          <label style={labelStyle}>Confirmar Nueva Contraseña</label>
-          <input 
-            type="password" 
-            style={inputStyle} 
-            value={passwordData.confirm}
-            onChange={(e) => setPasswordData({...passwordData, confirm: e.target.value})}
-          />
-          
-          <button type="submit" style={buttonStyle}>Guardar Cambios</button>
-        </form>
+  const handleEditCancel = () => {
+    setEditData({ nombre: user?.nombre || '', correo: user?.correo || '', telefono: user?.telefono || '' });
+    setEditMode(false);
+  };
+
+  /* ── Render ──────────────────────────────────── */
+  return (
+    <div className="page-container">
+      <div className="profile-wrapper">
+
+        {/* ── Hero card ── */}
+        <div className="profile-hero">
+          <div className="profile-hero-accent" />
+          <div className="profile-hero-body">
+            <div className="profile-avatar">{getInitials(user?.nombre)}</div>
+            <div className="profile-hero-info">
+              <h1 className="profile-hero-name">{user?.nombre || 'Usuario'}</h1>
+              <span className="profile-hero-email">{user?.correo}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="profile-grid">
+
+          {/* ── Información Personal ── */}
+          <div className="profile-card">
+            <div className="profile-card-header">
+              <div className="profile-card-title">
+                <span className="pct-icon"><FaUser /></span>
+                <h2>Información personal</h2>
+              </div>
+            </div>
+
+            {profileSuccess && <div className="profile-success">{profileSuccess}</div>}
+            {profileError   && <div className="profile-error">{profileError}</div>}
+
+            <div className="profile-info">
+              {[
+                { icon: <FaUser />,     label: 'Nombre',             key: 'nombre',   type: 'text'  },
+                { icon: <FaEnvelope />, label: 'Correo electrónico', key: 'correo',   type: 'email' },
+                { icon: <FaPhone />,    label: 'Teléfono',           key: 'telefono', type: 'tel'   },
+              ].map(({ icon, label, key, type }) => (
+                <div className="info-field" key={key}>
+                  <label className="info-label">
+                    <span className="info-label-icon">{icon}</span>{label}
+                  </label>
+                  {editMode ? (
+                    <input
+                      className="profile-input"
+                      type={type}
+                      value={editData[key]}
+                      onChange={e => setEditData({ ...editData, [key]: e.target.value })}
+                    />
+                  ) : (
+                    <div className="info-value">{user?.[key] || <span className="info-empty">—</span>}</div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {!editMode ? (
+              <button className="btn-save-password" onClick={() => setEditMode(true)}>
+                <FaEdit /> Editar información
+              </button>
+            ) : (
+              <div className="edit-action-btns">
+                <button className="btn-cancel-full" onClick={handleEditCancel}>
+                  <FaBan /> Cancelar
+                </button>
+                <button className="btn-save-password" onClick={handleProfileSave} disabled={updating}>
+                  <FaSave /> {updating ? 'Guardando…' : 'Guardar cambios'}
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* ── Seguridad ── */}
+          <div className="profile-card">
+            <div className="profile-card-header">
+              <div className="profile-card-title">
+                <span className="pct-icon pct-icon--key"><FaKey /></span>
+                <h2>Seguridad</h2>
+              </div>
+            </div>
+
+            <form onSubmit={handlePasswordUpdate} className="password-form">
+              {success    && <div className="profile-success">{success}</div>}
+              {(error || localError) && <div className="profile-error">{localError || error}</div>}
+
+              {[
+                { id: 'current', label: 'Contraseña actual',     ph: 'Contraseña actual'          },
+                { id: 'new',     label: 'Nueva contraseña',       ph: 'Nueva contraseña'            },
+                { id: 'confirm', label: 'Confirmar contraseña',   ph: 'Repite la nueva contraseña'  },
+              ].map(({ id, label, ph }) => (
+                <div className="form-group" key={id}>
+                  <label className="form-label">{label}</label>
+                  <div className="password-input-wrapper">
+                    <input
+                      type={showPasswords[id] ? 'text' : 'password'}
+                      className="profile-input"
+                      value={passwordData[id]}
+                      onChange={e => setPasswordData({ ...passwordData, [id]: e.target.value })}
+                      placeholder={ph}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="password-toggle"
+                      onClick={() => setShowPasswords({ ...showPasswords, [id]: !showPasswords[id] })}
+                    >
+                      {showPasswords[id] ? <FaEyeSlash /> : <FaEye />}
+                    </button>
+                  </div>
+
+                  {id === 'new' && passwordData.new.length > 0 && (
+                    <ul className="password-rules">
+                      {[
+                        [rules.length,    'Mínimo 8 caracteres'],
+                        [rules.lowercase, 'Una letra minúscula'],
+                        [rules.uppercase, 'Una letra mayúscula'],
+                        [rules.special,   'Un carácter especial'],
+                      ].map(([met, text], i) => (
+                        <li key={i} className={met ? 'rule-met' : 'rule-unmet'}>
+                          {met ? <FaCheck /> : <FaTimes />} {text}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
+
+              <button type="submit" className="btn-save-password" disabled={loading}>
+                <FaLock /> {loading ? 'Guardando…' : 'Cambiar contraseña'}
+              </button>
+            </form>
+          </div>
+
+        </div>
       </div>
     </div>
   );
 };
-
-
-
-
-const containerStyle = { padding: '40px', backgroundColor: '#0b0e14', minHeight: '100vh', color: 'white' };
-const cardStyle = { background: '#1c222d', padding: '20px', borderRadius: '12px', marginBottom: '20px', maxWidth: '450px', border: '1px solid #2d3748' };
-const labelStyle = { display: 'block', marginBottom: '5px', fontSize: '14px', color: '#a0aec0' };
-const inputStyle = { width: '100%', padding: '10px', marginBottom: '15px', borderRadius: '6px', border: '1px solid #2d3748', backgroundColor: '#0b0e14', color: 'white' };
-const buttonStyle = { width: '100%', padding: '12px', backgroundColor: '#00d4ff', color: 'black', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' };
 
 export default Profile;

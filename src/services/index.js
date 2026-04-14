@@ -72,4 +72,10 @@ export const archivoService = {
   delete: (id) => api.delete(`/archivos/${id}`),
 };
 
+// Perfil
+export const profileService = {
+  updatePassword: (data) => api.post('/auth/user/update-password', data),
+  updateProfile:  (data) => api.put('/auth/user/update-profile', data),
+};
+
 export default api;
