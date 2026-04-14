@@ -6,6 +6,7 @@ import {
 } from 'react-icons/fa';
 import { usuarioService, departamentoService, permisoService } from '../../services';
 import '../../styles/UsuariosList.css';
+import '../../styles/TicketList.css';
 
 /* ─────────────────────────────────────────────────────────────────
    KEY INSIGHT:
@@ -538,6 +539,20 @@ export default function UsuariosList({
               ))}
             </select>
           </div>
+
+          {(search || filterEstatus !== 'todos' || filterDepto !== '') && (
+            <button 
+              className="btn-secondary"
+              onClick={() => {
+                setSearch('');
+                setFilterEstatus('todos');
+                setFilterDepto('');
+              }}
+              title="Limpiar todos los filtros"
+            >
+              <FaTimes /> Limpiar
+            </button>
+          )}
         </div>
 
         <button className="ul-btn ul-btn--primary" onClick={() => setModal('create')}>

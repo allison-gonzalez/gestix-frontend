@@ -82,6 +82,20 @@ export default function TicketList({ tickets = [], loading, onRefresh, onView, o
               </select>
             </div>
           </div>
+
+          {(search || filterEstado !== 'todos' || filterPrioridad !== 'todas') && (
+            <button 
+              className="btn-secondary"
+              onClick={() => {
+                setSearch('');
+                setFilterEstado('todos');
+                setFilterPrioridad('todas');
+              }}
+              title="Limpiar todos los filtros"
+            >
+              <FaTimes /> Limpiar
+            </button>
+          )}
         </div>
         <button 
           className="btn-primary btn-create-ticket"

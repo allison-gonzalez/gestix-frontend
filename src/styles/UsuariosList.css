@@ -194,17 +194,17 @@
 }
 
 .ul-table thead tr {
-  background: #f8fafc;
-  border-bottom: 2px solid #e8ecf1;
+  background: #ffffff;
+  border-bottom: 2px solid #f0f3f7;
 }
 
 .ul-table th {
   padding: 12px 16px;
   text-align: left;
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   font-weight: 700;
-  color: #7a8a99;
-  letter-spacing: 0.06em;
+  color: #1B3A5C;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
@@ -214,11 +214,11 @@
 }
 
 .ul-table tbody tr:last-child { border-bottom: none; }
-.ul-table tbody tr:hover      { background: #fafbfc; }
+.ul-table tbody tr:hover      { background: #f8fafc; }
 
 .ul-table td {
-  padding: 13px 16px;
-  color: #374151;
+  padding: 12px 16px;
+  color: #2d3748;
   vertical-align: middle;
 }
 
