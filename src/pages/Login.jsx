@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlineCheckCircle, AiOutlineLock, AiOutlineThunderbolt } from 'react-icons/ai';
 import { MdCheckBox, MdCheckBoxOutlineBlank } from 'react-icons/md';
+import { FaTimes, FaKey, FaEnvelope } from 'react-icons/fa';
 import { useAuth } from '../hooks/useAuth';
 import api from '../services/api';
 import '../styles/Login.css';
@@ -16,6 +17,13 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Forgot password state
+  const [showForgotModal, setShowForgotModal] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotError, setForgotError] = useState('');
+  const [tempPassword, setTempPassword] = useState('');
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -28,8 +36,19 @@ export default function Login() {
       });
 
       if (response.data.success) {
+        console.log('Login response:', response.data.user);
+        console.log('must_change_password:', response.data.user.must_change_password);
         login(response.data.access_token, response.data.user, rememberMe);
-        navigate('/home');
+        console.log('After login() called');
+        if (response.data.user.must_change_password) {
+          console.log('Redirigiendo a /perfil (must_change_password = true)');
+          console.log('navigate("/perfil") será llamado ahora...');
+          navigate('/perfil');
+          console.log('navigate("/perfil") fue llamado');
+        } else {
+          console.log('Redirigiendo a /home (must_change_password = false)');
+          navigate('/home');
+        }
       }
     } catch (err) {
       const errorMessage = err.response?.data?.message || 'Error en la autenticación';
@@ -40,8 +59,98 @@ export default function Login() {
     }
   };
 
+  const handleForgotOpen = (e) => {
+    e.preventDefault();
+    setForgotEmail('');
+    setForgotError('');
+    setTempPassword('');
+    setShowForgotModal(true);
+  };
+
+  const handleForgotClose = () => {
+    setShowForgotModal(false);
+    setForgotEmail('');
+    setForgotError('');
+    setTempPassword('');
+  };
+
+  const handleForgotSubmit = async (e) => {
+    e.preventDefault();
+    setForgotLoading(true);
+    setForgotError('');
+    setTempPassword('');
+
+    try {
+      const response = await api.post('/auth/forgot-password', { email: forgotEmail });
+      if (response.data.success) {
+        setTempPassword('sent');
+      } else {
+        setForgotError(response.data.message || 'No se pudo procesar la solicitud.');
+      }
+    } catch (err) {
+      setForgotError(err.response?.data?.message || 'Error al procesar la solicitud.');
+    } finally {
+      setForgotLoading(false);
+    }
+  };
+
   return (
     <div className="login-container">
+      {/* Forgot Password Modal */}
+      {showForgotModal && (
+        <div className="forgot-overlay" onClick={handleForgotClose}>
+          <div className="forgot-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="forgot-modal-header">
+              <h2><FaKey /> Recuperar Contraseña</h2>
+              <button className="forgot-close-btn" onClick={handleForgotClose} aria-label="Cerrar">
+                <FaTimes />
+              </button>
+            </div>
+
+            {!tempPassword ? (
+              <>
+                <p className="forgot-description">
+                  Ingresa tu correo electrónico y recibirás una contraseña temporal para acceder a tu cuenta.
+                </p>
+                <form onSubmit={handleForgotSubmit} className="forgot-form">
+                  {forgotError && <div className="forgot-error">{forgotError}</div>}
+                  <div className="forgot-input-group">
+                    <FaEnvelope className="forgot-input-icon" />
+                    <input
+                      type="email"
+                      placeholder="usuario@empresa.com"
+                      value={forgotEmail}
+                      onChange={(e) => setForgotEmail(e.target.value)}
+                      required
+                      autoFocus
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="forgot-submit-btn"
+                    disabled={forgotLoading}
+                  >
+                    {forgotLoading ? 'Procesando...' : 'Obtener contraseña temporal'}
+                  </button>
+                </form>
+              </>
+            ) : (
+              <div className="forgot-success">
+                <AiOutlineCheckCircle className="forgot-success-icon" />
+                <p><strong>¡Correo enviado!</strong></p>
+                <p>Revisa tu bandeja de entrada en <strong>{forgotEmail}</strong>. Te enviamos una contraseña temporal para acceder.</p>
+                <p className="forgot-warning">
+                  Recuerda cambiarla desde tu perfil después de iniciar sesión.
+                </p>
+                <button className="forgot-submit-btn" onClick={handleForgotClose}>
+                  Volver al inicio de sesión
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="login-wrapper">
         {/* Left Side - Form */}
         <div className="login-left">
@@ -55,7 +164,7 @@ export default function Login() {
 
             <form onSubmit={handleSubmit} className="login-form">
               {error && <div className="error-message">{error}</div>}
-              
+
               <div className="form-group">
                 <label htmlFor="email">Email</label>
                 <div className="input-wrapper">
@@ -124,7 +233,7 @@ export default function Login() {
             <div className="login-footer">
               <p>
                 ¿Olvidaste tu contraseña?{' '}
-                <a href="#recuperar" className="recovery-link">
+                <a href="#recuperar" className="recovery-link" onClick={handleForgotOpen}>
                   Recuperar
                 </a>
               </p>

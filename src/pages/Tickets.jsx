@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { FaPaperPlane, FaBuilding, FaUser, FaTimes, FaTicketAlt, FaEye } from 'react-icons/fa';
 import TicketList from '../components/TicketList';
 import { ticketService, comentarioService, categoriaService, departamentoService, usuarioService, archivoService, STORAGE_BASE_URL } from '../services';
@@ -7,6 +8,7 @@ import '../styles/Tickets.css';
 
 export default function Tickets() {
   const { user: authUser } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState('departamento');
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -55,6 +57,20 @@ export default function Tickets() {
     fetchDepartamentos();
     fetchUsuarios();
   }, []);
+
+  // Abrir modal si viene ?ticketId=X desde una notificación
+  useEffect(() => {
+    const ticketIdParam = searchParams.get('ticketId');
+    if (!ticketIdParam || loading) return;
+
+    const ticket = tickets.find(t => String(t.id) === String(ticketIdParam));
+    if (ticket) {
+      handleView(ticket);
+      // Limpiar el param de la URL sin recargar
+      setSearchParams({}, { replace: true });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, tickets, loading]);
 
   useEffect(() => {
     if (showViewModal && selectedTicket) {
@@ -350,7 +366,7 @@ export default function Tickets() {
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header">
-              <h2><FaTicketAlt /> Crear Nuevo Ticket</h2>
+              <h2 className="modal-title"><FaTicketAlt /> Crear Nuevo Ticket</h2>
               <button
                 className="modal-close"
                 onClick={() => setShowCreateModal(false)}

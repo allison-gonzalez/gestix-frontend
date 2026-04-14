@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 
 // Auth (HEAD)
 import { AuthProvider } from './contexts/AuthContext';
+import { NotificacionesProvider } from './contexts/NotificacionesContext';
 import { PermissionsProvider } from './contexts/PermissionsContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { ProtectedRouteWithPermission } from './components/ProtectedRouteWithPermission';
@@ -25,6 +26,7 @@ import Usuarios from './pages/Usuarios';
 import Administracion from './pages/Administracion';
 import AdminModule from './pages/AdminModule';
 import Reportes from './pages/Reportes';
+import Profile from './pages/Profile';
 
 import './styles/index.css';
 import './styles/TicketList.css';
@@ -51,6 +53,10 @@ function AppContent() {
           ) : (
           <Routes>
             <Route path="/home" element={<Home />} />
+            
+            {/* Ruta del Perfil de Usuario */}
+            <Route path="/perfil" element={<Profile />} />
+
             <Route
               path="/tickets"
               element={
@@ -142,27 +148,32 @@ function ProtectedLayout() {
 }
 
 function PublicRoute({ children }) {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
   if (isLoading) return null;
-  if (isAuthenticated) return <Navigate to="/home" replace />;
+  if (isAuthenticated) {
+    if (user?.must_change_password) return <Navigate to="/perfil" replace />;
+    return <Navigate to="/home" replace />;
+  }
   return children;
 }
 
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <Routes>
-          {/* Login (HEAD prioridad) */}
-          <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+      <NotificacionesProvider>
+        <Router>
+          <Routes>
+            {/* Login (HEAD prioridad) */}
+            <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
 
-          {/* Redirect base */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
+            {/* Redirect base */}
+            <Route path="/" element={<Navigate to="/login" replace />} />
 
-          {/* Rutas protegidas */}
-          <Route path="/*" element={<ProtectedLayout />} />
-        </Routes>
-      </Router>
+            {/* Rutas protegidas */}
+            <Route path="/*" element={<ProtectedLayout />} />
+          </Routes>
+        </Router>
+      </NotificacionesProvider>
     </AuthProvider>
   );
 }

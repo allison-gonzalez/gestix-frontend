@@ -159,7 +159,9 @@ export default function TicketList({ tickets = [], loading, onRefresh, onView, o
                           }
                         </select>
                       ) : (
-                        usuarios.find(u => String(u.id) === String(ticket.asignado_a_id))?.nombre || 'Sin asignar'
+                        ticket.asignado_a_id
+                          ? (usuarios.find(u => Number(u.id) === Number(ticket.asignado_a_id))?.nombre ?? 'Sin asignar')
+                          : 'Sin asignar'
                       )}
                     </td>
                     <td>{ticket.fecha_creacion ? new Date(ticket.fecha_creacion).toLocaleDateString() : '-'}</td>
