@@ -20,6 +20,7 @@ export function useProfile() {
     try {
       const res = await profileService.updatePassword({ current, new: newPassword });
       setSuccess(res.data?.message || 'Contraseña actualizada correctamente');
+      updateUser({ must_change_password: false });
       return true;
     } catch (err) {
       setError(err.response?.data?.message || 'Error al actualizar la contraseña');

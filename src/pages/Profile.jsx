@@ -17,6 +17,9 @@ const Profile = () => {
     updating, profileError, profileSuccess, updateProfileData,
   } = useProfile();
 
+  console.log('Profile.jsx - user:', user);
+  console.log('Profile.jsx - must_change_password:', user?.must_change_password);
+
   /* ── Password state ─────────────────────────── */
   const [passwordData, setPasswordData] = useState({ current: '', new: '', confirm: '' });
   const [showPasswords, setShowPasswords] = useState({ current: false, new: false, confirm: false });
@@ -77,6 +80,13 @@ const Profile = () => {
         </div>
 
         <div className="profile-grid">
+
+          {user?.must_change_password && (
+            <div className="profile-force-change-banner">
+              <FaLock />
+              <span>Debes cambiar tu contraseña antes de continuar. Usa el formulario de seguridad a continuación.</span>
+            </div>
+          )}
 
           {/* ── Información Personal ── */}
           <div className="profile-card">

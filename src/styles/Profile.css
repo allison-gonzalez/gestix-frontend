@@ -77,6 +77,28 @@
   align-items: start;
 }
 
+/* -- Force change password banner ---------------- */
+.profile-force-change-banner {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #fff3cd;
+  border: 1.5px solid #f0a500;
+  border-left: 5px solid #f0a500;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  color: #7a5000;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.profile-force-change-banner svg {
+  flex-shrink: 0;
+  font-size: 1.2rem;
+  color: #f0a500;
+}
+
 /* -- Card ---------------------------------------- */
 .profile-card {
   background: #ffffff;

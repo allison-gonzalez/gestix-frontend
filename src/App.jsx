@@ -147,9 +147,12 @@ function ProtectedLayout() {
 }
 
 function PublicRoute({ children }) {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
   if (isLoading) return null;
-  if (isAuthenticated) return <Navigate to="/home" replace />;
+  if (isAuthenticated) {
+    if (user?.must_change_password) return <Navigate to="/perfil" replace />;
+    return <Navigate to="/home" replace />;
+  }
   return children;
 }
 
