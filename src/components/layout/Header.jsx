@@ -85,7 +85,8 @@ function Header() {
                       className={`notification-item-dropdown ${n.leida ? 'notif-leida' : 'notif-no-leida'}`}
                       onClick={() => {
                         if (!n.leida) marcarLeida(n.id);
-                        if (n.ticket_id) navigate(`/tickets`);
+                        setShowNotifications(false);
+                        if (n.ticket_id) navigate(`/tickets?ticketId=${n.ticket_id}`);
                       }}
                     >
                       <span className="notif-tipo-icon">
