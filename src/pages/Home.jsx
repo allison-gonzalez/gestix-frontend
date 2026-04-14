@@ -12,7 +12,9 @@ export default function Home() {
   const [stats, setStats] = useState({
     totalTickets: 0,
     ticketsAbiertos: 0,
+    ticketsPendientes: 0,
     ticketsResueltos: 0,
+    ticketsCerrados: 0,
     tiempoPromedio: 0,
     ticketsPorEstado: {},
     cambioTotalMes: 0,
@@ -75,8 +77,9 @@ export default function Home() {
 
       const totalTickets = tickets.length;
       const ticketsAbiertos = tickets.filter((t) => t.estado === 'abierto').length;
-      const ticketsResueltos = tickets.filter((t) => t.estado === 'resuelto').length;
       const ticketsPendientes = tickets.filter((t) => t.estado === 'pendiente').length;
+      const ticketsResueltos = tickets.filter((t) => t.estado === 'resuelto').length;
+      const ticketsCerrados = tickets.filter((t) => t.estado === 'cerrado').length;
 
       // Cálculo de dinámicas
       const hoy = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
@@ -158,12 +161,15 @@ export default function Home() {
       setStats({
         totalTickets,
         ticketsAbiertos,
+        ticketsPendientes,
         ticketsResueltos,
+        ticketsCerrados,
         tiempoPromedio,
         ticketsPorEstado: {
           abierto: ticketsAbiertos,
           pendiente: ticketsPendientes,
           resuelto: ticketsResueltos,
+          cerrado: ticketsCerrados,
         },
         cambioTotalMes,
         ticketsHoy,
@@ -178,7 +184,7 @@ export default function Home() {
   };
 
   const chartData = {
-    labels: ['ABIERTOS', 'PENDIENTES', 'RESUELTOS'],
+    labels: ['Abiertos', 'Pendientes', 'Resueltos', 'Cerrados'],
     datasets: [
       {
         label: 'Cantidad de Tickets',
@@ -186,20 +192,12 @@ export default function Home() {
           stats.ticketsPorEstado.abierto || 0,
           stats.ticketsPorEstado.pendiente || 0,
           stats.ticketsPorEstado.resuelto || 0,
+          stats.ticketsPorEstado.cerrado || 0,
         ],
-        backgroundColor: ['#5DADE2', '#F4D03F', '#58D68D'],
-        borderColor: ['#3498db', '#F39C12', '#27ae60'],
-        borderWidth: 2,
-        borderRadius: 8,
-        datalabels: {
-          color: '#fff',
-          font: {
-            weight: 'bold',
-            size: 16,
-          },
-          anchor: 'center',
-          align: 'center',
-        },
+        backgroundColor: ['#5DADE2', '#F4D03F', '#58D68D', '#A569BD'],
+        borderColor: ['#5DADE2', '#F4D03F', '#58D68D', '#A569BD'],
+        borderWidth: 1,
+        borderRadius: 4,
       },
     ],
   };
@@ -347,7 +345,7 @@ export default function Home() {
             <div className="stat-icon stat-icon-orange"><FaExclamationCircle /></div>
             <div className="stat-content">
               <h3>TICKETS PENDIENTES</h3>
-              <p className="stat-number">{loading ? '-' : stats.ticketsPorEstado.pendiente}</p>
+              <p className="stat-number">{loading ? '-' : stats.ticketsPendientes}</p>
               <span className="stat-change">{loading ? '-' : getChangeText(stats.cambioTotalMes)}</span>
             </div>
           </div>
@@ -361,6 +359,14 @@ export default function Home() {
           </div>
           <div className="stat-card" style={{ borderLeftColor: '#AF7AC5' }}>
             <div className="stat-icon stat-icon-purple"><FaLightbulb /></div>
+            <div className="stat-content">
+              <h3>TICKETS CERRADOS</h3>
+              <p className="stat-number">{loading ? '-' : stats.ticketsCerrados}</p>
+              <span className="stat-change">↑ 8% vs mes anterior</span>
+            </div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-icon stat-icon-pink"><FaLightbulb /></div>
             <div className="stat-content">
               <h3>TIEMPO PROMEDIO</h3>
               <p className="stat-number">{loading ? '-' : `${stats.tiempoPromedio} ${stats.tiempoPromedio === 1 ? 'día' : 'días'}`}</p>

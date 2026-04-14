@@ -19,6 +19,7 @@ import {
   FaToggleOn,
   FaToggleOff,
   FaQuestion,
+  FaTimes,
 } from 'react-icons/fa';
 import { backupService } from '../services';
 import DataTable from '../components/common/DataTable';
@@ -188,7 +189,7 @@ export default function Administracion() {
           <h1 className="page-title">Administración</h1>
           <p className="page-subtitle">Respaldo y restauración de base de datos</p>
         </div>
-        <button className="btn-primary" onClick={handleCreate} disabled={creating || loading}>
+        <button className="btn-primary btn-create-ticket" onClick={handleCreate} disabled={creating || loading}>
           <FaPlus /> {creating ? 'Creando...' : 'Nuevo Backup'}
         </button>
       </div>
@@ -417,6 +418,12 @@ export default function Administracion() {
                       onChange={(e) => setBackupSearch(e.target.value)}
                     />
                   </div>
+                  {backupSearch && (
+                    <button className="btn-secondary" onClick={() => setBackupSearch('')}>
+                      <FaTimes /> Limpiar
+                    </button>
+                  )}
+                  <div className="admin-toolbar-spacer"></div>
                   <button className="btn-icon-only" onClick={fetchData} title="Actualizar">
                     <FaSync />
                   </button>
@@ -428,7 +435,7 @@ export default function Administracion() {
                   <div className="admin-empty-icon"><FaDatabase /></div>
                   <p className="admin-empty-title">Sin backups</p>
                   <p className="admin-empty-sub">Crea el primer backup para proteger tus datos.</p>
-                  <button className="btn-primary" onClick={handleCreate} disabled={creating}>
+                  <button className="btn-primary btn-create-ticket" onClick={handleCreate} disabled={creating}>
                     <FaPlus /> {creating ? 'Creando...' : 'Crear primer backup'}
                   </button>
                 </div>

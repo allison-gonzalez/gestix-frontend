@@ -249,12 +249,17 @@ export default function AdminModule() {
                   <FaSearch className="search-icon" />
                   <input type="text" placeholder="Buscar departamento..." value={deptSearch} onChange={(e) => setDeptSearch(e.target.value)} />
                 </div>
-                <PermissionGuard permiso="crear_ticket">
-                  <button className="btn-primary" onClick={() => { setEditingDept(null); setDeptForm({ nombre: '', estatus: 1 }); setShowDeptModal(true); }}>
-                    <FaPlus /> Nuevo
+                {deptSearch && (
+                  <button className="btn-secondary" onClick={() => setDeptSearch('')}>
+                    <FaTimes /> Limpiar
                   </button>
-                </PermissionGuard>
+                )}
               </div>
+              <PermissionGuard permiso="crear_ticket">
+                <button className="btn-primary btn-create-ticket" onClick={() => { setEditingDept(null); setDeptForm({ nombre: '', estatus: 1 }); setShowDeptModal(true); }}>
+                  <FaPlus /> Nuevo
+                </button>
+              </PermissionGuard>
             </div>
             <DataTable
               keyField="_id"
@@ -287,12 +292,17 @@ export default function AdminModule() {
                   <FaSearch className="search-icon" />
                   <input type="text" placeholder="Buscar permiso..." value={permSearch} onChange={(e) => setPermSearch(e.target.value)} />
                 </div>
-                <PermissionGuard permiso="crear_ticket">
-                  <button className="btn-primary" onClick={() => { setEditingPerm(null); setPermForm({ nombre: '', descripcion: '', estatus: 1 }); setShowPermModal(true); }}>
-                    <FaPlus /> Nuevo
+                {permSearch && (
+                  <button className="btn-secondary" onClick={() => setPermSearch('')}>
+                    <FaTimes /> Limpiar
                   </button>
-                </PermissionGuard>
+                )}
               </div>
+              <PermissionGuard permiso="crear_ticket">
+                <button className="btn-primary btn-create-ticket" onClick={() => { setEditingPerm(null); setPermForm({ nombre: '', descripcion: '', estatus: 1 }); setShowPermModal(true); }}>
+                  <FaPlus /> Nuevo
+                </button>
+              </PermissionGuard>
             </div>
             <DataTable
               keyField="_id"
@@ -326,12 +336,17 @@ export default function AdminModule() {
                   <FaSearch className="search-icon" />
                   <input type="text" placeholder="Buscar categoría..." value={catSearch} onChange={(e) => setCatSearch(e.target.value)} />
                 </div>
-                <PermissionGuard permiso="crear_ticket">
-                  <button className="btn-primary" onClick={() => { setEditingCat(null); setCatForm({ nombre: '', departamento_id: '', estatus: 1 }); setShowCatModal(true); }}>
-                    <FaPlus /> Nuevo
+                {catSearch && (
+                  <button className="btn-secondary" onClick={() => setCatSearch('')}>
+                    <FaTimes /> Limpiar
                   </button>
-                </PermissionGuard>
+                )}
               </div>
+              <PermissionGuard permiso="crear_ticket">
+                <button className="btn-primary btn-create-ticket" onClick={() => { setEditingCat(null); setCatForm({ nombre: '', departamento_id: '', estatus: 1 }); setShowCatModal(true); }}>
+                  <FaPlus /> Nuevo
+                </button>
+              </PermissionGuard>
             </div>
             <DataTable
               keyField="_id"

@@ -1,4 +1,5 @@
 import api from './api';
+export { STORAGE_BASE_URL } from './api';
 
 // Tickets
 export const ticketService = {
@@ -63,6 +64,12 @@ export const backupService = {
   download: (filename) => api.get(`/backup/download/${filename}`, { responseType: 'blob' }),
   delete: (filename) => api.delete(`/backup/${filename}`),
   restore: (filename) => api.post(`/backup/restore/${filename}`),
+};
+
+// Archivos
+export const archivoService = {
+  getByEntidad: (tipo, id) => api.get(`/archivos/${tipo}/${id}`),
+  delete: (id) => api.delete(`/archivos/${id}`),
 };
 
 export default api;

@@ -4,7 +4,7 @@
   justify-content: flex-end;
   align-items: center;
   height: 70px;
-  background-color: #1e3a5f;
+  background-color: #1B3A5C;
   padding: 0 2rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   position: sticky;
@@ -33,7 +33,7 @@
 .header-icon-btn {
   background: none;
   border: none;
-  color: #80deea;
+  color: #2DC4D4;
   font-size: 1.2rem;
   cursor: pointer;
   position: relative;
@@ -47,15 +47,15 @@
 }
 
 .header-icon-btn:hover {
-  background-color: rgba(0, 188, 212, 0.15);
-  color: #b2ebf2;
+  background-color: rgba(45, 196, 212, 0.15);
+  color: #2DC4D4;
 }
 
 .notification-badge {
   position: absolute;
   top: -4px;
   right: -4px;
-  background-color: #e74c3c;
+  background-color: #e53e3e;
   color: white;
   border-radius: 50%;
   width: 18px;

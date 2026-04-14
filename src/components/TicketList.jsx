@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaSearch, FaFilter, FaEye, FaEdit } from 'react-icons/fa';
+import { FaSearch, FaEye, FaPlus, FaSpinner, FaTimes } from 'react-icons/fa';
 import '../styles/TicketList.css';
 
 const PRIORITY_COLORS = {
@@ -15,41 +15,102 @@ const STATUS_COLORS = {
   cerrado: 'badge-gray',
 };
 
-export default function TicketList({ tickets = [], loading, onRefresh }) {
+export default function TicketList({ tickets = [], loading, onRefresh, onView, onCreateTicket, usuarios = [], authUser, onAssign }) {
   const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState('todos');
+  const [filterEstado, setFilterEstado] = useState('todos');
+  const [filterPrioridad, setFilterPrioridad] = useState('todas');
+
+  const canAssign = Array.isArray(authUser?.permisos) && authUser.permisos.some(p => Number(p) === 4);
 
   const filtered = tickets.filter((t) => {
     const matchSearch =
       t.titulo?.toLowerCase().includes(search.toLowerCase()) ||
       t.descripcion?.toLowerCase().includes(search.toLowerCase());
-    if (filter === 'alta') return matchSearch && t.prioridad === 'alta';
-    if (filter === 'abiertos') return matchSearch && t.estado === 'abierto';
-    return matchSearch;
+    const matchEstado = filterEstado === 'todos' || t.estado === filterEstado;
+    const matchPrioridad = filterPrioridad === 'todas' || t.prioridad === filterPrioridad;
+    return matchSearch && matchEstado && matchPrioridad;
   });
 
   return (
     <div className="ticket-list-container">
       <div className="ticket-list-toolbar">
-        <div className="search-box">
-          <FaSearch className="search-icon" />
-          <input
-            type="text"
-            placeholder="Buscar tickets..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+        <div className="search-and-filters">
+          <div className="filter-group">
+            <label className="filter-label">Buscar</label>
+            <div className="search-box">
+              <FaSearch className="search-icon" />
+              <input
+                type="text"
+                placeholder="Buscar tickets..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              {search && (
+                <button className="search-box-clear" onClick={() => setSearch('')}>
+                  <FaTimes />
+                </button>
+              )}
+            </div>
+          </div>
+          <div className="filter-buttons">
+            <div className="filter-group">
+              <label className="filter-label">Estado</label>
+              <select
+                className="filter-select"
+                value={filterEstado}
+                onChange={(e) => setFilterEstado(e.target.value)}
+              >
+                <option value="todos">Todos</option>
+                <option value="abierto">Abierto</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="resuelto">Resuelto</option>
+                <option value="cerrado">Cerrado</option>
+              </select>
+            </div>
+            <div className="filter-group">
+              <label className="filter-label">Prioridad</label>
+              <select
+                className="filter-select"
+                value={filterPrioridad}
+                onChange={(e) => setFilterPrioridad(e.target.value)}
+              >
+                <option value="todas">Todas</option>
+                <option value="baja">Baja</option>
+                <option value="media">Media</option>
+                <option value="alta">Alta</option>
+                <option value="critica">Crítica</option>
+              </select>
+            </div>
+          </div>
+
+          {(search || filterEstado !== 'todos' || filterPrioridad !== 'todas') && (
+            <button 
+              className="btn-secondary"
+              onClick={() => {
+                setSearch('');
+                setFilterEstado('todos');
+                setFilterPrioridad('todas');
+              }}
+              title="Limpiar todos los filtros"
+            >
+              <FaTimes /> Limpiar
+            </button>
+          )}
         </div>
-        <div className="filter-buttons">
-          <button className={`filter-btn ${filter === 'todos' ? 'active' : ''}`} onClick={() => setFilter('todos')}>Todos</button>
-          <button className={`filter-btn ${filter === 'alta' ? 'active' : ''}`} onClick={() => setFilter('alta')}>Alta Prioridad</button>
-          <button className={`filter-btn ${filter === 'abiertos' ? 'active' : ''}`} onClick={() => setFilter('abiertos')}>Abiertos</button>
-          <button className="filter-btn icon-btn"><FaFilter /></button>
-        </div>
+        <button 
+          className="btn-primary btn-create-ticket"
+          onClick={onCreateTicket}
+          title="Crear nuevo ticket"
+        >
+          <FaPlus /> Crear Ticket
+        </button>
       </div>
 
       {loading ? (
-        <div className="loading-state">Cargando tickets...</div>
+        <div className="ul-state ul-state--loading">
+          <FaSpinner className="spin" />
+          <span>Cargando tickets…</span>
+        </div>
       ) : (
         <div className="table-wrapper">
           <table className="ticket-table">
@@ -70,7 +131,7 @@ export default function TicketList({ tickets = [], loading, onRefresh }) {
               ) : (
                 filtered.map((ticket, index) => (
                   <tr key={ticket._id || index}>
-                    <td className="ticket-id">#{index + 1}</td>
+                    <td className="ticket-id">#{ticket.id}</td>
                     <td className="ticket-title">{ticket.titulo}</td>
                     <td>
                       <span className={`badge ${PRIORITY_COLORS[ticket.prioridad] || 'badge-gray'}`}>
@@ -82,11 +143,32 @@ export default function TicketList({ tickets = [], loading, onRefresh }) {
                         {ticket.estado}
                       </span>
                     </td>
-                    <td>{ticket.asignado_a || 'Sin asignar'}</td>
+                    <td>
+                      {canAssign ? (
+                        <select
+                          className="assign-select"
+                          value={ticket.asignado_a_id ?? ''}
+                          onChange={(e) => onAssign && onAssign(ticket.id, e.target.value ? Number(e.target.value) : null)}
+                        >
+                          <option value="">Sin asignar</option>
+                          {usuarios
+                            .filter(u => String(u.departamento_id) === String(ticket.departamento_id) && u.estatus === 1)
+                            .map(u => (
+                              <option key={u.id} value={u.id}>{u.nombre}</option>
+                            ))
+                          }
+                        </select>
+                      ) : (
+                        usuarios.find(u => String(u.id) === String(ticket.asignado_a_id))?.nombre || 'Sin asignar'
+                      )}
+                    </td>
                     <td>{ticket.fecha_creacion ? new Date(ticket.fecha_creacion).toLocaleDateString() : '-'}</td>
-                    <td className="actions">
-                      <button className="action-btn" title="Ver"><FaEye /></button>
-                      <button className="action-btn" title="Editar"><FaEdit /></button>
+                    <td>
+                      <div className="admin-actions">
+                        <button className="backup-btn restore" title="Ver" onClick={() => onView && onView(ticket)}>
+                          <FaEye />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
