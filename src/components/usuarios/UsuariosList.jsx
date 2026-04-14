@@ -254,7 +254,7 @@ function UsuarioModal({ usuario, departamentos, permisos, onClose, onSave }) {
                   {departamentos.map(d => {
                     const id = docId(d);
                     return (
-                      <option key={String(id)} value={id}>
+                      <option key={String(id)} value={String(id)}>
                         {d.nombre}
                       </option>
                     );
