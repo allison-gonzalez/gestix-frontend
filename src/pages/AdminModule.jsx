@@ -11,7 +11,7 @@ import {
   FaCheck,
   FaSave,
 } from 'react-icons/fa';
-import { departamentoService, permisoService, categoriaService } from '../services';
+import { departamentoService, permisoService, categoriaService, usuarioService } from '../services';
 import DataTable from '../components/common/DataTable';
 import { PermissionGuard } from '../components/PermissionGuard';
 import '../styles/Administracion.css';
@@ -28,8 +28,9 @@ export default function AdminModule() {
 
   // Departamentos
   const [departamentos, setDepartamentos] = useState([]);
+  const [usuariosActivos, setUsuariosActivos] = useState([]);
   const [showDeptModal, setShowDeptModal] = useState(false);
-  const [deptForm, setDeptForm] = useState({ nombre: '', estatus: 1 });
+  const [deptForm, setDeptForm] = useState({ nombre: '', estatus: 1, encargado_id: '' });
   const [deptSearch, setDeptSearch] = useState('');
   const [editingDept, setEditingDept] = useState(null);
 
@@ -63,8 +64,12 @@ export default function AdminModule() {
 
   const loadDepartamentos = async () => {
     try {
-      const res = await departamentoService.getAll();
-      setDepartamentos(res.data?.data || []);
+      const [dRes, uRes] = await Promise.all([
+        departamentoService.getAll(),
+        usuarioService.getAll(),
+      ]);
+      setDepartamentos(dRes.data?.data || []);
+      setUsuariosActivos((uRes.data?.data || []).filter(u => Number(u.estatus) === 1));
     } catch (err) {
       console.error('Error al cargar departamentos:', err);
     }
@@ -103,15 +108,20 @@ export default function AdminModule() {
   const handleSaveDept = async () => {
     if (!deptForm.nombre.trim()) { showAlert('error', 'El nombre es requerido'); return; }
     try {
+      const payload = {
+        nombre:       deptForm.nombre,
+        estatus:      deptForm.estatus,
+        encargado_id: deptForm.encargado_id !== '' ? Number(deptForm.encargado_id) : null,
+      };
       if (editingDept) {
-        await departamentoService.update(editingDept._id, deptForm);
+        await departamentoService.update(editingDept._id, payload);
         showAlert('success', 'Departamento actualizado');
       } else {
-        await departamentoService.create(deptForm);
+        await departamentoService.create(payload);
         showAlert('success', 'Departamento creado');
       }
       setShowDeptModal(false);
-      setDeptForm({ nombre: '', estatus: 1 });
+      setDeptForm({ nombre: '', estatus: 1, encargado_id: '' });
       setEditingDept(null);
       await loadData();
     } catch (err) {
@@ -121,7 +131,7 @@ export default function AdminModule() {
 
   const handleEditDept = (dept) => {
     setEditingDept(dept);
-    setDeptForm({ nombre: dept.nombre, estatus: dept.estatus });
+    setDeptForm({ nombre: dept.nombre, estatus: dept.estatus, encargado_id: dept.encargado_id ?? '' });
     setShowDeptModal(true);
   };
 
@@ -263,6 +273,7 @@ export default function AdminModule() {
             </div>
             <DataTable
               keyField="_id"
+              loading={loading}
               rows={departamentos.filter(d => d.nombre?.toLowerCase().includes(deptSearch.toLowerCase()))}
               emptyText="No hay departamentos registrados"
               columns={[
@@ -306,6 +317,7 @@ export default function AdminModule() {
             </div>
             <DataTable
               keyField="_id"
+              loading={loading}
               rows={permisos.filter(p => p.nombre?.toLowerCase().includes(permSearch.toLowerCase()))}
               emptyText="No hay permisos registrados"
               columns={[
@@ -350,6 +362,7 @@ export default function AdminModule() {
             </div>
             <DataTable
               keyField="_id"
+              loading={loading}
               rows={categorias.filter(c => c.nombre?.toLowerCase().includes(catSearch.toLowerCase()))}
               emptyText="No hay categorías registradas"
               columns={[
@@ -391,6 +404,18 @@ export default function AdminModule() {
                 <select value={deptForm.estatus} onChange={(e) => setDeptForm({ ...deptForm, estatus: parseInt(e.target.value) })}>
                   <option value={1}>Activo</option>
                   <option value={0}>Inactivo</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label>Encargado del departamento</label>
+                <select
+                  value={deptForm.encargado_id}
+                  onChange={(e) => setDeptForm({ ...deptForm, encargado_id: e.target.value })}
+                >
+                  <option value="">Sin encargado</option>
+                  {usuariosActivos.map(u => (
+                    <option key={u.id ?? u._id} value={u.id ?? u._id}>{u.nombre}</option>
+                  ))}
                 </select>
               </div>
             </div>

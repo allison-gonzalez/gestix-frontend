@@ -4,7 +4,7 @@ import {
   FaTimes, FaCheck, FaUserCircle, FaShieldAlt, FaBuilding,
   FaExclamationTriangle, FaSpinner,
 } from 'react-icons/fa';
-import { usuarioService, departamentoService, permisoService } from '../../services';
+import { usuarioService, departamentoService, permisoService, categoriaService } from '../../services';
 import '../../styles/UsuariosList.css';
 import '../../styles/TicketList.css';
 
@@ -73,7 +73,7 @@ function Toast({ toasts }) {
 }
 
 /* ── Modal form ───────────────────────────────────────────────── */
-function UsuarioModal({ usuario, departamentos, permisos, onClose, onSave }) {
+function UsuarioModal({ usuario, departamentos, permisos, categorias, onClose, onSave }) {
   const isEdit = Boolean(usuario);
 
   const [form, setForm] = useState(() => ({
@@ -86,6 +86,8 @@ function UsuarioModal({ usuario, departamentos, permisos, onClose, onSave }) {
     departamento_id: toNum(usuario?.departamento_id) ?? '',
     // Convert every permission id to a number
     permisos:        (usuario?.permisos ?? []).map(Number).filter(n => !isNaN(n)),
+    // Categories this user can handle
+    categorias_asignables: (usuario?.categorias_asignables ?? []).map(Number).filter(n => !isNaN(n)),
   }));
 
   const [showPass, setShowPass] = useState(false);
@@ -98,6 +100,15 @@ function UsuarioModal({ usuario, departamentos, permisos, onClose, onSave }) {
       permisos: f.permisos.includes(numericId)
         ? f.permisos.filter(p => p !== numericId)
         : [...f.permisos, numericId],
+    }));
+  };
+
+  const toggleCategoria = (numericId) => {
+    setForm(f => ({
+      ...f,
+      categorias_asignables: f.categorias_asignables.includes(numericId)
+        ? f.categorias_asignables.filter(c => c !== numericId)
+        : [...f.categorias_asignables, numericId],
     }));
   };
 
@@ -131,14 +142,13 @@ function UsuarioModal({ usuario, departamentos, permisos, onClose, onSave }) {
     setSaving(true);
     try {
       const payload = {
-        nombre:          form.nombre,
-        correo:          form.correo,
-        telefono:        form.telefono,
-        estatus:         parseInt(form.estatus, 10),
-        // Must be integer (Int32) to match DB schema, or null
-        departamento_id: form.departamento_id !== '' ? Number(form.departamento_id) : null,
-        // Array of integers — matches DB schema exactly
-        permisos:        form.permisos,
+        nombre:                form.nombre,
+        correo:                form.correo,
+        telefono:              form.telefono,
+        estatus:               parseInt(form.estatus, 10),
+        departamento_id:       form.departamento_id !== '' ? Number(form.departamento_id) : null,
+        permisos:              form.permisos,
+        categorias_asignables: form.categorias_asignables,
       };
       if (form.contrasena) payload.contrasena = form.contrasena;
       await onSave(payload);
@@ -247,7 +257,7 @@ function UsuarioModal({ usuario, departamentos, permisos, onClose, onSave }) {
                   value={form.departamento_id}
                   onChange={e => {
                     const v = e.target.value;
-                    setForm(f => ({ ...f, departamento_id: v === '' ? '' : Number(v) }));
+                    setForm(f => ({ ...f, departamento_id: v === '' ? '' : Number(v), categorias_asignables: [] }));
                   }}
                 >
                   <option value="">Sin departamento</option>
@@ -264,7 +274,7 @@ function UsuarioModal({ usuario, departamentos, permisos, onClose, onSave }) {
             </div>
           </div>
 
-          {/* ── Right: permisos ── */}
+          {/* ── Right: permisos + categorías ── */}
           <div className="ul-modal__col">
             <div className="ul-permisos-head">
               <FaShieldAlt />
@@ -277,7 +287,6 @@ function UsuarioModal({ usuario, departamentos, permisos, onClose, onSave }) {
               )}
               {permisos.map(p => {
                 const numId   = docId(p);
-                // Checked if the user's permisos array (numbers) includes this permission's numeric id
                 const checked = form.permisos.includes(numId);
                 return (
                   <label
@@ -297,6 +306,43 @@ function UsuarioModal({ usuario, departamentos, permisos, onClose, onSave }) {
                       {p.descripcion && (
                         <span className="ul-permiso__desc">{p.descripcion}</span>
                       )}
+                    </div>
+                  </label>
+                );
+              })}
+            </div>
+
+            {/* Categorías que puede atender */}
+            <div className="ul-permisos-head" style={{ marginTop: '1rem' }}>
+              <FaShieldAlt />
+              <span>Categorías que atiende</span>
+              <span className="ul-permisos-count">{form.categorias_asignables.length}</span>
+            </div>
+            <div className="ul-permisos-grid">
+              {(form.departamento_id === '' || form.departamento_id === null) && (
+                <p className="ul-no-permisos">Selecciona un departamento primero</p>
+              )}
+              {categorias.filter(c => Number(c.departamento_id) === Number(form.departamento_id) && form.departamento_id !== '' && form.departamento_id !== null).length === 0 && form.departamento_id !== '' && form.departamento_id !== null && (
+                <p className="ul-no-permisos">No hay categorías para este departamento</p>
+              )}
+              {categorias.filter(c => Number(c.departamento_id) === Number(form.departamento_id)).map(c => {
+                const numId   = docId(c);
+                const checked = form.categorias_asignables.includes(numId);
+                return (
+                  <label
+                    key={String(numId)}
+                    className={`ul-permiso ${checked ? 'is-checked' : ''}`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => toggleCategoria(numId)}
+                    />
+                    <span className="ul-permiso__mark">
+                      {checked && <FaCheck />}
+                    </span>
+                    <div className="ul-permiso__info">
+                      <span className="ul-permiso__name">{c.nombre}</span>
                     </div>
                   </label>
                 );
@@ -406,6 +452,7 @@ export default function UsuariosList({
   const [loading,       setLoading]       = useState(initialLoading);
   const [departamentos, setDepartamentos] = useState([]);
   const [permisos,      setPermisos]      = useState([]);
+  const [categorias,    setCategorias]    = useState([]);
   const [search,        setSearch]        = useState('');
   const [filterEstatus, setFilterEstatus] = useState('todos');
   const [filterDepto,   setFilterDepto]   = useState('');
@@ -421,12 +468,14 @@ export default function UsuariosList({
   useEffect(() => {
     const load = async () => {
       try {
-        const [dRes, pRes] = await Promise.all([
+        const [dRes, pRes, cRes] = await Promise.all([
           departamentoService.getAll(),
           permisoService.getAll(),
+          categoriaService.getAll(),
         ]);
         setDepartamentos(Array.isArray(dRes.data) ? dRes.data : dRes.data?.data ?? []);
         setPermisos(Array.isArray(pRes.data) ? pRes.data : pRes.data?.data ?? []);
+        setCategorias(Array.isArray(cRes.data) ? cRes.data : cRes.data?.data ?? []);
       } catch (err) {
         console.warn('Error cargando catálogos:', err);
       }
@@ -642,6 +691,7 @@ export default function UsuariosList({
           usuario={modal === 'create' ? null : modal}
           departamentos={departamentos}
           permisos={permisos}
+          categorias={categorias}
           onClose={() => setModal(null)}
           onSave={handleSave}
         />
