@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 
 // Auth (HEAD)
 import { AuthProvider } from './contexts/AuthContext';
+import { NotificacionesProvider } from './contexts/NotificacionesContext';
 import { PermissionsProvider } from './contexts/PermissionsContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { ProtectedRouteWithPermission } from './components/ProtectedRouteWithPermission';
@@ -159,18 +160,21 @@ function PublicRoute({ children }) {
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <Routes>
-          {/* Login (HEAD prioridad) */}
-          <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+      {/* Temporalmente deshabilitado para debugging */}
+      {/* <NotificacionesProvider> */}
+        <Router>
+          <Routes>
+            {/* Login (HEAD prioridad) */}
+            <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
 
-          {/* Redirect base */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
+            {/* Redirect base */}
+            <Route path="/" element={<Navigate to="/login" replace />} />
 
-          {/* Rutas protegidas */}
-          <Route path="/*" element={<ProtectedLayout />} />
-        </Routes>
-      </Router>
+            {/* Rutas protegidas */}
+            <Route path="/*" element={<ProtectedLayout />} />
+          </Routes>
+        </Router>
+      {/* </NotificacionesProvider> */}
     </AuthProvider>
   );
 }

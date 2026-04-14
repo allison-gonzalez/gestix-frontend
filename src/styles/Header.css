@@ -82,9 +82,13 @@
 }
 
 .notification-header {
-  padding: 1rem;
+  padding: 0.75rem 1rem;
   border-bottom: 1px solid #f0f0f0;
   background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
 }
 
 .notification-header h4 {
@@ -93,45 +97,103 @@
   font-weight: 600;
 }
 
+.notif-mark-all-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: none;
+  border: 1px solid #2DC4D4;
+  color: #2DC4D4;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.notif-mark-all-btn:hover {
+  background: #2DC4D4;
+  color: #fff;
+}
+
 .notification-list {
-  max-height: 300px;
+  max-height: 340px;
   overflow-y: auto;
 }
 
+.notif-empty {
+  padding: 1.5rem;
+  text-align: center;
+  color: #aaa;
+  font-size: 0.88rem;
+  margin: 0;
+}
+
 .notification-item-dropdown {
-  padding: 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 0.85rem 1rem;
   border-bottom: 1px solid #f0f0f0;
   transition: background-color 0.2s;
   cursor: pointer;
+  position: relative;
 }
 
 .notification-item-dropdown:hover {
-  background-color: #f9f9f9;
+  background-color: #f0fafa;
+}
+
+.notif-no-leida {
+  background-color: #f0faff;
+}
+
+.notif-leida {
+  opacity: 0.7;
+}
+
+.notif-tipo-icon {
+  color: #2DC4D4;
+  font-size: 1rem;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.notif-body {
+  flex: 1;
+  min-width: 0;
 }
 
 .notification-title {
-  margin: 0 0 0.25rem 0;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #333;
+  margin: 0 0 0.15rem 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #1B3A5C;
+}
+
+.notif-mensaje {
+  margin: 0 0 0.2rem 0;
+  font-size: 0.8rem;
+  color: #555;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .notification-time {
   margin: 0;
-  font-size: 0.8rem;
-  color: #999;
+  font-size: 0.75rem;
+  color: #aaa;
 }
 
-.notification-footer {
-  padding: 0.75rem 1rem;
-  text-align: center;
-  border-top: 1px solid #f0f0f0;
-}
-
-.notification-footer a {
-  color: #3498db;
-  text-decoration: none;
-  font-size: 0.9rem;
+.notif-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2DC4D4;
+  flex-shrink: 0;
+  margin-top: 0.35rem;
 }
 
 /* Responsive */
