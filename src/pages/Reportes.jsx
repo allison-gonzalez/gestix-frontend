@@ -10,6 +10,7 @@ import {
 } from 'chart.js';
 import * as XLSX from 'xlsx';
 import api from '../services/api';
+import { analyticsService } from '../services/integrationService';
 import '../styles/Reportes.css';
 import '../styles/TicketList.css';
 
@@ -45,6 +46,9 @@ export default function Reportes() {
   const [datos, setDatos] = useState(defaultData);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [analytics, setAnalytics] = useState({ byDept: [], byAgent: [] });
+  const [analyticsLoading, setAnalyticsLoading] = useState(true);
 
   const rangoLabel = FILTROS.find(f => f.value === rango)?.label ?? rango;
 
@@ -116,6 +120,19 @@ export default function Reportes() {
   useEffect(() => {
     fetchReportes();
   }, [fetchReportes]);
+
+  useEffect(() => {
+    setAnalyticsLoading(true);
+    Promise.all([
+      analyticsService.getByDepartment().catch(() => null),
+      analyticsService.getByAgent().catch(() => null),
+    ]).then(([deptRes, agentRes]) => {
+      setAnalytics({
+        byDept:  deptRes?.data?.data  ?? [],
+        byAgent: agentRes?.data?.data ?? [],
+      });
+    }).finally(() => setAnalyticsLoading(false));
+  }, []);
 
   /* ── Charts config ──────────────────────────── */
   const barMesData = {
@@ -361,6 +378,101 @@ export default function Reportes() {
           </div>
         )}
       </div>
+
+      {/* ── Analytics — Integration API ───────────────────────── */}
+      {!analyticsLoading && (analytics.byDept.length > 0 || analytics.byAgent.length > 0) && (
+        <>
+          <div className="rpt-section-divider">
+            <span>Analytics — Integration API</span>
+          </div>
+
+          <div className="rpt-charts-grid">
+            {analytics.byDept.length > 0 && (
+              <div className="rpt-chart-card full-width">
+                <h3 className="rpt-chart-title"><FaChartBar /> Tickets por departamento</h3>
+                <div className="rpt-chart-body">
+                  <Bar
+                    data={{
+                      labels: analytics.byDept.map(d => d.nombre),
+                      datasets: [
+                        {
+                          label: 'Abiertos',
+                          data: analytics.byDept.map(d => d.abiertos),
+                          backgroundColor: CHART_COLORS.cyan,
+                          borderRadius: 4,
+                        },
+                        {
+                          label: 'En progreso',
+                          data: analytics.byDept.map(d => d.en_progreso),
+                          backgroundColor: CHART_COLORS.yellow,
+                          borderRadius: 4,
+                        },
+                        {
+                          label: 'Resueltos',
+                          data: analytics.byDept.map(d => d.resueltos),
+                          backgroundColor: CHART_COLORS.green,
+                          borderRadius: 4,
+                        },
+                      ],
+                    }}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: { position: 'bottom', labels: { color: '#1B3A5C', font: { size: 12 }, padding: 14 } },
+                        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}` } },
+                      },
+                      scales: {
+                        x: { stacked: false, ticks: { color: '#1B3A5C', font: { size: 12 } }, grid: { display: false } },
+                        y: { beginAtZero: true, ticks: { stepSize: 1, color: '#6c757d', font: { size: 11 } }, grid: { color: '#f0f0f0' } },
+                      },
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {analytics.byAgent.length > 0 && (
+              <div className="rpt-chart-card full-width">
+                <h3 className="rpt-chart-title"><FaChartBar /> Carga de trabajo por agente</h3>
+                <div className="rpt-chart-body">
+                  <Bar
+                    data={{
+                      labels: analytics.byAgent.map(a => a.nombre),
+                      datasets: [
+                        {
+                          label: 'Activos',
+                          data: analytics.byAgent.map(a => a.activos),
+                          backgroundColor: CHART_COLORS.navy,
+                          borderRadius: 4,
+                        },
+                        {
+                          label: 'Resueltos',
+                          data: analytics.byAgent.map(a => a.resueltos),
+                          backgroundColor: CHART_COLORS.green,
+                          borderRadius: 4,
+                        },
+                      ],
+                    }}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: { position: 'bottom', labels: { color: '#1B3A5C', font: { size: 12 }, padding: 14 } },
+                        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}` } },
+                      },
+                      scales: {
+                        x: { ticks: { color: '#1B3A5C', font: { size: 12 } }, grid: { display: false } },
+                        y: { beginAtZero: true, ticks: { stepSize: 1, color: '#6c757d', font: { size: 11 } }, grid: { color: '#f0f0f0' } },
+                      },
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        </>
+      )}
       </div>
     </div>
   );
