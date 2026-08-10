@@ -10,6 +10,7 @@ import {
   FaTimes,
   FaBars,
   FaCog,
+  FaBrain,
 } from 'react-icons/fa';
 import { useAuth } from '../../hooks/useAuth';
 import { usePermission } from '../../hooks/usePermission';
@@ -57,6 +58,7 @@ function Navbar() {
     { path: '/tickets', label: 'Tickets', icon: FaTicketAlt, requiredPermission: 'crear_ticket' },
     { path: '/usuarios', label: 'Usuarios', icon: FaUsers, requiredPermission: 'ver_usuarios' },
     { path: '/reportes', label: 'Reportes', icon: FaChartBar, requiredPermission: 'ver_reportes' },
+    { path: '/analiticas', label: 'Analítica Avanzada', icon: FaBrain, requiredPermission: 'ver_reportes' },
     { path: '/admin', label: 'Administración de Datos', icon: FaCog, requiredPermission: 'acceso_admin' },
     { path: '/administracion', label: 'Administración BD', icon: FaDatabase, requiredPermission: 'acceso_admin_datos' },
   ];

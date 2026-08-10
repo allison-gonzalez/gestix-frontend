@@ -1,0 +1,279 @@
+/* =====================================================
+   Analiticas.css — Gestix Advanced Analytics Module
+   Palette: #1B3A5C (navy) | #FFD100 (yellow) | #2DC4D4 (cyan)
+   All classes prefixed with .an- to avoid conflicts
+   ===================================================== */
+
+.an-intro-card {
+  background: linear-gradient(135deg, #1B3A5C 0%, #234a73 100%);
+  color: white;
+  border-radius: 10px;
+  padding: 1.5rem 1.75rem;
+}
+
+.an-intro-card p {
+  margin: 0 0 1rem;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.92);
+  max-width: 900px;
+}
+
+.an-intro-card b {
+  color: #FFD100;
+  font-weight: 700;
+}
+
+.an-intro-pillars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.5rem;
+}
+
+.an-pillar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  background: white;
+  padding: 0.35rem 0.8rem;
+  border-radius: 50px;
+}
+
+.an-dimension-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.an-cluster-recomendacion {
+  margin: 0.4rem 0 0;
+  font-size: 0.8rem;
+  color: #495057;
+  line-height: 1.45;
+  font-style: italic;
+}
+
+.an-resumen-card {
+  background: #fffbea;
+  border: 1px solid #ffe58f;
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+}
+
+.an-resumen-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.8rem;
+  color: #8a6d00;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.an-resumen-lista {
+  margin: 0;
+  padding-left: 1.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.an-resumen-lista li {
+  color: #5c4a00;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.an-callout {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  background: #e8f4fd;
+  color: #1B3A5C;
+  border-left: 4px solid #2DC4D4;
+  border-radius: 8px;
+  padding: 0.9rem 1.1rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.5;
+  margin-bottom: 1.25rem;
+}
+
+.an-callout svg {
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+  color: #2DC4D4;
+}
+
+.an-technical-note {
+  margin: 1rem 0 0;
+  font-size: 0.72rem;
+  color: #adb5bd;
+  font-style: italic;
+}
+
+.an-section-card {
+  background: white;
+  border-radius: 10px;
+  padding: 1.5rem 1.75rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+.an-section-desc {
+  color: #6c757d;
+  font-size: 0.88rem;
+  margin: -0.25rem 0 1.25rem;
+  max-width: 780px;
+  line-height: 1.5;
+}
+
+.an-insuficiente {
+  background: #fffbea;
+  color: #8a6d00;
+  border-left: 4px solid #FFD100;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.88rem;
+}
+
+.an-cluster-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .an-cluster-layout { grid-template-columns: 1fr; }
+}
+
+.an-cluster-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.an-cluster-card {
+  border: 1px solid #eef0f3;
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+  background: #fafbfc;
+}
+
+.an-cluster-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+}
+
+.an-cluster-count {
+  font-weight: 700;
+  color: #1B3A5C;
+  font-size: 0.95rem;
+}
+
+.an-cluster-stat {
+  font-size: 0.83rem;
+  color: #495057;
+  margin-bottom: 0.25rem;
+}
+
+.an-cluster-stat b {
+  color: #1B3A5C;
+}
+
+.an-cluster-insight {
+  margin: 0.6rem 0 0;
+  font-size: 0.83rem;
+  color: #2DC4D4;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.an-badge {
+  display: inline-block;
+  padding: 0.2rem 0.7rem;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.an-riesgo-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+@media (max-width: 700px) {
+  .an-riesgo-kpis { grid-template-columns: 1fr; }
+}
+
+.an-riesgo-kpi {
+  background: #fafbfc;
+  border: 1px solid #eef0f3;
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.an-riesgo-kpi-value {
+  display: block;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #1B3A5C;
+}
+
+.an-riesgo-kpi-label {
+  display: block;
+  font-size: 0.75rem;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-top: 0.25rem;
+}
+
+.an-sin-riesgo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #27ae60;
+  background: #e8f8f0;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.an-riesgo-table-wrap {
+  overflow-x: auto;
+}
+
+.an-riesgo-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.an-riesgo-table th {
+  text-align: left;
+  padding: 0.6rem 0.8rem;
+  color: #6c757d;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-bottom: 2px solid #eef0f3;
+}
+
+.an-riesgo-table td {
+  padding: 0.7rem 0.8rem;
+  border-bottom: 1px solid #f0f2f5;
+  color: #1B3A5C;
+}
+
+.an-riesgo-table tbody tr:hover {
+  background: #fafbfc;
+}

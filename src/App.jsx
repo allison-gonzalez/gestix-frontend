@@ -26,6 +26,7 @@ import Usuarios from './pages/Usuarios';
 import Administracion from './pages/Administracion';
 import AdminModule from './pages/AdminModule';
 import Reportes from './pages/Reportes';
+import Analiticas from './pages/Analiticas';
 import Profile from './pages/Profile';
 
 import './styles/index.css';
@@ -82,6 +83,16 @@ function AppContent() {
               element={
                 hasPermission('ver_reportes') ? (
                   <Reportes />
+                ) : (
+                  <PermissionGuardFallback />
+                )
+              }
+            />
+            <Route
+              path="/analiticas"
+              element={
+                hasPermission('ver_reportes') ? (
+                  <Analiticas />
                 ) : (
                   <PermissionGuardFallback />
                 )
