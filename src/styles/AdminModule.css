@@ -299,17 +299,18 @@
   justify-content: center;
   width: 36px;
   height: 36px;
-  border-radius: 6px;
+  border-radius: 9px;
   border: none;
   font-size: 1.1rem;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
   flex-shrink: 0;
+  color: #ffffff;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
 }
 
 .backup-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  filter: brightness(0.9);
+  transform: translateY(-2px);
 }
 
 .backup-btn:disabled {
@@ -318,19 +319,19 @@
 }
 
 .backup-btn.delete {
-  background: #e53e3e;
-  color: #ffffff;
+  background: linear-gradient(135deg, #f16565 0%, #e53e3e 100%);
 }
+.backup-btn.delete:hover:not(:disabled) { box-shadow: 0 8px 16px rgba(229, 62, 62, 0.45); }
 
 .backup-btn.download {
-  background: #2DC4D4;
-  color: #ffffff;
+  background: linear-gradient(135deg, #5ee0ee 0%, #2DC4D4 100%);
 }
+.backup-btn.download:hover:not(:disabled) { box-shadow: 0 8px 16px rgba(45, 196, 212, 0.45); }
 
 .backup-btn.restore {
-  background: #1B3A5C;
-  color: #ffffff;
+  background: linear-gradient(135deg, #2b5580 0%, #1B3A5C 100%);
 }
+.backup-btn.restore:hover:not(:disabled) { box-shadow: 0 8px 16px rgba(27, 58, 92, 0.45); }
 
 /* ── MODALES ──────────────────────────────────────── */
 .modal-overlay {
@@ -479,17 +480,19 @@
 }
 
 .ticket-table thead tr {
-  background: #f8fafc;
-  border-bottom: 2px solid #e0e6ee;
+  background: linear-gradient(120deg, #1B3A5C 0%, #234a73 100%);
 }
 
+.ticket-table th:first-child { border-top-left-radius: 8px; }
+.ticket-table th:last-child  { border-top-right-radius: 8px; }
+
 .ticket-table th {
-  padding: 12px;
+  padding: 13px 12px;
   text-align: left;
   font-weight: 700;
-  color: #4a5568;
+  color: #ffffff;
   text-transform: uppercase;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   letter-spacing: 0.05em;
 }
 
@@ -500,11 +503,15 @@
 }
 
 .ticket-table tbody tr {
-  transition: background-color 0.15s ease;
+  border-left: 3px solid transparent;
+  transition: background-color 0.15s ease, border-left-color 0.15s ease;
 }
 
+.ticket-table tbody tr:nth-child(even) { background: #fafbfd; }
+
 .ticket-table tbody tr:hover {
-  background: #f8fafc;
+  background: #eef7f9;
+  border-left-color: #2DC4D4;
 }
 
 .ticket-table tbody tr:last-child td {

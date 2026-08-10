@@ -10,6 +10,7 @@ import {
   FaTimes,
   FaCheck,
   FaSave,
+  FaCog,
 } from 'react-icons/fa';
 import { departamentoService, permisoService, categoriaService, usuarioService } from '../services';
 import DataTable from '../components/common/DataTable';
@@ -222,7 +223,7 @@ export default function AdminModule() {
     <div className="page-container">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Administración de Datos</h1>
+          <h1 className="page-title"><FaCog /> Administración de Datos</h1>
           <p className="page-subtitle">Gestión de departamentos, permisos y categorías</p>
         </div>
       </div>

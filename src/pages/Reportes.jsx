@@ -266,7 +266,7 @@ export default function Reportes() {
     <div className="page-container">
       <div className="page-header">
         <h1 className="page-title">
-           Reportes
+          <FaChartBar /> Reportes
         </h1>
         <div className="rpt-header-actions">
           <div className="rpt-filters">

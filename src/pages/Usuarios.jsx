@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { FaUsers } from 'react-icons/fa';
 import UsuariosList from '../components/usuarios/UsuariosList';
 import { usuarioService, departamentoService, permisoService } from '../services';
 
@@ -46,7 +47,7 @@ export default function Usuarios() {
   return (
     <div className="page-container">
       <div className="page-header">
-        <h1 className="page-title">Usuarios</h1>
+        <h1 className="page-title"><FaUsers /> Usuarios</h1>
       </div>
       <div className="page-content">
         <UsuariosList

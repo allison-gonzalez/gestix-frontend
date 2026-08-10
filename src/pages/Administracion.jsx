@@ -186,7 +186,7 @@ export default function Administracion() {
     <div className="page-container">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Administración</h1>
+          <h1 className="page-title"><FaDatabase /> Administración</h1>
           <p className="page-subtitle">Respaldo y restauración de base de datos</p>
         </div>
         <button className="btn-primary btn-create-ticket" onClick={handleCreate} disabled={creating || loading}>

@@ -194,27 +194,28 @@
 }
 
 .ul-table thead tr {
-  background: #ffffff;
-  border-bottom: 2px solid #f0f3f7;
+  background: linear-gradient(120deg, #1B3A5C 0%, #234a73 100%);
 }
 
 .ul-table th {
-  padding: 12px 16px;
+  padding: 13px 16px;
   text-align: left;
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   font-weight: 700;
-  color: #1B3A5C;
-  letter-spacing: 0.04em;
+  color: #ffffff;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
 .ul-table tbody tr {
   border-bottom: 1px solid #f0f3f7;
-  transition: background 0.12s ease;
+  border-left: 3px solid transparent;
+  transition: background 0.15s ease, border-left-color 0.15s ease;
 }
 
+.ul-table tbody tr:nth-child(even) { background: #fafbfd; }
 .ul-table tbody tr:last-child { border-bottom: none; }
-.ul-table tbody tr:hover      { background: #f8fafc; }
+.ul-table tbody tr:hover      { background: #eef7f9; border-left-color: #2DC4D4; }
 
 .ul-table td {
   padding: 12px 16px;
@@ -309,17 +310,18 @@
   justify-content: center;
   width: 36px;
   height: 36px;
-  border-radius: 6px;
+  border-radius: 9px;
   border: none;
   font-size: 1.1rem;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
   flex-shrink: 0;
+  color: #ffffff;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
 }
 
 .ul-icon-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  filter: brightness(0.9);
+  transform: translateY(-2px);
 }
 
 .ul-icon-btn:disabled {
@@ -327,9 +329,14 @@
   cursor: not-allowed;
 }
 
-.ul-icon-btn--view { background: #2DC4D4; color: #ffffff; }
-.ul-icon-btn--edit { background: #1B3A5C; color: #ffffff; }
-.ul-icon-btn--del  { background: #e53e3e; color: #ffffff; }
+.ul-icon-btn--view { background: linear-gradient(135deg, #5ee0ee 0%, #2DC4D4 100%); }
+.ul-icon-btn--view:hover:not(:disabled) { box-shadow: 0 8px 16px rgba(45, 196, 212, 0.45); }
+
+.ul-icon-btn--edit { background: linear-gradient(135deg, #2b5580 0%, #1B3A5C 100%); }
+.ul-icon-btn--edit:hover:not(:disabled) { box-shadow: 0 8px 16px rgba(27, 58, 92, 0.45); }
+
+.ul-icon-btn--del { background: linear-gradient(135deg, #f16565 0%, #e53e3e 100%); }
+.ul-icon-btn--del:hover:not(:disabled) { box-shadow: 0 8px 16px rgba(229, 62, 62, 0.45); }
 
 /* ── State / empty ────────────────────────────────────────── */
 .ul-state {

@@ -54,7 +54,7 @@ function Navbar() {
     : null;
 
   const allMenuItems = [
-    { path: '/', label: 'Dashboard', icon: FaHome, requiredPermission: null },
+    { path: '/home', label: 'Dashboard', icon: FaHome, requiredPermission: null },
     { path: '/tickets', label: 'Tickets', icon: FaTicketAlt, requiredPermission: 'crear_ticket' },
     { path: '/usuarios', label: 'Usuarios', icon: FaUsers, requiredPermission: 'ver_usuarios' },
     { path: '/reportes', label: 'Reportes', icon: FaChartBar, requiredPermission: 'ver_reportes' },

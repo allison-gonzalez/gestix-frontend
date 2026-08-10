@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaTicketAlt, FaClock, FaCheckCircle, FaLightbulb, FaFilter, FaExclamationCircle, FaTimes } from 'react-icons/fa';
+import { FaTicketAlt, FaClock, FaCheckCircle, FaLightbulb, FaFilter, FaExclamationCircle, FaTimes, FaHome } from 'react-icons/fa';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -7,6 +7,16 @@ import { ticketService } from '../services';
 import '../styles/Home.css';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ChartDataLabels);
+
+// Degradado + resplandor de cada tarjeta KPI, a juego con su ícono (stat-icon-*)
+const ACCENTS = {
+  navy:   { '--accent-grad': 'linear-gradient(180deg, #2b5580, #1B3A5C)', '--accent-glow': 'rgba(27, 58, 92, 0.22)' },
+  cyan:   { '--accent-grad': 'linear-gradient(180deg, #5ee0ee, #2DC4D4)', '--accent-glow': 'rgba(45, 196, 212, 0.28)' },
+  orange: { '--accent-grad': 'linear-gradient(180deg, #f5a556, #e67e22)', '--accent-glow': 'rgba(230, 126, 34, 0.28)' },
+  green:  { '--accent-grad': 'linear-gradient(180deg, #4fce7a, #28a745)', '--accent-glow': 'rgba(40, 167, 69, 0.28)' },
+  purple: { '--accent-grad': 'linear-gradient(180deg, #9b7bd6, #6f42c1)', '--accent-glow': 'rgba(111, 66, 193, 0.28)' },
+  yellow: { '--accent-grad': 'linear-gradient(180deg, #ffd75e, #e6ac00)', '--accent-glow': 'rgba(230, 172, 0, 0.28)' },
+};
 
 export default function Home() {
   const [stats, setStats] = useState({
@@ -194,8 +204,8 @@ export default function Home() {
           stats.ticketsPorEstado.resuelto || 0,
           stats.ticketsPorEstado.cerrado || 0,
         ],
-        backgroundColor: ['#5DADE2', '#F4D03F', '#58D68D', '#A569BD'],
-        borderColor: ['#5DADE2', '#F4D03F', '#58D68D', '#A569BD'],
+        backgroundColor: ['#2DC4D4', '#FFD100', '#28a745', '#6f42c1'],
+        borderColor: ['#2DC4D4', '#FFD100', '#28a745', '#6f42c1'],
         borderWidth: 1,
         borderRadius: 4,
       },
@@ -274,7 +284,7 @@ export default function Home() {
   return (
     <div className="page-container">
       <div className="page-header">
-        <h1 className="page-title">Dashboard</h1>
+        <h1 className="page-title"><FaHome /> Dashboard</h1>
       </div>
 
       <div className="page-content">
@@ -325,23 +335,23 @@ export default function Home() {
         </div>
 
         <div className="dashboard-grid">
-          <div className="stat-card" style={{ borderLeftColor: '#5DADE2' }}>
-            <div className="stat-icon stat-icon-blue"><FaTicketAlt /></div>
+          <div className="stat-card" style={ACCENTS.navy}>
+            <div className="stat-icon stat-icon-navy"><FaTicketAlt /></div>
             <div className="stat-content">
               <h3>TOTAL DE TICKETS</h3>
               <p className="stat-number">{loading ? '-' : stats.totalTickets}</p>
               <span className="stat-change">{loading ? '-' : getChangeText(stats.cambioTotalMes)}</span>
             </div>
           </div>
-          <div className="stat-card" style={{ borderLeftColor: '#F4D03F' }}>
-            <div className="stat-icon stat-icon-yellow"><FaClock /></div>
+          <div className="stat-card" style={ACCENTS.cyan}>
+            <div className="stat-icon stat-icon-cyan"><FaClock /></div>
             <div className="stat-content">
               <h3>TICKETS ABIERTOS</h3>
               <p className="stat-number">{loading ? '-' : stats.ticketsAbiertos}</p>
               <span className="stat-change">{loading ? '-' : `↑ ${stats.ticketsHoy} nuevos hoy`}</span>
             </div>
           </div>
-          <div className="stat-card" style={{ borderLeftColor: '#E74C3C' }}>
+          <div className="stat-card" style={ACCENTS.orange}>
             <div className="stat-icon stat-icon-orange"><FaExclamationCircle /></div>
             <div className="stat-content">
               <h3>TICKETS PENDIENTES</h3>
@@ -349,7 +359,7 @@ export default function Home() {
               <span className="stat-change">{loading ? '-' : getChangeText(stats.cambioTotalMes)}</span>
             </div>
           </div>
-          <div className="stat-card" style={{ borderLeftColor: '#58D68D' }}>
+          <div className="stat-card" style={ACCENTS.green}>
             <div className="stat-icon stat-icon-green"><FaCheckCircle /></div>
             <div className="stat-content">
               <h3>TICKETS RESUELTOS</h3>
@@ -357,7 +367,7 @@ export default function Home() {
               <span className="stat-change">{loading ? '-' : getChangeText(stats.cambioResoltosMes)}</span>
             </div>
           </div>
-          <div className="stat-card" style={{ borderLeftColor: '#AF7AC5' }}>
+          <div className="stat-card" style={ACCENTS.purple}>
             <div className="stat-icon stat-icon-purple"><FaLightbulb /></div>
             <div className="stat-content">
               <h3>TICKETS CERRADOS</h3>
@@ -365,8 +375,8 @@ export default function Home() {
               <span className="stat-change">↑ 8% vs mes anterior</span>
             </div>
           </div>
-          <div className="stat-card">
-            <div className="stat-icon stat-icon-pink"><FaLightbulb /></div>
+          <div className="stat-card" style={ACCENTS.yellow}>
+            <div className="stat-icon stat-icon-yellow"><FaLightbulb /></div>
             <div className="stat-content">
               <h3>TIEMPO PROMEDIO</h3>
               <p className="stat-number">{loading ? '-' : `${stats.tiempoPromedio} ${stats.tiempoPromedio === 1 ? 'día' : 'días'}`}</p>

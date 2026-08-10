@@ -29,10 +29,10 @@ const PRIORIDAD_BADGE = {
 // Cada grupo de K-Means se etiqueta con la dimensión de decisión de negocio
 // a la que aporta, para que el cliente vea de inmediato qué hacer con él.
 const DIMENSION_INFO = {
-  oportunidad: { label: 'Oportunidad', icon: FaLightbulb, bg: '#e8f8f0', text: '#27ae60' },
-  riesgo: { label: 'Riesgo', icon: FaShieldAlt, bg: '#fde8e8', text: '#c0392b' },
-  optimizacion: { label: 'Optimización de proceso', icon: FaTools, bg: '#fef0e6', text: '#e67e22' },
-  tendencia: { label: 'Tendencia estable', icon: FaChartLine, bg: '#e8f4fd', text: '#2980b9' },
+  oportunidad: { label: 'Oportunidad', icon: FaLightbulb, bg: '#e8f8f0', text: '#27ae60', grad: 'linear-gradient(180deg, #4fce7a, #27ae60)' },
+  riesgo: { label: 'Riesgo', icon: FaShieldAlt, bg: '#fde8e8', text: '#c0392b', grad: 'linear-gradient(180deg, #f28b82, #c0392b)' },
+  optimizacion: { label: 'Optimización de proceso', icon: FaTools, bg: '#fef0e6', text: '#e67e22', grad: 'linear-gradient(180deg, #f5a556, #e67e22)' },
+  tendencia: { label: 'Tendencia estable', icon: FaChartLine, bg: '#e8f4fd', text: '#2980b9', grad: 'linear-gradient(180deg, #5ee0ee, #2980b9)' },
 };
 
 const TENDENCIA_INFO = {
@@ -256,7 +256,7 @@ export default function Analiticas() {
                 {grupos.map((g) => {
                   const dInfo = DIMENSION_INFO[g.dimension] ?? DIMENSION_INFO.tendencia;
                   return (
-                    <div key={g.id} className="an-cluster-card">
+                    <div key={g.id} className="an-cluster-card" style={{ '--dim-grad': dInfo.grad }}>
                       <div className="an-cluster-head">
                         <span
                           className="an-badge an-dimension-badge"

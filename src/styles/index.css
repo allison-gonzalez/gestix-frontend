@@ -67,20 +67,51 @@ body {
 }
 
 .page-header {
+  position: relative;
   background-color: white;
-  padding: 1.5rem 2rem;
-  border-bottom: 1px solid #e0e0e0;
+  padding: 1.75rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   gap: 1rem;
+  box-shadow: 0 1px 0 rgba(27, 58, 92, 0.06);
+}
+
+.page-header::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #1B3A5C 0%, #2DC4D4 45%, #FFD100 100%);
+  opacity: 0.9;
 }
 
 .page-title {
-  font-size: 2rem;
-  font-weight: 600;
-  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: #1B3A5C;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+/* Ícono del título dentro de una insignia en degradado — mismo lenguaje visual
+   que los íconos de las tarjetas KPI en toda la app */
+.page-title svg:first-child {
+  flex-shrink: 0;
+  width: 1.15em;
+  height: 1.15em;
+  padding: 0.45em;
+  box-sizing: content-box;
+  color: white;
+  background: linear-gradient(135deg, #2DC4D4 0%, #1B3A5C 100%);
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(27, 58, 92, 0.3);
 }
 
 .page-content {

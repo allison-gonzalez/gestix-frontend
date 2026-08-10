@@ -315,7 +315,7 @@ export default function Tickets() {
   return (
     <div className="page-container">
       <div className="page-header">
-        <h1 className="page-title">Tickets</h1>
+        <h1 className="page-title"><FaTicketAlt /> Tickets</h1>
       </div>
       <div className="page-content">
         <div className="admin-panel">
@@ -663,7 +663,9 @@ export default function Tickets() {
                       comments.map((comment) => (
                         <div key={comment.id} className="comment-item">
                           <div className="comment-header">
-                            <strong>{comment.usuario_autor_nombre}</strong>
+                            <strong data-initial={(comment.usuario_autor_nombre || '?').trim().charAt(0).toUpperCase()}>
+                              {comment.usuario_autor_nombre}
+                            </strong>
                             <span>{new Date(comment.fecha).toLocaleString()}</span>
                           </div>
                           <div className="comment-body">
