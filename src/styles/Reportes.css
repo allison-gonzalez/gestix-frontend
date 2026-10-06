@@ -202,6 +202,7 @@
 }
 
 @media (max-width: 900px) { .rpt-charts-grid { grid-template-columns: 1fr; } }
+.rpt-charts-grid > *, .rpt-chart-card, .rpt-chart-body { min-width: 0; max-width: 100%; }
 
 .rpt-chart-card {
   background: white;
@@ -359,6 +360,7 @@
 }
 
 @media (max-width: 900px) { .rpt-charts-grid { grid-template-columns: 1fr; } }
+.rpt-charts-grid > *, .rpt-chart-card, .rpt-chart-body { min-width: 0; max-width: 100%; }
 
 .rpt-chart-card {
   background: white;

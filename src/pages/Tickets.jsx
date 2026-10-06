@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { FaPaperPlane, FaBuilding, FaUser, FaTimes, FaTicketAlt, FaEye } from 'react-icons/fa';
+import { FaPaperPlane, FaBuilding, FaUser, FaTimes, FaTicketAlt, FaEye, FaClock } from 'react-icons/fa';
 import TicketList from '../components/TicketList';
 import { ticketService, comentarioService, categoriaService, departamentoService, usuarioService, archivoService, STORAGE_BASE_URL } from '../services';
 import { useAuth } from '../hooks/useAuth';
+import { useOnlineStatus } from '../hooks/useOnlineStatus';
+import { cacheGet, cacheSet } from '../utils/localCache';
+import { agregarPendiente, enviarPendientes, getPendientes, onPendientesChange, quitarPendiente } from '../utils/ticketQueue';
 import '../styles/Tickets.css';
+import '../styles/Pwa.css';
 
 export default function Tickets() {
   const { user: authUser } = useAuth();
@@ -40,6 +44,9 @@ export default function Tickets() {
   });
   const [updatingView, setUpdatingView] = useState(false);
   const [ticketArchivos, setTicketArchivos] = useState([]);
+  const online = useOnlineStatus();
+  const [pendientes, setPendientes] = useState(() => getPendientes());
+  const [sincronizando, setSincronizando] = useState(false);
 
   const canAssign = Array.isArray(authUser?.permisos) && authUser.permisos.some(p => Number(p) === 4);
 
@@ -57,6 +64,26 @@ export default function Tickets() {
     fetchDepartamentos();
     fetchUsuarios();
   }, []);
+
+  // Tickets creados sin conexión: se muestran aquí y se envían solos al volver internet
+  const misPendientes = pendientes.filter(
+    (p) => String(p.usuario_autor_id) === String(authUser?.id)
+  );
+
+  useEffect(() => onPendientesChange(() => setPendientes(getPendientes())), []);
+
+  const sincronizar = async () => {
+    if (!authUser?.id) return;
+    setSincronizando(true);
+    const { enviados } = await enviarPendientes(authUser.id);
+    setSincronizando(false);
+    if (enviados > 0) fetchTickets();
+  };
+
+  useEffect(() => {
+    if (online && misPendientes.length > 0) sincronizar();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [online]);
 
   // Abrir modal si viene ?ticketId=X desde una notificación
   useEffect(() => {
@@ -91,9 +118,12 @@ export default function Tickets() {
       setLoading(true);
       const res = await ticketService.getAll();
       const data = Array.isArray(res.data) ? res.data : res.data.data || [];
+      cacheSet('tickets', data);
       setTickets(sortTicketsNewestFirst(data));
     } catch (error) {
       console.error('Error fetching tickets:', error);
+      const guardados = cacheGet('tickets'); // sin internet: última lista vista
+      if (guardados) setTickets(sortTicketsNewestFirst(guardados));
     } finally {
       setLoading(false);
     }
@@ -103,9 +133,11 @@ export default function Tickets() {
     try {
       const res = await categoriaService.getAll();
       const data = Array.isArray(res.data) ? res.data : res.data.data || [];
+      cacheSet('categorias', data);
       setCategorias(data);
     } catch (error) {
       console.error('Error fetching categorias:', error);
+      setCategorias(cacheGet('categorias') || []);
     }
   };
 
@@ -113,9 +145,11 @@ export default function Tickets() {
     try {
       const res = await departamentoService.getAll();
       const data = Array.isArray(res.data) ? res.data : res.data.data || [];
+      cacheSet('departamentos', data);
       setDepartamentos(data);
     } catch (error) {
       console.error('Error fetching departamentos:', error);
+      setDepartamentos(cacheGet('departamentos') || []);
     }
   };
 
@@ -123,9 +157,11 @@ export default function Tickets() {
     try {
       const res = await usuarioService.getAll();
       const data = Array.isArray(res.data) ? res.data : res.data.data || [];
+      cacheSet('usuarios', data);
       setUsuarios(data);
     } catch (error) {
       console.error('Error fetching usuarios:', error);
+      setUsuarios(cacheGet('usuarios') || []);
     }
   };
 
@@ -227,6 +263,35 @@ export default function Tickets() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
+
+    // Sin conexión: el ticket se guarda en este dispositivo (localStorage) y se envía después.
+    const guardarSinConexion = () => {
+      agregarPendiente({
+        titulo: formData.titulo,
+        descripcion: formData.descripcion,
+        prioridad: formData.prioridad,
+        departamento_id: formData.departamento_id,
+        categoria_id: formData.categoria_id,
+        usuario_autor_id: authUser?.id,
+        archivoNombre: formData.archivo?.name || null, // el archivo no se puede guardar sin conexión
+      });
+      setShowCreateModal(false);
+      setFormData({
+        titulo: '',
+        descripcion: '',
+        prioridad: 'media',
+        departamento_id: '',
+        categoria_id: '',
+        archivo: null,
+      });
+    };
+
+    if (!navigator.onLine) {
+      guardarSinConexion();
+      setSubmitting(false);
+      return;
+    }
+
     try {
       const data = new FormData();
       data.append('titulo', formData.titulo);
@@ -255,7 +320,11 @@ export default function Tickets() {
       });
       fetchTickets();
     } catch (error) {
-      console.error('Error creating ticket:', error);
+      if (!error.response) {
+        guardarSinConexion(); // la conexión se cayó justo al enviar
+      } else {
+        console.error('Error creating ticket:', error);
+      }
     } finally {
       setSubmitting(false);
     }
@@ -318,6 +387,50 @@ export default function Tickets() {
         <h1 className="page-title"><FaTicketAlt /> Tickets</h1>
       </div>
       <div className="page-content">
+        {misPendientes.length > 0 && (
+          <div className="pwa-pendientes">
+            <div className="pwa-pendientes-head">
+              <span>
+                <FaClock />
+                <strong>
+                  {misPendientes.length} {misPendientes.length === 1 ? 'ticket pendiente' : 'tickets pendientes'} de enviar
+                </strong>
+              </span>
+              <button
+                type="button"
+                className="pwa-pend-btn"
+                onClick={sincronizar}
+                disabled={!online || sincronizando}
+              >
+                {sincronizando ? 'Enviando…' : 'Enviar ahora'}
+              </button>
+            </div>
+            <ul>
+              {misPendientes.map((p) => (
+                <li key={p.localId}>
+                  <div className="pwa-pend-info">
+                    <strong>{p.titulo}</strong>
+                    <small>
+                      Prioridad {p.prioridad} · guardado {new Date(p.creadoEn).toLocaleString()}
+                      {p.archivoNombre ? ` · el adjunto "${p.archivoNombre}" no se guarda sin conexión` : ''}
+                    </small>
+                    {p.error && <small className="pwa-error">{p.error}</small>}
+                  </div>
+                  <button
+                    type="button"
+                    className="pwa-pend-btn pwa-pend-btn--danger"
+                    onClick={() => quitarPendiente(p.localId)}
+                  >
+                    Descartar
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <p className="pwa-pendientes-note">
+              Estos tickets están guardados solo en este navegador. Se envían automáticamente cuando vuelve la conexión.
+            </p>
+          </div>
+        )}
         <div className="admin-panel">
           <div className="admin-tabs">
             <button

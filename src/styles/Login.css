@@ -5,8 +5,9 @@
   width: 100%;
   height: 100%;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  overflow-y: auto;
   background: #1b2437;
   padding: 20px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
@@ -20,6 +21,8 @@
   max-width: 1160px;
   align-items: stretch;
   justify-content: center;
+  /* centra en vertical si cabe; si es más alto que la pantalla, empieza arriba y se puede hacer scroll */
+  margin-block: auto;
 }
 
 /* Left Side - Form */

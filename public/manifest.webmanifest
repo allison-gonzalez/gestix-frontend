@@ -1,0 +1,22 @@
+{
+  "name": "Gestix, gestión de tickets de soporte",
+  "short_name": "Gestix",
+  "description": "Crea, asigna y da seguimiento a tickets de soporte técnico, también con poca o nula conexión.",
+  "lang": "es",
+  "start_url": "/home",
+  "scope": "/",
+  "id": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#1B3A5C",
+  "theme_color": "#1B3A5C",
+  "categories": ["business", "productivity"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Tickets", "short_name": "Tickets", "url": "/tickets", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

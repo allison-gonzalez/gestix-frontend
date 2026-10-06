@@ -17,6 +17,8 @@ import Login from './pages/Login';
 import Navbar, { SidebarProvider, useSidebarState } from './components/layout/Navbar';
 import Header from './components/layout/Header';
 import LoadingBar from './components/common/LoadingBar';
+import OfflineBanner from './components/common/OfflineBanner';
+import InstallPrompt from './components/common/InstallPrompt';
 import { LoadingProvider } from './context/LoadingContext';
 
 // Pages (MAIN + comunes)
@@ -172,6 +174,8 @@ function App() {
   return (
     <AuthProvider>
       <NotificacionesProvider>
+        <OfflineBanner />
+        <InstallPrompt />
         <Router>
           <Routes>
             {/* Login (HEAD prioridad) */}

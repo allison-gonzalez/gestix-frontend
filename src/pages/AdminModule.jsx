@@ -115,7 +115,7 @@ export default function AdminModule() {
         encargado_id: deptForm.encargado_id !== '' ? Number(deptForm.encargado_id) : null,
       };
       if (editingDept) {
-        await departamentoService.update(editingDept._id, payload);
+        await departamentoService.update(editingDept.id ?? editingDept._id, payload);
         showAlert('success', 'Departamento actualizado');
       } else {
         await departamentoService.create(payload);
@@ -150,7 +150,7 @@ export default function AdminModule() {
     if (!permForm.nombre.trim()) { showAlert('error', 'El nombre es requerido'); return; }
     try {
       if (editingPerm) {
-        await permisoService.update(editingPerm._id, permForm);
+        await permisoService.update(editingPerm.id ?? editingPerm._id, permForm);
         showAlert('success', 'Permiso actualizado');
       } else {
         await permisoService.create(permForm);
@@ -189,7 +189,7 @@ export default function AdminModule() {
     try {
       const payload = { ...catForm, departamento_id: parseInt(catForm.departamento_id) || catForm.departamento_id };
       if (editingCat) {
-        await categoriaService.update(editingCat._id, payload);
+        await categoriaService.update(editingCat.id ?? editingCat._id, payload);
         showAlert('success', 'Categoría actualizada');
       } else {
         await categoriaService.create(payload);

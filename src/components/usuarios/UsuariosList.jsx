@@ -492,7 +492,7 @@ export default function UsuariosList({
   const handleSave = async (payload) => {
     try {
       if (modal && typeof modal === 'object') {
-        await usuarioService.update(modal._id || modal.id, payload);
+        await usuarioService.update(modal.id ?? modal._id, payload);
         toast('Usuario actualizado correctamente');
       } else {
         await usuarioService.create(payload);

@@ -900,8 +900,11 @@
 
 @media (max-width: 640px) {
   .ul-toolbar    { flex-direction: column; align-items: stretch; }
-  .ul-toolbar__left { flex-direction: column; }
-  .ul-search input  { width: 100%; }
+  .ul-toolbar__left { flex-direction: column; align-items: stretch; flex: none; width: 100%; }
+  .ul-toolbar__left .filter-group { flex: none; min-width: 0; width: 100%; }
+  .ul-filter-select { width: 100%; }
+  .ul-search, .ul-search input { width: 100%; }
+  .ul-toolbar .btn-nuevo-usuario, .ul-toolbar > button { width: 100%; justify-content: center; }
   .ul-row-2         { grid-template-columns: 1fr; }
   .ul-table th:nth-child(3),
   .ul-table td:nth-child(3),

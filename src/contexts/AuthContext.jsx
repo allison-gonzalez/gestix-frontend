@@ -1,4 +1,5 @@
 import { createContext, useState, useCallback, useEffect } from 'react';
+import { cacheClear } from '../utils/localCache';
 
 export const AuthContext = createContext();
 
@@ -48,6 +49,7 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('user');
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('user');
+    cacheClear(); // no dejar datos de la sesión guardados en el navegador
   }, []);
 
   const updateUser = useCallback((newData) => {

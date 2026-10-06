@@ -54,8 +54,11 @@ body {
   height: 100%;
 }
 
+/* En pantallas chicas el menú siempre es una barra angosta de 70px (ver Navbar.css),
+   así que el contenido también debe empezar a los 70px aunque esté "expandido". */
 @media (max-width: 768px) {
-  .main-content {
+  .main-content,
+  .main-content.sidebar-expanded {
     margin-left: 70px;
   }
 }

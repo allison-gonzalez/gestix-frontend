@@ -733,3 +733,12 @@
   font-size: 1rem;
   color: inherit;
 }
+
+/* Detalle de ticket en pantallas angostas: paneles uno debajo del otro */
+@media (max-width: 900px) {
+  .modal-content.modal-large { width: 100%; max-height: 96vh; border-radius: 14px; }
+  .modal-large-body { flex-direction: column; overflow-y: auto; }
+  .modal-left-panel { flex: none; overflow: visible; padding: 18px; border-right: none; border-bottom: 2px solid #f0f3f7; }
+  .modal-right-panel { flex: none; overflow: visible; }
+  .ticket-view, .update-form { grid-template-columns: 1fr; }
+}

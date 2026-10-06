@@ -1,6 +1,13 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { permisoService } from '../services/permisoService';
+import { cacheGet, cacheSet } from '../utils/localCache';
+
+const toMap = (permisos) => {
+  const map = {};
+  permisos.forEach((p) => { map[p.nombre] = p.id; });
+  return map;
+};
 
 const PermissionsContext = createContext({ permissionsMap: {}, isLoading: true });
 
@@ -21,13 +28,11 @@ export function PermissionsProvider({ children }) {
       .getAll()
       .then((res) => {
         const permisos = res.data?.data || [];
-        const map = {};
-        permisos.forEach((p) => {
-          map[p.nombre] = p.id;
-        });
-        setPermissionsMap(map);
+        cacheSet('permisos', permisos);
+        setPermissionsMap(toMap(permisos));
       })
-      .catch(() => setPermissionsMap({}))
+      // sin internet se usa la última lista guardada, para no perder el acceso a las pantallas
+      .catch(() => setPermissionsMap(toMap(cacheGet('permisos') || [])))
       .finally(() => setIsLoading(false));
   }, [isAuthenticated]);
 
