@@ -7,6 +7,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useOnlineStatus } from '../hooks/useOnlineStatus';
 import { cacheGet, cacheSet } from '../utils/localCache';
 import { agregarPendiente, enviarPendientes, getPendientes, onPendientesChange, quitarPendiente } from '../utils/ticketQueue';
+import { guardarBorrador, leerBorrador, borrarBorrador } from '../utils/borradorDB';
 import '../styles/Tickets.css';
 import '../styles/Pwa.css';
 
@@ -47,6 +48,9 @@ export default function Tickets() {
   const online = useOnlineStatus();
   const [pendientes, setPendientes] = useState(() => getPendientes());
   const [sincronizando, setSincronizando] = useState(false);
+  const [borradorRecuperado, setBorradorRecuperado] = useState(false);
+
+  const claveBorrador = authUser?.id ? `ticket_${authUser.id}` : null;
 
   const canAssign = Array.isArray(authUser?.permisos) && authUser.permisos.some(p => Number(p) === 4);
 
@@ -84,6 +88,42 @@ export default function Tickets() {
     if (online && misPendientes.length > 0) sincronizar();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [online]);
+
+  // Background Sync: el service worker avisa cuando el navegador recupera la conexión
+  useEffect(() => {
+    if (!('serviceWorker' in navigator)) return undefined;
+    const alRecibir = (e) => {
+      if (e.data?.tipo === 'sync-tickets') sincronizar();
+    };
+    navigator.serviceWorker.addEventListener('message', alRecibir);
+    return () => navigator.serviceWorker.removeEventListener('message', alRecibir);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authUser?.id]);
+
+  // Borrador (IndexedDB): al abrir el formulario se recupera lo que quedó escrito
+  useEffect(() => {
+    if (!showCreateModal || !claveBorrador) return;
+    leerBorrador(claveBorrador).then((b) => {
+      if (b?.datos) {
+        setFormData((prev) => ({ ...prev, ...b.datos, archivo: null }));
+        setBorradorRecuperado(true);
+      }
+    });
+    return () => setBorradorRecuperado(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showCreateModal]);
+
+  // Borrador (IndexedDB): se guarda solo, medio segundo después de dejar de escribir
+  useEffect(() => {
+    if (!showCreateModal || !claveBorrador) return undefined;
+    const { titulo, descripcion, prioridad, departamento_id, categoria_id } = formData;
+    if (!titulo && !descripcion) return undefined;
+    const espera = setTimeout(() => {
+      guardarBorrador(claveBorrador, { titulo, descripcion, prioridad, departamento_id, categoria_id });
+    }, 500);
+    return () => clearTimeout(espera);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData, showCreateModal]);
 
   // Abrir modal si viene ?ticketId=X desde una notificación
   useEffect(() => {
@@ -275,6 +315,7 @@ export default function Tickets() {
         usuario_autor_id: authUser?.id,
         archivoNombre: formData.archivo?.name || null, // el archivo no se puede guardar sin conexión
       });
+      if (claveBorrador) borrarBorrador(claveBorrador);
       setShowCreateModal(false);
       setFormData({
         titulo: '',
@@ -309,6 +350,7 @@ export default function Tickets() {
       }
 
       await ticketService.create(data);
+      if (claveBorrador) borrarBorrador(claveBorrador);
       setShowCreateModal(false);
       setFormData({
         titulo: '',
@@ -488,6 +530,9 @@ export default function Tickets() {
               </button>
             </div>
             <form onSubmit={handleSubmit} className="ticket-form">
+              {borradorRecuperado && (
+                <p className="pwa-borrador">Se recuperó un borrador guardado en este dispositivo.</p>
+              )}
               <div className="form-group">
                 <label htmlFor="titulo">Título</label>
                 <input

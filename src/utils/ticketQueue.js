@@ -23,6 +23,19 @@ export function onPendientesChange(callback) {
   return () => window.removeEventListener(EVENT, callback);
 }
 
+// Background Sync: le pide al navegador que avise al service worker cuando haya conexión.
+// Si el navegador no lo soporta, el envío se hace con el evento "online" de la página.
+export async function registrarSync() {
+  try {
+    const registro = await navigator.serviceWorker?.ready;
+    if (registro && 'sync' in registro) {
+      await registro.sync.register('sync-tickets');
+    }
+  } catch (err) {
+    // sin soporte o sin permiso: se usa el evento "online"
+  }
+}
+
 export function agregarPendiente(ticket) {
   const item = {
     ...ticket,
@@ -30,6 +43,7 @@ export function agregarPendiente(ticket) {
     creadoEn: new Date().toISOString(),
   };
   guardar([...getPendientes(), item]);
+  registrarSync();
   return item;
 }
 

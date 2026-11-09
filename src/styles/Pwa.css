@@ -91,3 +91,14 @@ body.is-offline .sidebar { top: 36px; height: calc(100vh - 36px); }
 .pwa-pend-btn--danger { border-color: #c0392b; color: #c0392b; }
 .pwa-pend-btn--danger:hover:not(:disabled) { background: #c0392b; color: #ffffff; }
 .pwa-pendientes-note { margin: 10px 0 0; font-size: 0.74rem; color: #8a6d00; }
+
+/* Aviso de borrador recuperado desde IndexedDB */
+.pwa-borrador {
+  margin: 0 0 12px;
+  padding: 8px 12px;
+  background: #eaf6f9;
+  border-left: 4px solid #2DC4D4;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: #1B3A5C;
+}
